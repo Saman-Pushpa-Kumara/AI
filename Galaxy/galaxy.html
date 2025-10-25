@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AI Power: Hyper-Realistic Galactic Simulation</title>
+    <style> body { margin: 0; overflow: hidden; background: #000; } </style>
+      <style> 
+    .hacker-text {
+    font-family: 'Share Tech Mono', monospace;
+    
+    font-size: 10px;
+    color: #00ff00; /* classic hacker green */
+    text-shadow:
+        0 0 5px #00ff00,
+        0 0 10px #00ff00,
+        0 0 20px #00ff00,
+        0 0 40px #00ff00;
+    animation: flicker 1.5s infinite;
+}
+
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+    }
+    20%, 22%, 24%, 55% {
+        opacity: 0.3;
+    }
+}
+  </style> 
+</head>
+<body>
+    <!-- All necessary Three.js scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<div class="hacker-text"><center>GALAXY SPK MODS</div>
+    <script>
+        // 1. Scene, Camera, Renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        // 2. Controls & Lighting
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 5;
+        controls.maxDistance = 150;
+        camera.position.set(20, 15, 40);
+        
+        // A REAL LIGHT SOURCE FOR PLANETS
+        const pointLight = new THREE.PointLight(0xffeebf, 1.5, 300);
+        pointLight.position.set(0, 0, 0);
+        scene.add(pointLight);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.05));
+
+        // 3. HYPER-REALISTIC GALAXY
+        const createGalaxyLayer = (params) => {
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(params.count * 3);
+            const colors = new Float32Array(params.count * 3);
+            const colorInside = new THREE.Color(params.insideColor);
+            const colorOutside = new THREE.Color(params.outsideColor);
+
+            for (let i = 0; i < params.count; i++) {
+                const i3 = i * 3;
+                const radius = Math.random() * params.radius;
+                const spinAngle = radius * params.spin;
+                const branchAngle = (i % params.branches) / params.branches * Math.PI * 2;
+
+                // Galactic Bulge: More stars closer to the center
+                const power = (radius < params.radius * 0.3) ? 2.5 : params.randomnessPower;
+                const randomX = Math.pow(Math.random(), power) * (Math.random() < 0.5 ? 1 : -1) * params.randomness * radius;
+                const randomY = Math.pow(Math.random(), power) * (Math.random() < 0.5 ? 1 : -1) * params.randomness * radius * params.flatness;
+                const randomZ = Math.pow(Math.random(), power) * (Math.random() < 0.5 ? 1 : -1) * params.randomness * radius;
+
+                positions[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
+                positions[i3 + 1] = randomY;
+                positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+
+                const mixedColor = colorInside.clone().lerp(colorOutside, radius / params.radius);
+                colors[i3] = mixedColor.r; colors[i3 + 1] = mixedColor.g; colors[i3 + 2] = mixedColor.b;
+            }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            const material = new THREE.PointsMaterial({ size: params.size, sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true });
+            return new THREE.Points(geometry, material);
+        };
+
+        // Layer 1: Main Spiral Arms (500,000 stars)
+        const mainGalaxy = createGalaxyLayer({ count: 500000, size: 0.018, radius: 60, branches: 7, spin: 1.2, randomness: 0.5, randomnessPower: 3.5, flatness: 0.2, insideColor: '#ffca89', outsideColor: '#8db8ff' });
+        scene.add(mainGalaxy);
+
+        // Layer 2: Galactic Halo (Faint, spherical)
+        const halo = createGalaxyLayer({ count: 200000, size: 0.01, radius: 80, branches: 1, spin: 0, randomness: 1, randomnessPower: 2, flatness: 1, insideColor: '#ffffff', outsideColor: '#ffffff' });
+        halo.material.opacity = 0.1;
+        halo.material.blending = THREE.NormalBlending;
+        scene.add(halo);
+
+        // 4. "INTERSTELLAR" BLACK HOLE
+        const blackHole = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+        scene.add(blackHole);
+
+        const diskGeometry = new THREE.RingGeometry(1.2, 4.5, 128);
+        const diskMaterial = new THREE.ShaderMaterial({
+            side: THREE.DoubleSide,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            uniforms: { time: { value: 0 } },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                varying vec2 vUv;
+                uniform float time;
+                
+                // Perlin Noise function for turbulence
+                float random(vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123); }
+                float noise(vec2 st) {
+                    vec2 i = floor(st); vec2 f = fract(st);
+                    float a = random(i); float b = random(i + vec2(1.0, 0.0));
+                    float c = random(i + vec2(0.0, 1.0)); float d = random(i + vec2(1.0, 1.0));
+                    vec2 u = f * f * (3.0 - 2.0 * f);
+                    return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+                }
+
+                void main() {
+                    float dist = distance(vUv, vec2(0.5));
+                    float radius = (vUv.x - 0.5);
+                    
+                    // Color gradient: Hot inside, cooler outside
+                    vec3 color = mix(vec3(1.0, 0.8, 0.5), vec3(1.0, 0.2, 0.0), radius * 2.0);
+                    
+                    // Turbulence and bands
+                    float turbulence = noise(vec2(vUv.y * 20.0 - time * 0.5, vUv.x * 10.0));
+                    float bands = sin(vUv.y * 50.0 - time * 2.0 + turbulence * 2.0);
+                    
+                    float alpha = pow(1.0 - abs(radius * 2.0), 2.0);
+                    alpha *= 1.0 - bands;
+                    
+                    gl_FragColor = vec4(color, alpha * 0.6);
+                }
+            `
+        });
+        const accretionDisk = new THREE.Mesh(diskGeometry, diskMaterial);
+        accretionDisk.rotation.x = Math.PI * 0.55;
+        scene.add(accretionDisk);
+
+        // 5. REAL SPHERICAL PLANETS
+        const planets = [];
+        const planetData = [
+            { size: 0.3, texture: 'earth', distance: 8, speed: 0.2 },
+            { size: 0.2, texture: 'mars', distance: 12, speed: 0.15 },
+            { size: 0.6, texture: 'jupiter', distance: 18, speed: 0.1 }
+        ];
+
+        planetData.forEach(data => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            if (data.texture === 'earth') {
+                ctx.fillStyle = '#5a8da0'; ctx.fillRect(0, 0, 128, 64);
+                ctx.fillStyle = '#7a9b4a'; ctx.fillRect(20, 20, 30, 20); ctx.fillRect(80, 40, 20, 15);
+            } else if (data.texture === 'mars') {
+                ctx.fillStyle = '#c1440e'; ctx.fillRect(0, 0, 128, 64);
+                ctx.fillStyle = '#8f2c05'; ctx.beginPath(); ctx.arc(50, 30, 15, 0, Math.PI*2); ctx.fill();
+            } else { // jupiter
+                ctx.fillStyle = '#d8c8a8'; ctx.fillRect(0, 0, 128, 64);
+                for(let i=0; i<10; i++) {
+                    ctx.fillStyle = `rgba(165, 125, 80, ${Math.random() * 0.5 + 0.2})`;
+                    ctx.fillRect(0, Math.random() * 64, 128, Math.random() * 5 + 2);
+                }
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.8 });
+            const geometry = new THREE.SphereGeometry(data.size, 32, 32);
+            const planet = new THREE.Mesh(geometry, material);
+            planet.userData = data; // Store distance and speed
+            scene.add(planet);
+            planets.push(planet);
+        });
+
+        // 6. Post-Processing
+        const composer = new THREE.EffectComposer(renderer);
+        composer.addPass(new THREE.RenderPass(scene, camera));
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0.1; bloomPass.strength = 1.0; bloomPass.radius = 0.8;
+        composer.addPass(bloomPass);
+
+        // 7. Animation Loop
+        const clock = new THREE.Clock();
+        const animate = () => {
+            const elapsedTime = clock.getElapsedTime();
+            mainGalaxy.rotation.y = elapsedTime * 0.02;
+            halo.rotation.y = elapsedTime * 0.015;
+            accretionDisk.material.uniforms.time.value = elapsedTime;
+            
+            planets.forEach(planet => {
+                const { distance, speed } = planet.userData;
+                planet.position.x = Math.cos(elapsedTime * speed) * distance;
+                planet.position.z = Math.sin(elapsedTime * speed) * distance;
+                planet.rotation.y += 0.005;
+            });
+
+            controls.update();
+            composer.render();
+            requestAnimationFrame(animate);
+        };
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => { /* ... same resize logic ... */ });
+    </script>
+</body>
+</html>
