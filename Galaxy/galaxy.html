@@ -6,14 +6,45 @@
     <title>AI Power: Hyper-Realistic Galactic Simulation</title>
     <!-- Font Awesome CDN for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style> 
-        body { 
-            margin: 0; 
-            overflow: hidden; 
-            background: #000; 
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
             font-family: sans-serif;
-        } 
-    
+        }
+
+        /* --- NEW: Start Overlay --- */
+        #start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+            cursor: pointer;
+            transition: opacity 0.5s;
+        }
+
+        #start-overlay h1 {
+            color: white;
+            font-size: 2.5em;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        #start-overlay p {
+            color: #ccc;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
         /* Header */
         .header {
             position: fixed;
@@ -30,7 +61,6 @@
             align-items: center;
         }
 
-        /* New style for "Galaxy" text */
         .logo-text {
             color: white;
             font-size: 28px;
@@ -61,27 +91,29 @@
             background-color: rgba(255, 255, 255, 0.1);
             border-color: rgba(255, 255, 255, 0.8);
         }
-    
+
     </style>
-    
+
 </head>
 <body>
 
+<!-- NEW: Audio element -->
+<audio id="background-audio" src="https://cdn.pixabay.com/audio/2022/04/16/audio_071e5c0d53.mp3" loop></audio>
+
+<!-- NEW: Start Overlay -->
+<div id="start-overlay">
+    <h1>Galaxy Simulation</h1>
+    <p>Click anywhere to begin</p>
+</div>
+
+
 <header class="header">
     <div class="header-row">
-        <!-- "Galaxy" text instead of menu icon -->
         <div class="logo-text">Galaxy</div>
-        
         <div class="social-links">
-            <a href="https://www.fb.com/saman2200" class="social-link">
-                <i class="fab fa-facebook-f"></i>
-            </a>
-            <a href="https://www.fb.com/saman2200" class="social-link">
-                <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://www.fb.com/saman2200" class="social-link">
-                <i class="fab fa-whatsapp"></i>
-            </a>
+            <a href="https://www.fb.com/saman2200" class="social-link"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.fb.com/saman2200" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.fb.com/saman2200" class="social-link"><i class="fab fa-whatsapp"></i></a>
         </div>
     </div>
 </header>
@@ -97,6 +129,26 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
 <script>
+    // --- NEW: Audio and Overlay Logic ---
+    const audio = document.getElementById('background-audio');
+    const overlay = document.getElementById('start-overlay');
+
+    overlay.addEventListener('click', () => {
+        // Attempt to play the audio
+        audio.play().catch(error => {
+            console.error("Audio playback failed:", error);
+            // Even if audio fails, we hide the overlay
+        });
+
+        // Hide the overlay
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 500); // Wait for the fade-out transition to complete
+
+    }, { once: true }); // The event will only fire once
+
+
     // 1. Scene, Camera, Renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
@@ -112,8 +164,7 @@
     controls.minDistance = 5;
     controls.maxDistance = 150;
     camera.position.set(20, 15, 40);
-    
-    // A REAL LIGHT SOURCE FOR PLANETS
+
     const pointLight = new THREE.PointLight(0xffeebf, 1.5, 300);
     pointLight.position.set(0, 0, 0);
     scene.add(pointLight);
@@ -133,7 +184,6 @@
             const spinAngle = radius * params.spin;
             const branchAngle = (i % params.branches) / params.branches * Math.PI * 2;
 
-            // Galactic Bulge: More stars closer to the center
             const power = (radius < params.radius * 0.3) ? 2.5 : params.randomnessPower;
             const randomX = Math.pow(Math.random(), power) * (Math.random() < 0.5 ? 1 : -1) * params.randomness * radius;
             const randomY = Math.pow(Math.random(), power) * (Math.random() < 0.5 ? 1 : -1) * params.randomness * radius * params.flatness;
@@ -152,11 +202,9 @@
         return new THREE.Points(geometry, material);
     };
 
-    // Layer 1: Main Spiral Arms (500,000 stars)
     const mainGalaxy = createGalaxyLayer({ count: 500000, size: 0.018, radius: 60, branches: 7, spin: 1.2, randomness: 0.5, randomnessPower: 3.5, flatness: 0.2, insideColor: '#ffca89', outsideColor: '#8db8ff' });
     scene.add(mainGalaxy);
 
-    // Layer 2: Galactic Halo (Faint, spherical)
     const halo = createGalaxyLayer({ count: 200000, size: 0.01, radius: 80, branches: 1, spin: 0, randomness: 1, randomnessPower: 2, flatness: 1, insideColor: '#ffffff', outsideColor: '#ffffff' });
     halo.material.opacity = 0.1;
     halo.material.blending = THREE.NormalBlending;
@@ -183,8 +231,7 @@
         fragmentShader: `
             varying vec2 vUv;
             uniform float time;
-            
-            // Perlin Noise function for turbulence
+
             float random(vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123); }
             float noise(vec2 st) {
                 vec2 i = floor(st); vec2 f = fract(st);
@@ -197,17 +244,11 @@
             void main() {
                 float dist = distance(vUv, vec2(0.5));
                 float radius = (vUv.x - 0.5);
-                
-                // Color gradient: Hot inside, cooler outside
                 vec3 color = mix(vec3(1.0, 0.8, 0.5), vec3(1.0, 0.2, 0.0), radius * 2.0);
-                
-                // Turbulence and bands
                 float turbulence = noise(vec2(vUv.y * 20.0 - time * 0.5, vUv.x * 10.0));
                 float bands = sin(vUv.y * 50.0 - time * 2.0 + turbulence * 2.0);
-                
                 float alpha = pow(1.0 - abs(radius * 2.0), 2.0);
                 alpha *= 1.0 - bands;
-                
                 gl_FragColor = vec4(color, alpha * 0.6);
             }
         `
@@ -234,7 +275,7 @@
         } else if (data.texture === 'mars') {
             ctx.fillStyle = '#c1440e'; ctx.fillRect(0, 0, 128, 64);
             ctx.fillStyle = '#8f2c05'; ctx.beginPath(); ctx.arc(50, 30, 15, 0, Math.PI*2); ctx.fill();
-        } else { // jupiter
+        } else {
             ctx.fillStyle = '#d8c8a8'; ctx.fillRect(0, 0, 128, 64);
             for(let i=0; i<10; i++) {
                 ctx.fillStyle = `rgba(165, 125, 80, ${Math.random() * 0.5 + 0.2})`;
@@ -245,7 +286,7 @@
         const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.8 });
         const geometry = new THREE.SphereGeometry(data.size, 32, 32);
         const planet = new THREE.Mesh(geometry, material);
-        planet.userData = data; // Store distance and speed
+        planet.userData = data;
         scene.add(planet);
         planets.push(planet);
     });
@@ -264,7 +305,7 @@
         mainGalaxy.rotation.y = elapsedTime * 0.02;
         halo.rotation.y = elapsedTime * 0.015;
         accretionDisk.material.uniforms.time.value = elapsedTime;
-        
+
         planets.forEach(planet => {
             const { distance, speed } = planet.userData;
             planet.position.x = Math.cos(elapsedTime * speed) * distance;
@@ -280,15 +321,10 @@
 
     // Handle Resize
     window.addEventListener('resize', () => {
-        // Update camera
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
-
-        // Update renderer
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        // Update composer
         composer.setSize(window.innerWidth, window.innerHeight);
     });
 </script>
