@@ -1,1 +1,1031 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>සෞරග්‍රහ මණ්ඩල ප්‍රදර්ශනය</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&family=Manrope:wght@400;500;800&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .slider-container {
+            position: relative;
+                        
+            width: 100vw;
+            height: 120vh;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background: radial-gradient(circle, rgba(255, 161, 0, 0.1) 0%, rgb(12, 0, 12) 100%);
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .slide-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 50px;
+            /* සියලුම විනිවිදක අන්තර්ගතය පොදුවේ ඉහළට ගෙන ඇත */
+            transform: translateY(-20px); 
+        }
+
+        .content-row {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .slide-info {
+            flex: 1;
+            max-width: 25%;
+        }
+
+        .slide-counter {
+            font-size: 15px;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 27px;
+        }
+
+        .slide-description {
+            font-size: 15px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 22px;
+            margin-bottom: 27px;
+        }
+
+        .learn-more {
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+            text-transform: uppercase;
+            text-decoration: none;
+            letter-spacing: 2.74512px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        .planet-center {
+            flex: 1;
+            text-align: center;
+            max-width: 50%;
+        }
+
+        .planet-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 113px;
+            font-weight: 400;
+            color: white;
+            text-transform: uppercase;
+            text-shadow: rgba(0, 0, 0, 0.6) 0px 21.9609px 37.5166px;
+            line-height: 113px;
+            margin-bottom: 10px;
+        }
+
+        .planet-subtitle {
+            font-size: 15px;
+            font-weight: 800;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2.74512px;
+        }
+
+        .planet-stats {
+            flex: 1;
+            max-width: 25%;
+            text-align: right;
+        }
+
+        .stat-item {
+            margin-bottom: 18px;
+        }
+
+        .stat-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            color: white;
+            line-height: 22px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 15px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 22px;
+        }
+
+        .planet-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 487px;
+            height: 486px;
+            border-radius: 50%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 5;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .planet-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 405px;
+            height: 405px;
+            border-radius: 50%;
+            z-index: 4;
+        }
+
+        /* ග්‍රහලෝක වලට අදාල මෝස්තර */
+        .slide.sun {
+            background: radial-gradient(circle, rgba(255, 161, 0, 0.1) 0%, rgb(12, 0, 12) 100%);
+        }
+        .slide.sun .planet-glow {
+            box-shadow: rgb(255, 159, 43) 0px 0px 90.5889px 0px;
+        }
+        /* හිරු විනිවිදකයේ විස්තර අනෙක් ඒවා මෙන් ඉහළට ගැනීම සඳහා අගය වෙනස් කරන ලදි */
+        .slide.sun .slide-content { 
+            transform: translateY(-280px); 
+        }
+
+        .slide.mercury {
+            background: radial-gradient(circle, rgba(222, 252, 252, 0.1) 0%, rgb(0, 4, 12) 100%);
+        }
+        .slide.mercury .planet-image {
+            box-shadow: rgba(255, 255, 255, 0.3) 0px 0px 54.0667px 0px;
+        }
+
+        .slide.venus {
+            background: radial-gradient(circle, rgba(201, 86, 20, 0.15) 0%, rgb(0, 0, 12) 100%);
+        }
+        .slide.venus .planet-image {
+            box-shadow: rgba(255, 206, 147, 0.3) 0px 0px 54.0667px 0px;
+        }
+
+        .slide.earth {
+            background: radial-gradient(circle, rgba(26, 214, 253, 0.1) 0%, rgb(0, 4, 12) 100%);
+        }
+        .slide.earth .planet-image {
+            box-shadow: rgba(255, 255, 255, 0.3) 0px 0px 54.0667px 0px;
+        }
+
+        .slide.mars {
+            background: radial-gradient(circle, rgba(226, 97, 22, 0.15) 0%, rgb(0, 0, 12) 100%);
+        }
+        .slide.mars .planet-image {
+            box-shadow: rgba(255, 206, 147, 0.3) 0px 0px 54.0667px 0px;
+        }
+
+        .slide.jupiter {
+            background: radial-gradient(circle, rgba(226, 97, 22, 0.15) 0%, rgb(0, 4, 12) 100%);
+        }
+        .slide.jupiter .planet-image {
+            box-shadow: rgba(255, 240, 226, 0.25) 0px 0px 54.0667px 0px;
+        }
+
+        .slide.saturn {
+            background: radial-gradient(circle, rgba(26, 214, 253, 0.1) 0%, rgb(0, 4, 12) 100%);
+        }
+        .slide.saturn .planet-image {
+            box-shadow: rgba(255, 248, 201, 0.5) 0px 0px 54.0667px 0px;
+        }
+
+        .slide.uranus {
+            background: radial-gradient(circle, rgba(0, 255, 229, 0.1) 0%, rgb(0, 4, 12) 100%);
+        }
+        .slide.uranus .planet-image {
+            box-shadow: rgba(255, 255, 255, 0.3) 0px 0px 54.0667px 0px;
+        }
+
+        .slide.neptune {
+            background: radial-gradient(circle, rgba(26, 214, 253, 0.1) 0%, rgb(12, 0, 3) 100%);
+        }
+        .slide.neptune .planet-image {
+            box-shadow: rgba(186, 208, 221, 0.41) 0px 0px 10.3583px 0px;
+            /* නෙප්චූන් පිහිටීම නිවැරදි කිරීම සඳහා අභිරුචි width/height ඉවත් කරන ලදී */
+        }
+
+        /* මඟපෙන්වීම */
+        .navigation {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 0 50px;
+        }
+
+        .nav-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 3.66016px;
+            cursor: pointer;
+            padding: 0;
+            margin: 0 8px;
+        }
+
+        .nav-btn.icon {
+            font-size: 13px;
+            line-height: 52px;
+        }
+
+        .nav-btn.text {
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 50px;
+        }
+
+        .scroll-btn {
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 70px;
+            padding: 0 41px;
+            line-height: 50px;
+        }
+
+        /* ශීර්ෂකය */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 30px 50px;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .menu-line {
+            height: 1px;
+            background: white;
+        }
+
+        .menu-line:nth-child(1) { width: 15px; }
+        .menu-line:nth-child(2) { width: 30px; }
+        .menu-line:nth-child(3) { width: 20px; }
+
+        .logo {
+            width: 177px;
+            height: 43px;
+            background: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 9px;
+        }
+
+        .social-link {
+            width: 43px;
+            height: 43px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* පැති මඟපෙන්වීම */
+        .side-nav {
+            position: fixed;
+            left: -275px;
+            top: 0;
+            width: 275px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 200;
+            transition: left 0.3s ease;
+        }
+
+        .side-nav.open {
+            left: 0;
+        }
+
+        .planet-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .planet-nav-item:hover {
+            opacity: 0.8;
+        }
+
+        .planet-nav-icon {
+            width: 41px;
+            height: 41px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-right: 20px;
+        }
+
+        .planet-nav-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 23px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide-content {
+                padding: 0 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .content-row {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .slide-info, .planet-center, .planet-stats {
+                max-width: 100%;
+            }
+
+            .planet-title {
+                font-size: 60px;
+                line-height: 60px;
+            }
+
+            .planet-image {
+                width: 300px;
+                height: 300px;
+                position: relative;
+                top: 0;
+                left: 0;
+                transform: none;
+                margin: 20px auto;
+            }
+
+            .header, .navigation {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ශීර්ෂකය -->
+    <header class="header">
+        <div class="header-row">
+            <div class="menu-icon" onclick="toggleSideNav()">
+                <div class="menu-line"></div>
+                <div class="menu-line"></div>
+                <div class="menu-line"></div>
+            </div>
+            
+            <div class="social-links">
+                <a href="https://www.facebook.com/SAMAN2200" class="social-link">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.facebook.com/SAMAN2200" class="social-link">
+                    <i class="fab fa-telegram"></i>
+                </a>
+                <a href="https://www.facebook.com/SAMAN2200" class="social-link">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- පැති මඟපෙන්වීම -->
+    <nav class="side-nav" id="sideNav">
+        <div class="planet-nav-item" onclick="goToSlide(0)">
+            <div class="planet-nav-icon" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/sun6.png'); width: 51px; height: 51px;"></div>
+            <div class="planet-nav-text">හිරු</div>
+        </div>
+        <div class="planet-nav-item" onclick="goToSlide(1)">
+            <div class="planet-nav-icon" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/mercury.png');"></div>
+            <div class="planet-nav-text">බුධ</div>
+        </div>
+        <div class="planet-nav-item" onclick="goToSlide(2)">
+            <div class="planet-nav-icon" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/venus.png');"></div>
+            <div class="planet-nav-text">සිකුරු</div>
+        </div>
+        <div class="planet-nav-item" onclick="goToSlide(3)">
+            <div class="planet-nav-icon" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/earth.png');"></div>
+            <div class="planet-nav-text">පෘථිවිය</div>
+        </div>
+        <div class="planet-nav-item" onclick="goToSlide(4)">
+            <div class="planet-nav-icon" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/mars.png');"></div>
+            <div class="planet-nav-text">අඟහරු</div>
+        </div>
+        <div class="planet-nav-item" onclick="goToSlide(5)">
+            <div class="planet-nav-icon" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/jupiter.png');"></div>
+            <div class="planet-nav-text">බ්‍රහස්පති</div>
+        </div>
+        <div class="planet-nav-item" onclick="goToSlide(6)">
+            <div class="planet-nav-icon" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/saturn.png');"></div>
+            <div class="planet-nav-text">සෙනසුරු</div>
+        </div>
+        <div class="planet-nav-item" onclick="goToSlide(7)">
+            <div class="planet-nav-icon" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/uranus.png');"></div>
+            <div class="planet-nav-text">යුරේනස්</div>
+        </div>
+        <div class="planet-nav-item" onclick="goToSlide(8)">
+            <div class="planet-nav-icon" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/neptune.png');"></div>
+            <div class="planet-nav-text">නෙප්චූන්</div>
+        </div>
+    </nav>
+
+    <!-- ප්‍රධාන විනිවිදක බහාලුම -->
+    <div class="slider-container">
+        <!-- හිරු විනිවිදකය -->
+        <div class="slide sun active">
+            <div class="slide-bg">
+                <video autoplay muted loop>
+                    <source src="https://github.com/Saman-Pushpa-Kumara/AI/blob/main/All_the_worlds/galaxy.mp4 ">
+                </video>
+            </div>
+            <div class="planet-glow"></div>
+            <div class="planet-image" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/sun6.png'); width: 552px; height: 551px;"></div>
+            <div class="slide-content">
+                <div class="content-row">
+                    <div class="slide-info">
+                        <div class="slide-counter">1 / 9</div>
+                        <div class="slide-description">හිරු යනු අපගේ සෞරග්‍රහ මණ්ඩලයේ මධ්‍යයේ ඇති, වසර බිලියන 4.5ක් පැරණි කහ වාමන තාරකාවකි - එය උණුසුම්, දිලිසෙන හයිඩ්‍රජන් සහ හීලියම් බෝලයකි. එය පෘථිවියේ සිට කිලෝමීටර් මිලියන 150ක් පමණ දුරින් පිහිටා ඇති අතර එය අපගේ සෞරග්‍රහ මණ්ඩලයේ ඇති එකම තාරකාවයි.</div>
+                        <a href="https://si.wikipedia.org/wiki/%E0%B7%84%E0%B7%92%E0%B6%BB%E0%B7%94" class="learn-more">වැඩිදුර ඉගෙන ගන්න</a>
+                    </div>
+                    <div class="planet-center">
+                        <div class="planet-title">හිරු</div>
+                        <div class="planet-subtitle">ජීවයේ මූලාශ්‍රය</div>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">වයස</div>
+                            <div class="stat-value">වසර බිලියන 4.5</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">තාරකා වර්ගය</div>
+                            <div class="stat-value">කහ වාමන</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">අරය</div>
+                            <div class="stat-value">කිලෝමීටර් 696,340</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">උෂ්ණත්වය</div>
+                            <div class="stat-value">සෙල්සියස් අංශක 5,500</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- බුධ විනිවිදකය -->
+        <div class="slide mercury">
+            <div class="slide-bg">
+                <video autoplay muted loop>
+                    <source src="https://github.com/Saman-Pushpa-Kumara/AI/blob/main/All_the_worlds/galaxy.mp4 ">
+                </video>
+            </div>
+            <div class="planet-image" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/mercury.png');"></div>
+            <div class="slide-content">
+                <div class="content-row">
+                    <div class="slide-info">
+                        <div class="slide-counter">2 / 9</div>
+                        <div class="slide-description">අපගේ සෞරග්‍රහ මණ්ඩලයේ කුඩාම ග්‍රහලෝකය සහ සූර්යයාට ආසන්නතම ග්‍රහලෝකය වන බුධ, පෘථිවියේ චන්ද්‍රයාට වඩා මඳක් විශාලය. බුධ යනු වේගවත්ම ග්‍රහලෝකය වන අතර, පෘථිවි දින 88 කින් සූර්යයා වටා ගමන් කරයි.</div>
+                        <a href="https://si.wikipedia.org/wiki/%E0%B6%B6%E0%B7%94%E0%B6%B0" class="learn-more">වැඩිදුර ඉගෙන ගන්න</a>
+                    </div>
+                    <div class="planet-center">
+                        <div class="planet-title">බුධ</div>
+                        <div class="planet-subtitle">උණුසුම් සහ සීතල</div>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">වසරක දිග</div>
+                            <div class="stat-value">පෘථිවි දින 88</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">ග්‍රහලෝක වර්ගය</div>
+                            <div class="stat-value">භූමිෂ්ඨ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">අරය</div>
+                            <div class="stat-value">කිලෝමීටර් 2,439</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">හිරු සිට දුර</div>
+                            <div class="stat-value">කි.මී. 50,784,911</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- සිකුරු විනිවිදකය -->
+        <div class="slide venus">
+            <div class="slide-bg">
+                <video autoplay muted loop>
+                    <source src="https://github.com/Saman-Pushpa-Kumara/AI/blob/main/All_the_worlds/galaxy.mp4 ">
+                </video>
+            </div>
+            <div class="planet-image" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/venus.png');"></div>
+            <div class="slide-content">
+                <div class="content-row">
+                    <div class="slide-info">
+                        <div class="slide-counter">3 / 9</div>
+                        <div class="slide-description">සිකුරු යනු භූමිෂ්ඨ ග්‍රහලෝකයකි. එහි සමාන ප්‍රමාණය, ස්කන්ධය, සූර්යයාට ආසන්න බව සහ මූලික සංයුතිය නිසා සමහර විට පෘථිවියේ "සහෝදර ග්‍රහලෝකය" ලෙස හැඳින්වේ. නමුත් එය වෙනත් අංශවලින් පෘථිවියට වඩා බෙහෙවින් වෙනස් ය.</div>
+                        <a href="https://si.wikipedia.org/wiki/%E0%B7%83%E0%B7%92%E0%B6%9A%E0%B7%94%E0%B6%BB%E0%B7%94_%E0%B6%9C%E0%B7%8A%E2%80%8D%E0%B6%BB%E0%B7%84%E0%B6%BD%E0%B7%9C%E0%B7%80" class="learn-more">වැඩිදුර ඉගෙන ගන්න</a>
+                    </div>
+                    <div class="planet-center">
+                        <div class="planet-title">සිකුරු</div>
+                        <div class="planet-subtitle">සන්ධ්‍යා තරුව</div>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">වසරක දිග</div>
+                            <div class="stat-value">පෘථිවි දින 225</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">ග්‍රහලෝක වර්ගය</div>
+                            <div class="stat-value">භූමිෂ්ඨ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">අරය</div>
+                            <div class="stat-value">කිලෝමීටර් 6,051</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">හිරු සිට දුර</div>
+                            <div class="stat-value">කි.මී. 107,480,968</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- පෘථිවි විනිවිදකය -->
+        <div class="slide earth">
+            <div class="slide-bg">
+                <video autoplay muted loop>
+                    <source src="https://github.com/Saman-Pushpa-Kumara/AI/blob/main/All_the_worlds/galaxy.mp4 ">
+                </video>
+            </div>
+            <div class="planet-image" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/earth.png');"></div>
+            <div class="slide-content">
+                <div class="content-row">
+                    <div class="slide-info">
+                        <div class="slide-counter">4 / 9</div>
+                        <div class="slide-description">පෘථිවිය සූර්යයාගේ සිට තුන්වන ග්‍රහලෝකය වන අතර ජීවය පවතින බවට දන්නා එකම ග්‍රහ වස්තුවයි. සෞරග්‍රහ මණ්ඩලය පුරා විශාල ජල ප්‍රමාණයක් සොයා ගත හැකි වුවද, ද්‍රව මතුපිට ජලය පවත්වා ගන්නේ පෘථිවිය පමණි.</div>
+                        <a href="https://si.wikipedia.org/wiki/%E0%B6%B8%E0%B7%84_%E0%B6%B4%E0%B7%9C%E0%B7%85%E0%B7%9C%E0%B7%80" class="learn-more">වැඩිදුර ඉගෙන ගන්න</a>
+                    </div>
+                    <div class="planet-center">
+                        <div class="planet-title">පෘථිවිය</div>
+                        <div class="planet-subtitle">මිහිරි නිවහන</div>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">වසරක දිග</div>
+                            <div class="stat-value">පෘථිවි දින 365</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">ග්‍රහලෝක වර්ගය</div>
+                            <div class="stat-value">භූමිෂ්ඨ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">අරය</div>
+                            <div class="stat-value">කිලෝමීටර් 6,371</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">හිරු සිට දුර</div>
+                            <div class="stat-value">කි.මී. 147,295,031</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- අඟහරු විනිවිදකය -->
+        <div class="slide mars">
+            <div class="slide-bg">
+                <video autoplay muted loop>
+                    <source src="https://github.com/Saman-Pushpa-Kumara/AI/blob/main/All_the_worlds/galaxy.mp4 ">
+                </video>
+            </div>
+            <div class="planet-image" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/mars.png');"></div>
+            <div class="slide-content">
+                <div class="content-row">
+                    <div class="slide-info">
+                        <div class="slide-counter">5 / 9</div>
+                        <div class="slide-description">අඟහරු යනු තුනී වායුගෝලයක් සහිත භූමිෂ්ඨ ග්‍රහලෝකයකි. එහි මතුපිට ලක්ෂණ චන්ද්‍රයාගේ ආවාට, පෘථිවියේ නිම්න, කාන්තාර සහ ධ්‍රැවීය අයිස් වැස්මට සමානකම් දක්වයි.</div>
+                        <a href="https://si.wikipedia.org/wiki/%E0%B6%85%E0%B6%9F%E0%B7%84%E0%B6%BB%E0%B7%94_%E0%B6%9C%E0%B7%8A%E2%80%8D%E0%B6%BB%E0%B7%84%E0%B6%BD%E0%B7%9C%E0%B7%80" class="learn-more">වැඩිදුර ඉගෙන ගන්න</a>
+                    </div>
+                    <div class="planet-center">
+                        <div class="planet-title">අඟහරු</div>
+                        <div class="planet-subtitle">රතු ග්‍රහලෝකය</div>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">වසරක දිග</div>
+                            <div class="stat-value">පෘථිවි දින 687</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">ග්‍රහලෝක වර්ගය</div>
+                            <div class="stat-value">භූමිෂ්ඨ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">අරය</div>
+                            <div class="stat-value">කිලෝමීටර් 3,390</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">හිරු සිට දුර</div>
+                            <div class="stat-value">කි.මී. 224,894,231</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- බ්‍රහස්පති විනිවිදකය -->
+        <div class="slide jupiter">
+            <div class="slide-bg">
+                <video autoplay muted loop>
+                    <source src="https://github.com/Saman-Pushpa-Kumara/AI/blob/main/All_the_worlds/galaxy.mp4 ">
+                </video>
+            </div>
+            <div class="planet-image" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/jupiter.png');"></div>
+            <div class="slide-content">
+                <div class="content-row">
+                    <div class="slide-info">
+                        <div class="slide-counter">6 / 9</div>
+                        <div class="slide-description">බ්‍රහස්පති සූර්යයාගේ සිට පස්වන ග්‍රහලෝකය වන අතර සෞරග්‍රහ මණ්ඩලයේ විශාලතම ග්‍රහලෝකයයි. එය වායු යෝධයෙකි, එහි ස්කන්ධය සෞරග්‍රහ මණ්ඩලයේ අනෙකුත් සියලුම ග්‍රහලෝකවල ස්කන්ධය මෙන් දෙගුණයකටත් වඩා වැඩිය.</div>
+                        <a href="https://si.wikipedia.org/wiki/%E0%B6%B6%E0%B7%8A%E2%80%8D%E0%B6%BB%E0%B7%84%E0%B7%83%E0%B7%8A%E0%B6%B4%E0%B6%AD%E0%B7%92_%E0%B6%9C%E0%B7%8A%E2%80%8D%E0%B6%BB%E0%B7%84%E0%B6%BA%E0%B7%8F" class="learn-more">වැඩිදුර ඉගෙන ගන්න</a>
+                    </div>
+                    <div class="planet-center">
+                        <div class="planet-title">බ්‍රහස්පති</div>
+                        <div class="planet-subtitle">රජු</div>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">වසරක දිග</div>
+                            <div class="stat-value">පෘථිවි දින 4,333</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">ග්‍රහලෝක වර්ගය</div>
+                            <div class="stat-value">වායු යෝධ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">අරය</div>
+                            <div class="stat-value">කිලෝමීටර් 71,492</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">හිරු සිට දුර</div>
+                            <div class="stat-value">කි.මී. 746,122,626</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- සෙනසුරු විනිවිදකය -->
+        <div class="slide saturn">
+            <div class="slide-bg">
+                <video autoplay muted loop>
+                    <source src="https://github.com/Saman-Pushpa-Kumara/AI/blob/main/All_the_worlds/galaxy.mp4 ">
+                </video>
+            </div>
+            <div class="planet-image" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/saturn.png');"></div>
+            <div class="saturn-rings" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-9.7677deg); width: 994px; height: 367px; background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/saturn_ring.png'); background-size: cover; background-repeat: no-repeat; background-position: center; z-index: 6;"></div>
+            <div class="slide-content">
+                <div class="content-row">
+                    <div class="slide-info">
+                        <div class="slide-counter">7 / 9</div>
+                        <div class="slide-description">සෙනසුරු සූර්යයාගේ සිට හයවන ග්‍රහලෝකය වන අතර අපගේ සෞරග්‍රහ මණ්ඩලයේ දෙවන විශාලතම ග්‍රහලෝකයයි. වළලු ඇති එකම ග්‍රහලෝකය සෙනසුරු නොවේ, නමුත් කිසිවක් සෙනසුරුගේ වළලු තරම් දර්ශනීය හෝ සංකීර්ණ නොවේ. සෙනසුරුට චන්ද්‍රයන් දුසිම් ගණනක් ද ඇත.</div>
+                        <a href="https://si.wikipedia.org/wiki/%E0%B7%83%E0%B7%99%E0%B6%B1%E0%B7%83%E0%B7%94%E0%B6%BB%E0%B7%94_%E0%B6%9C%E0%B7%8A%E2%80%8D%E0%B6%BB%E0%B7%84%E0%B6%BD%E0%B7%9C%E0%B7%80" class="learn-more">වැඩිදුර ඉගෙන ගන්න</a>
+                    </div>
+                    <div class="planet-center">
+                        <div class="planet-title">සෙනසුරු</div>
+                        <div class="planet-subtitle">වළලු සහිත ග්‍රහලොව</div>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">වසරක දිග</div>
+                            <div class="stat-value">පෘථිවි දින 10,759</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">ග්‍රහලෝක වර්ගය</div>
+                            <div class="stat-value">වායු යෝධ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">අරය</div>
+                            <div class="stat-value">කිලෝමීටර් 58,232</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">හිරු සිට දුර</div>
+                            <div class="stat-value">කි.මී. 147,295,031</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- යුරේනස් විනිවිදකය -->
+        <div class="slide uranus">
+            <div class="slide-bg">
+                <video autoplay muted loop>
+                    <source src="https://github.com/Saman-Pushpa-Kumara/AI/blob/main/All_the_worlds/galaxy.mp4 ">
+                </video>
+            </div>
+            <div class="planet-image" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/uranus.png');"></div>
+            <div class="slide-content">
+                <div class="content-row">
+                    <div class="slide-info">
+                        <div class="slide-counter">8 / 9</div>
+                        <div class="slide-description">සූර්යයාගේ සිට හත්වන ග්‍රහලෝකය වන යුරේනස් අපගේ සෞරග්‍රහ මණ්ඩලයේ තුන්වන විශාලතම විෂ්කම්භය ඇති ග්‍රහලෝකයයි. එය ඉතා සීතල සහ සුළං සහිතය. එය සිය කක්ෂයේ තලයෙන් අංශක 90 කට ආසන්න කෝණයකින් භ්‍රමණය වන අතර, එය වටා දුර්වල වළලු 13 ක් සහ කුඩා චන්ද්‍රයන් 27 ක් ඇත.</div>
+                        <a href="https://si.wikipedia.org/wiki/%E0%B6%BA%E0%B7%94%E2%80%8D%E0%B6%BB%E0%B7%9A%E0%B6%B1%E0%B7%83%E0%B7%8A" class="learn-more">වැඩිදුර ඉගෙන ගන්න</a>
+                    </div>
+                    <div class="planet-center">
+                        <div class="planet-title">යුරේනස්</div>
+                        <div class="planet-subtitle">හත්වන සංචාරකයා</div>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">වසරක දිග</div>
+                            <div class="stat-value">පෘථිවි දින 30,687</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">ග්‍රහලෝක වර්ගය</div>
+                            <div class="stat-value">අයිස් යෝධ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">අරය</div>
+                            <div class="stat-value">කිලෝමීටර් 25,362</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">හිරු සිට දුර</div>
+                            <div class="stat-value">කි.මී. 2,935,484,463</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- නෙප්චූන් විනිවිදකය -->
+        <!-- නෙප්චූන් පිහිටීම නිවැරදි කර ඇත -->
+        <div class="slide neptune">
+            <div class="slide-bg">
+                <video autoplay muted loop>
+                    <source src="https://github.com/Saman-Pushpa-Kumara/AI/blob/main/All_the_worlds/galaxy.mp4 ">
+                </video>
+            </div>
+            <div class="planet-image" style="background-image: url('https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/All_the_worlds/neptune.png');"></div>
+            <div class="slide-content">
+                <div class="content-row">
+                    <div class="slide-info">
+                        <div class="slide-counter">9 / 9</div>
+                        <div class="slide-description">නෙප්චූන් යනු සූර්යයාගේ සිට අටවන සහ දුරස්ථම සෞරග්‍රහ මණ්ඩලයේ ග්‍රහලෝකයයි. සෞරග්‍රහ මණ්ඩලයේ, එය විෂ්කම්භයෙන් සිව්වන විශාලතම ග්‍රහලෝකය, තුන්වන විශාලතම ස්කන්ධය ඇති ග්‍රහලෝකය සහ ඝනත්වයෙන් වැඩිම යෝධ ග්‍රහලෝකයයි.</div>
+                        <a href="https://si.wikipedia.org/wiki/%E0%B6%B1%E0%B7%99%E0%B6%B4%E0%B7%8A%E0%B6%A0%E0%B7%96%E0%B6%B1%E0%B7%8A" class="learn-more">වැඩිදුර ඉගෙන ගන්න</a>
+                    </div>
+                    <div class="planet-center">
+                        <div class="planet-title">නෙප්චූන්</div>
+                        <div class="planet-subtitle">ඉතා ඈතින්</div>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">වසරක දිග</div>
+                            <div class="stat-value">පෘථිවි දින 60,190 (වසර 165)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">ග්‍රහලෝක වර්ගය</div>
+                            <div class="stat-value">අයිස් යෝධ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">අරය</div>
+                            <div class="stat-value">කිලෝමීටර් 24,622</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">හිරු සිට දුර</div>
+                            <div class="stat-value">කි.මී. 4,475,931,034</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- මඟපෙන්වීම -->
+    <nav class="navigation">
+        <div class="nav-row">
+            <div class="nav-left">
+                <button class="nav-btn icon" onclick="previousSlide()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="nav-btn text" onclick="previousSlide()">Prev</button>
+            </div>
+            <div class="nav-center">
+                <button class="nav-btn scroll-btn" onclick="toggleAutoplay()">Scroll</button>
+            </div>
+            <div class="nav-right">
+                <button class="nav-btn text" onclick="nextSlide()">Next</button>
+                <button class="nav-btn icon" onclick="nextSlide()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        let currentSlide = 0;
+        let autoplayInterval;
+        let isAutoplay = true;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlide = index;
+        }
+
+        function nextSlide() {
+            const next = (currentSlide + 1) % totalSlides;
+            showSlide(next);
+        }
+
+        function previousSlide() {
+            const prev = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(prev);
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+            closeSideNav();
+        }
+
+        function toggleSideNav() {
+            const sideNav = document.getElementById('sideNav');
+            sideNav.classList.toggle('open');
+        }
+
+        function closeSideNav() {
+            const sideNav = document.getElementById('sideNav');
+            sideNav.classList.remove('open');
+        }
+
+        function startAutoplay() {
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopAutoplay() {
+            clearInterval(autoplayInterval);
+        }
+
+        function toggleAutoplay() {
+            if (isAutoplay) {
+                stopAutoplay();
+                isAutoplay = false;
+                document.querySelector('.scroll-btn').textContent = 'Paus';
+            } else {
+                startAutoplay();
+                isAutoplay = true;
+                document.querySelector('.scroll-btn').textContent = 'Scroll';
+            }
+        }
+
+        // යතුරුපුවරු මඟපෙන්වීම
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                previousSlide();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'Escape') {
+                closeSideNav();
+            }
+        });
+
+        // ස්පර්ශ/swipe මඟපෙන්වීම
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    previousSlide();
+                }
+            }
+        }
+
+        // පිටත ක්ලික් කළ විට පැති මඟපෙන්වීම වැසීම
+        document.addEventListener('click', function(e) {
+            const sideNav = document.getElementById('sideNav');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            if (!sideNav.contains(e.target) && !menuIcon.contains(e.target)) {
+                closeSideNav();
+            }
+        });
+
+        // ස්වයංක්‍රීය ධාවනය ආරම්භ කිරීම
+        startAutoplay();
+
+        // ටැබය නොපෙනෙන විට ස්වයංක්‍රීය ධාවනය නැවැත්වීම
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopAutoplay();
+            } else if (isAutoplay) {
+                startAutoplay();
+            }
+        });
+    </script>
+</body>
+  </html>
