@@ -8,7 +8,7 @@
       "name": "TV Derana",
       "category": "Local Channel",
       "iconUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMP7HGGCDLBqNBIZe6CTsTJpm6FuHBp7fj65faHQ81zA&s=10",
-      "streamUrl": "https://example.com/stream/derana.m3u8",
+      "streamUrl": "https://derana.rumex.lk/live/csdmTtJnkCwvXgod/576p.m3u8",
       "description": "Sri Lankan entertainment channel.",
       "orderIndex": 1,
       "tvgId": ""
