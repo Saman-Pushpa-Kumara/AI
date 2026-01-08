@@ -6,11 +6,12 @@
   "channels": {
     "channel_01": {
       "name": "TV Derana",
-      "category": "Local",
-      "iconUrl": "https://upload.wikimedia.org/wikipedia/en/7/76/TV_Derana_logo.png",
+      "category": "Local Channel",
+      "iconUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMP7HGGCDLBqNBIZe6CTsTJpm6FuHBp7fj65faHQ81zA&s=10",
       "streamUrl": "https://example.com/stream/derana.m3u8",
       "description": "Sri Lankan entertainment channel.",
-      "orderIndex": 1
+      "orderIndex": 1,
+      "tvgId": ""
     },
     "channel_02": {
       "name": "Hiruno TV",
