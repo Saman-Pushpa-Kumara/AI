@@ -28,5 +28,10 @@
       "password": "",
       "orderIndex": 3
     }
+  },
+  "categories": {
+    "cat_1767887259232": {
+      "name": "Local Channel"
+    }
   }
 }
