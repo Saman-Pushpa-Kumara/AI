@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ultra TV - Professional</title>
+    <title>Ultraflix TV - Professional</title>
     
     <!-- Professional Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;700;800&display=swap" rel="stylesheet">
@@ -310,7 +310,7 @@
                     
                     <div class="channel-tag" id="hero-tag"><i class="fas fa-satellite-dish"></i> FEATURED</div>
                     <h1 class="hero-title" id="hero-title">Loading...</h1>
-                    <p class="hero-desc" id="hero-desc">Stream your favorite channels live. Experience the best entertainment on Ultra TV.</p>
+                    <p class="hero-desc" id="hero-desc">Stream your favorite channels live. Experience the best entertainment on Ultraflix TV.</p>
                     <div class="hero-actions">
                         <button class="btn btn-play" id="btn-hero-play"><i class="fas fa-play"></i> Play</button>
                         <button class="btn btn-info" onclick="app.nav('search')"><i class="fas fa-list"></i> Browse</button>
@@ -378,7 +378,7 @@
             </div>
             
             <div style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: #666;">
-                Ultra TV Professional v5.0
+                Ultraflix TV Professional v1.0
             </div>
         </div>
     </main>
@@ -458,14 +458,14 @@
             <div class="modal-header">Privacy & Policy</div>
             <div class="info-content">
                 <div class="disclaimer-box">
-                    "Ultra TV" serves as an aggregator of publicly available streaming links. We do not host, upload, or manage any video content.
+                    "Ultraflix TV" serves as an aggregator of publicly available streaming links. We do not host, upload, or manage any video content.
                 </div>
                 
                 <h4>Data Collection & Usage</h4>
-                <p>We value your privacy. Ultra TV does not collect, store, or share any personal identifiable information (PII). All preferences, such as favorites and settings, are stored locally on your device's storage (LocalStorage).</p>
+                <p>We value your privacy. Ultraflix TV does not collect, store, or share any personal identifiable information (PII). All preferences, such as favorites and settings, are stored locally on your device's storage (LocalStorage).</p>
                 
                 <h4>Third-Party Content</h4>
-                <p>The content provided in this application is hosted by third-party servers. Ultra TV has no control over the nature, content, and availability of those sites. The inclusion of any links does not necessarily imply a recommendation or endorse the views expressed within them.</p>
+                <p>The content provided in this application is hosted by third-party servers. Ultraflix TV has no control over the nature, content, and availability of those sites. The inclusion of any links does not necessarily imply a recommendation or endorse the views expressed within them.</p>
                 
                 <h4>Copyright / DMCA</h4>
                 <p>If you believe that any content violates your copyright, please contact the respective hosting provider. As an aggregator, we act in accordance with the Digital Millennium Copyright Act (DMCA) by removing links to infringing content upon valid request.</p>
@@ -484,15 +484,15 @@
             <div class="info-content">
                 <p>Our dedicated support team is available to assist you with technical issues, feedback, or content inquiries. Please choose a method below:</p>
                 
-                <a href="mailto:SPK2200@GMAIL.COM" class="contact-btn">
+                <a href="mailto:SPK2200@YANDEX.COM" class="contact-btn">
                     <i class="fas fa-envelope" style="color:#e50914;"></i>
                     <div>
                         <div style="font-size:0.8rem; color:#aaa;">General Inquiries</div>
-                        <div style="font-weight:600;">SPK2200@GMAIL.COM</div>
+                        <div style="font-weight:600;">SPK2200@YANDEX.COM</div>
                     </div>
                 </a>
 
-                <a href="https://wa.me/qr/3ACKMAWBDLGJC1" class="contact-btn">
+                <a href="https://wa.me/saman" class="contact-btn">
                     <i class="fab fa-whatsapp" style="color:#25D366;"></i>
                     <div>
                         <div style="font-size:0.8rem; color:#aaa;">Instant Chat</div>
@@ -501,7 +501,7 @@
                 </a>
 
                 <div class="disclaimer-box" style="margin-top:15px; border-left-color: #2ed573;">
-                    Operating Hours: Mon-Fri, 9:00 AM - 6:00 PM (Standard Time). Response time may vary during weekends.
+                    Operating Hours: Mon-Fri, 9:00 AM - 10:00 PM (Standard Time). Response time may vary during weekends.
                 </div>
             </div>
         </div>
@@ -615,7 +615,7 @@
                 const random = app.data[Math.floor(Math.random() * app.data.length)];
                 document.getElementById('hero').style.backgroundImage = `url('${random.img}')`;
                 document.getElementById('hero-title').innerText = random.name;
-                document.getElementById('hero-desc').innerText = random.desc || "Watch this channel live on Ultra TV. High quality streaming available now.";
+                document.getElementById('hero-desc').innerText = random.desc || "Watch this channel live on Ultraflix TV. High quality streaming available now.";
                 document.getElementById('btn-hero-play').onclick = () => app.play(random);
             },
 
@@ -724,7 +724,7 @@
                 document.getElementById('p-cat').innerText = ch.cat;
                 
                 const descText = ch.desc ? ch.desc : 
-                    `${ch.name} is currently broadcasting live. Watch high-definition content from the ${ch.cat} category. Experience seamless streaming powered by Ultra TV Professional.`;
+                    `${ch.name} is currently broadcasting live. Watch high-definition content from the ${ch.cat} category. Experience seamless streaming powered by Ultraflix TV Professional.`;
                 document.getElementById('p-desc').innerText = descText;
 
                 app.updateFavIcon();
