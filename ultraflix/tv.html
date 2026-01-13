@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ultraflix TV - Professional</title>
+    <title>Ultra TV - Professional</title>
     
     <!-- Professional Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;700;800&display=swap" rel="stylesheet">
@@ -295,8 +295,8 @@
 </head>
 <body>
 
-    <!-- LOADING -->
-    <div id="loader" class="loader-screen">
+    <!-- LOADING: style="display: none;" à¶‘à¶šà¶­à·” à¶šà¶» à¶‡à¶­ -->
+    <div id="loader" class="loader-screen" style="display: none !important;">
         <div class="spinner"></div>
     </div>
 
@@ -310,7 +310,7 @@
                     
                     <div class="channel-tag" id="hero-tag"><i class="fas fa-satellite-dish"></i> FEATURED</div>
                     <h1 class="hero-title" id="hero-title">Loading...</h1>
-                    <p class="hero-desc" id="hero-desc">Stream your favorite channels live. Experience the best entertainment on Ultraflix TV.</p>
+                    <p class="hero-desc" id="hero-desc">Stream your favorite channels live. Experience the best entertainment on Ultra TV.</p>
                     <div class="hero-actions">
                         <button class="btn btn-play" id="btn-hero-play"><i class="fas fa-play"></i> Play</button>
                         <button class="btn btn-info" onclick="app.nav('search')"><i class="fas fa-list"></i> Browse</button>
@@ -378,7 +378,7 @@
             </div>
             
             <div style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: #666;">
-                Ultraflix TV Professional v1.0
+                Ultra TV Professional v5.0
             </div>
         </div>
     </main>
@@ -425,6 +425,21 @@
     </div>
 
     <!-- POPUP MODALS -->
+
+    <!-- Password Modal (NEW) -->
+    <div class="modal-overlay" id="password-modal">
+        <div class="custom-modal" style="text-align:center;">
+            <i class="fas fa-times modal-close" onclick="app.closeModal('password-modal')"></i>
+            <div class="modal-header"><i class="fas fa-lock" style="color:var(--primary);"></i> Locked Channel</div>
+            <p style="color:#ccc; margin-bottom:15px; font-size:0.9rem;">This channel requires an access code.</p>
+            <div class="search-box" style="margin-bottom:15px;">
+                <i class="fas fa-key search-icon"></i>
+                <input type="password" class="search-input" id="pass-input" placeholder="Enter Password" onkeyup="if(event.key==='Enter') app.verifyPassword()">
+            </div>
+            <button class="btn btn-play" onclick="app.verifyPassword()" style="width:100%; justify-content:center;">Unlock Now</button>
+            <div id="pass-error" style="color:#ff4757; font-size:0.8rem; margin-top:10px; display:none;">Incorrect Password!</div>
+        </div>
+    </div>
     
     <!-- Sort Modal -->
     <div class="modal-overlay" id="sort-modal">
@@ -443,14 +458,14 @@
             <div class="modal-header">Privacy & Policy</div>
             <div class="info-content">
                 <div class="disclaimer-box">
-                    "Ultraflix TV" serves as an aggregator of publicly available streaming links. We do not host, upload, or manage any video content.
+                    "Ultra TV" serves as an aggregator of publicly available streaming links. We do not host, upload, or manage any video content.
                 </div>
                 
                 <h4>Data Collection & Usage</h4>
-                <p>We value your privacy. Ultraflix TV does not collect, store, or share any personal identifiable information (PII). All preferences, such as favorites and settings, are stored locally on your device's storage (LocalStorage).</p>
+                <p>We value your privacy. Ultra TV does not collect, store, or share any personal identifiable information (PII). All preferences, such as favorites and settings, are stored locally on your device's storage (LocalStorage).</p>
                 
                 <h4>Third-Party Content</h4>
-                <p>The content provided in this application is hosted by third-party servers. Ultraflix TV has no control over the nature, content, and availability of those sites. The inclusion of any links does not necessarily imply a recommendation or endorse the views expressed within them.</p>
+                <p>The content provided in this application is hosted by third-party servers. Ultra TV has no control over the nature, content, and availability of those sites. The inclusion of any links does not necessarily imply a recommendation or endorse the views expressed within them.</p>
                 
                 <h4>Copyright / DMCA</h4>
                 <p>If you believe that any content violates your copyright, please contact the respective hosting provider. As an aggregator, we act in accordance with the Digital Millennium Copyright Act (DMCA) by removing links to infringing content upon valid request.</p>
@@ -469,15 +484,15 @@
             <div class="info-content">
                 <p>Our dedicated support team is available to assist you with technical issues, feedback, or content inquiries. Please choose a method below:</p>
                 
-                <a href="mailto:SPK2200@YANDEX.COM" class="contact-btn">
+                <a href="mailto:SPK2200@GMAIL.COM" class="contact-btn">
                     <i class="fas fa-envelope" style="color:#e50914;"></i>
                     <div>
                         <div style="font-size:0.8rem; color:#aaa;">General Inquiries</div>
-                        <div style="font-weight:600;">SPK2200@YANDEX.COM</div>
+                        <div style="font-weight:600;">SPK2200@GMAIL.COM</div>
                     </div>
                 </a>
 
-                <a href="https://wa.me/qr/saman" class="contact-btn">
+                <a href="https://wa.me/qr/3ACKMAWBDLGJC1" class="contact-btn">
                     <i class="fab fa-whatsapp" style="color:#25D366;"></i>
                     <div>
                         <div style="font-size:0.8rem; color:#aaa;">Instant Chat</div>
@@ -486,7 +501,7 @@
                 </a>
 
                 <div class="disclaimer-box" style="margin-top:15px; border-left-color: #2ed573;">
-                    Operating Hours: Mon-Fri, 9:00 AM - 10:00 PM (Standard Time). Response time may vary during weekends.
+                    Operating Hours: Mon-Fri, 9:00 AM - 6:00 PM (Standard Time). Response time may vary during weekends.
                 </div>
             </div>
         </div>
@@ -529,6 +544,7 @@
             catOrder: JSON.parse(localStorage.getItem('catOrder')) || [],
             settings: JSON.parse(localStorage.getItem('ultra_settings')) || { zoom: false },
             current: null,
+            pendingChannel: null, // Stores channel while waiting for password
             hls: null,
             plyr: null,
             tempOrder: [],
@@ -599,7 +615,7 @@
                 const random = app.data[Math.floor(Math.random() * app.data.length)];
                 document.getElementById('hero').style.backgroundImage = `url('${random.img}')`;
                 document.getElementById('hero-title').innerText = random.name;
-                document.getElementById('hero-desc').innerText = random.desc || "Watch this channel live on Ultraflix TV. High quality streaming available now.";
+                document.getElementById('hero-desc').innerText = random.desc || "Watch this channel live on Ultra TV. High quality streaming available now.";
                 document.getElementById('btn-hero-play').onclick = () => app.play(random);
             },
 
@@ -667,12 +683,33 @@
                 window.scrollTo({top: 0, behavior: 'smooth'});
             },
 
-            // --- REVISED PLAYER WITH UNIVERSAL AUDIO SUPPORT ---
+            // --- PASSWORD & PLAY LOGIC ---
+            
+            // Step 1: Check if locked
             play: (ch) => {
                 if(ch.pass) {
-                    if(prompt("Enter Password:") !== ch.pass) return alert("Wrong Password");
+                    app.pendingChannel = ch;
+                    document.getElementById('pass-input').value = '';
+                    document.getElementById('pass-error').style.display = 'none';
+                    app.openModal('password-modal');
+                } else {
+                    app.loadPlayer(ch);
                 }
+            },
 
+            // Step 2: Verify Password
+            verifyPassword: () => {
+                const input = document.getElementById('pass-input').value;
+                if(input === app.pendingChannel.pass) {
+                    app.closeModal('password-modal');
+                    app.loadPlayer(app.pendingChannel);
+                } else {
+                    document.getElementById('pass-error').style.display = 'block';
+                }
+            },
+
+            // Step 3: Load Player (Actual Play)
+            loadPlayer: (ch) => {
                 app.current = ch;
                 const vid = document.getElementById('video-el');
                 const ytFrame = document.getElementById('youtube-frame');
@@ -687,7 +724,7 @@
                 document.getElementById('p-cat').innerText = ch.cat;
                 
                 const descText = ch.desc ? ch.desc : 
-                    `${ch.name} is currently broadcasting live. Watch high-definition content from the ${ch.cat} category. Experience seamless streaming powered by Ultraflix TV Professional.`;
+                    `${ch.name} is currently broadcasting live. Watch high-definition content from the ${ch.cat} category. Experience seamless streaming powered by Ultra TV Professional.`;
                 document.getElementById('p-desc').innerText = descText;
 
                 app.updateFavIcon();
@@ -700,8 +737,7 @@
 
                 const ytId = app.getYoutubeId(ch.url);
                 
-                // AUDIO DETECTION LOGIC (UPDATED)
-                // Checks for 'mp3', 'zeno', 'radio', 'stream', 'icecast', 'shoutcast', 'aac', 'ogg' in the URL
+                // AUDIO DETECTION LOGIC
                 const isAudio = /mp3|zeno|radio|stream|aac|ogg|wav|icecast|shoutcast/i.test(ch.url);
                 const audioPoster = "https://i.pinimg.com/originals/3e/fe/1c/3efe1cb845954233246f60d5d8395dd0.gif";
 
@@ -731,7 +767,6 @@
                     }
 
                     // STREAMING LOGIC
-                    // 1. HLS (.m3u8)
                     if (Hls.isSupported() && ch.url.includes('.m3u8')) {
                         app.hls = new Hls();
                         app.hls.loadSource(ch.url);
@@ -755,8 +790,6 @@
                             vid.play().catch(e => console.log('Autoplay prevented:', e));
                         });
                     } 
-                    // 2. UNIVERSAL AUDIO / STANDARD VIDEO STREAM
-                    // Handles MP3, AAC, OGG, ZenoFM, Shoutcast, Icecast, and direct MP4
                     else {
                         vid.src = ch.url;
                         app.plyr = new Plyr(vid, defaultOptions);
@@ -791,7 +824,6 @@
                      app.toggleFullscreen();
                 }
                 
-                // --- CHANGED HERE: FORCE NAVIGATE TO HOME ---
                 app.nav('home');
             },
 
