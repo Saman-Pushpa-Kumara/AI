@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SAMAN | Drift Cinematic Experience</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #ff0055;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Main Canvas Layer */
+        #stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Scanline Overlay for retro/cinematic feel */
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* UI Overlay */
+        .ui-layer {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            
+            /* Glassmorphism */
+            background: var(--glass);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            
+            opacity: 0;
+            animation: fadeUp 1s ease 2s forwards;
+        }
+
+        .info h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .info p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
+        }
+
+        .controls button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .controls button:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        .controls button:active {
+            transform: scale(0.95);
+        }
+
+        /* Loading Overlay */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translate(-50%, 20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        /* Hidden assets */
+        .hidden-assets { display: none; }
+    </style>
+</head>
+<body>
+
+    <canvas id="stage"></canvas>
+    
+    <div class="scanlines"></div>
+
+    <div class="ui-layer">
+        <div class="info">
+            <h1>SRI LANKA 🇱🇰</h1>
+            <p>Open source modder and developer</p>
+        </div>
+        <div class="controls">
+            <button id="replayBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 5v7h7"/></svg>
+                Replay
+            </button>
+        </div>
+    </div>
+
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+/**
+ * YASH Drift Animation Engine
+ * * Architecture:
+ * 1. PhysicsEngine: Handles rigid body dynamics for the car.
+ * 2. ParticleSystem: Optimized pool for smoke, sparks, and rain.
+ * 3. Renderer: Layered canvas rendering (Background, Skidmarks, Car, Effects, Text).
+ * 4. AudioSynth: Web Audio API implementation for realistic engine/tire sounds.
+ */
+
+// --- Constants ---
+const CONFIG = {
+    gravity: 0.2,
+    wind: -2,
+    colors: {
+        skyTop: '#020205',
+        skyBottom: '#0a0a12',
+        neon: '#ff3366',
+        textChrome: ['#a0a0a0', '#ffffff', '#505050', '#a0a0a0'],
+        smoke: '220, 220, 225'
+    },
+    car: {
+        length: 160,
+        width: 70,
+        color: '#050505'
+    }
+};
+
+// --- Math Helpers ---
+const Vector = {
+    add: (v1, v2) => ({ x: v1.x + v2.x, y: v1.y + v2.y }),
+    sub: (v1, v2) => ({ x: v1.x - v2.x, y: v1.y - v2.y }),
+    mult: (v, n) => ({ x: v.x * n, y: v.y * n }),
+    rot: (v, a) => ({
+        x: v.x * Math.cos(a) - v.y * Math.sin(a),
+        y: v.x * Math.sin(a) + v.y * Math.cos(a)
+    }),
+    len: (v) => Math.hypot(v.x, v.y)
+};
+
+const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
+const random = (min, max) => Math.random() * (max - min) + min;
+
+// --- Audio Engine (Web Audio API) ---
+class SoundEngine {
+    constructor() {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        this.master = this.ctx.createGain();
+        this.master.gain.value = 0.3;
+        this.master.connect(this.ctx.destination);
+        this.initialized = false;
+    }
+
+    init() {
+        if(this.initialized) return;
+        this.ctx.resume();
+        this.initialized = true;
+        this.createEngineSound();
+        this.createTireSound();
+    }
+
+    createEngineSound() {
+        // Drone oscillator
+        this.engineOsc = this.ctx.createOscillator();
+        this.engineOsc.type = 'sawtooth';
+        this.engineGain = this.ctx.createGain();
+        this.engineGain.gain.value = 0;
+        
+        // Low pass filter for muffling
+        this.engineFilter = this.ctx.createBiquadFilter();
+        this.engineFilter.type = 'lowpass';
+        this.engineFilter.frequency.value = 400;
+
+        this.engineOsc.connect(this.engineFilter);
+        this.engineFilter.connect(this.engineGain);
+        this.engineGain.connect(this.master);
+        this.engineOsc.start();
+    }
+
+    createTireSound() {
+        // Pink noise buffer
+        const bufferSize = this.ctx.sampleRate * 2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            const white = Math.random() * 2 - 1;
+            data[i] = (lastOut + (0.02 * white)) / 1.02;
+            lastOut = data[i];
+            data[i] *= 3.5; 
+        }
+        var lastOut = 0;
+
+        this.tireNode = this.ctx.createBufferSource();
+        this.tireNode.buffer = buffer;
+        this.tireNode.loop = true;
+        
+        this.tireGain = this.ctx.createGain();
+        this.tireGain.gain.value = 0;
+
+        // Bandpass to simulate screech frequency
+        this.tireFilter = this.ctx.createBiquadFilter();
+        this.tireFilter.type = 'bandpass';
+        this.tireFilter.frequency.value = 1000;
+        this.tireFilter.Q.value = 1;
+
+        this.tireNode.connect(this.tireFilter);
+        this.tireFilter.connect(this.tireGain);
+        this.tireGain.connect(this.master);
+        this.tireNode.start();
+    }
+
+    update(speed, isDrifting) {
+        if(!this.initialized) return;
+
+        // Engine Pitch based on speed
+        const pitch = 80 + (speed * 15);
+        this.engineOsc.frequency.setTargetAtTime(pitch, this.ctx.currentTime, 0.1);
+        this.engineGain.gain.setTargetAtTime(0.4, this.ctx.currentTime, 0.1);
+
+        // Tire screech based on drift
+        const screechVol = isDrifting ? Math.min(speed / 10, 0.8) : 0;
+        this.tireGain.gain.setTargetAtTime(screechVol, this.ctx.currentTime, 0.1);
+    }
+}
+
+// --- Particle System ---
+class Particle {
+    constructor() {
+        this.reset();
+    }
+
+    reset() {
+        this.active = false;
+        this.x = 0; this.y = 0;
+        this.vx = 0; this.vy = 0;
+        this.life = 0; this.maxLife = 0;
+        this.size = 0;
+        this.color = '';
+        this.alpha = 1;
+        this.type = 'smoke'; // smoke, spark, rain
+    }
+
+    spawnSmoke(x, y, vx, vy) {
+        this.active = true;
+        this.x = x; this.y = y;
+        this.vx = vx + random(-1, 1);
+        this.vy = vy + random(-0.5, 0.5);
+        this.maxLife = random(60, 100);
+        this.life = this.maxLife;
+        this.size = random(10, 20);
+        this.alpha = random(0.2, 0.4);
+        this.rotation = random(0, Math.PI * 2);
+        this.rotSpeed = random(-0.05, 0.05);
+        this.type = 'smoke';
+    }
+
+    spawnSpark(x, y) {
+        this.active = true;
+        this.x = x; this.y = y;
+        this.vx = random(-5, 5);
+        this.vy = random(-5, -2); // Upwards
+        this.maxLife = random(10, 30);
+        this.life = this.maxLife;
+        this.size = random(1, 3);
+        this.type = 'spark';
+    }
+
+    spawnRain(w, h) {
+        this.active = true;
+        this.x = random(0, w);
+        this.y = random(-100, 0);
+        this.vx = CONFIG.wind + random(-1, 1);
+        this.vy = random(15, 25);
+        this.maxLife = 100;
+        this.life = this.maxLife;
+        this.size = random(1, 2);
+        this.type = 'rain';
+    }
+
+    update() {
+        if (!this.active) return;
+
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life--;
+
+        if (this.type === 'smoke') {
+            this.size += 0.3;
+            this.vx *= 0.95; // Drag
+            this.vy *= 0.95;
+            this.rotation += this.rotSpeed;
+            // Wind influence
+            this.vx += CONFIG.wind * 0.02;
+        } else if (this.type === 'spark') {
+            this.vy += CONFIG.gravity;
+            this.vx *= 0.9;
+        } else if (this.type === 'rain') {
+            if (this.y > window.innerHeight) this.active = false;
+        }
+
+        if (this.life <= 0) this.active = false;
+    }
+
+    draw(ctx) {
+        if (!this.active) return;
+
+        if (this.type === 'smoke') {
+            const progress = 1 - (this.life / this.maxLife);
+            const fade = this.alpha * (1 - progress);
+            
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+            ctx.globalAlpha = fade;
+            
+            // Soft smoke puff
+            const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+            grad.addColorStop(0, `rgba(${CONFIG.colors.smoke}, 0.8)`);
+            grad.addColorStop(1, `rgba(${CONFIG.colors.smoke}, 0)`);
+            
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+        } else if (this.type === 'spark') {
+            ctx.globalAlpha = this.life / this.maxLife;
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillRect(this.x, this.y, this.size, this.size);
+            ctx.globalAlpha = 1;
+        } else if (this.type === 'rain') {
+            ctx.globalAlpha = 0.3;
+            ctx.strokeStyle = '#8899aa';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x - this.vx, this.y - this.vy);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        }
+    }
+}
+
+// --- Car Class ---
+class Car {
+    constructor() {
+        this.pos = { x: -300, y: 0 };
+        this.vel = { x: 0, y: 0 };
+        this.angle = 0;
+        this.driftAngle = 0;
+        this.speed = 0;
+        this.state = 'APPROACH'; // APPROACH, DRIFT, EXIT
+        
+        // Wheel offsets relative to center
+        this.wheels = [
+            { x: 60, y: -30 }, { x: 60, y: 30 },  // Front
+            { x: -60, y: -30 }, { x: -60, y: 30 } // Rear
+        ];
+        this.wheelRotation = 0;
+    }
+
+    reset(w, h) {
+        this.pos = { x: -300, y: h * 0.65 };
+        this.angle = 0;
+        this.driftAngle = 0;
+        this.speed = 0;
+        this.state = 'APPROACH';
+    }
+
+    update(w, h) {
+        // State Machine
+        if (this.state === 'APPROACH') {
+            this.speed = lerp(this.speed, 22, 0.05); // Accel
+            this.pos.x += this.speed;
+            
+            // Trigger Drift
+            if (this.pos.x > w * 0.3) {
+                this.state = 'DRIFT';
+            }
+        } 
+        else if (this.state === 'DRIFT') {
+            // Decouple facing angle from movement vector
+            const targetDriftAngle = 0.6; // ~35 degrees
+            this.driftAngle = lerp(this.driftAngle, targetDriftAngle, 0.04);
+            
+            // Slide mechanics
+            this.speed = lerp(this.speed, 12, 0.02); // Slow down slightly in drift
+            this.pos.x += this.speed * Math.cos(this.driftAngle * 0.2);
+            this.pos.y += this.speed * Math.sin(this.driftAngle * 0.5) * 0.2; // slight diagonal slide
+
+            // Counter steer visual
+            this.angle = this.driftAngle;
+
+            if (this.pos.x > w + 200) {
+                this.state = 'EXIT';
+            }
+        }
+
+        // Wheel visual rotation
+        this.wheelRotation += this.speed * 0.1;
+    }
+
+    draw(ctx, w, h) {
+        ctx.save();
+        ctx.translate(this.pos.x, this.pos.y);
+        ctx.rotate(this.angle);
+
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.filter = 'blur(15px)';
+        ctx.beginPath();
+        ctx.ellipse(0, 10, CONFIG.car.length/2 + 20, CONFIG.car.width/2 + 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.filter = 'none';
+
+        // --- Render Car Body (Stylized GT-R) ---
+        
+        // Underglow
+        if(this.state === 'DRIFT') {
+            ctx.shadowColor = CONFIG.colors.neon;
+            ctx.shadowBlur = 30;
+        }
+
+        // 1. Rear Spoiler
+        ctx.fillStyle = '#111';
+        ctx.fillRect(-85, -35, 10, 70);
+
+        // 2. Chassis Main
+        ctx.fillStyle = '#0a0a0a'; // Dark Body
+        ctx.beginPath();
+        // Rear bumper
+        ctx.moveTo(-80, -32);
+        ctx.lineTo(-80, 32);
+        // Sides
+        ctx.lineTo(60, 30); // Front right
+        ctx.lineTo(80, 15); // Nose
+        ctx.lineTo(80, -15);
+        ctx.lineTo(60, -30); // Front left
+        ctx.closePath();
+        ctx.fill();
+
+        // 3. Cabin / Roof (Glass)
+        ctx.fillStyle = '#000';
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(-40, -25);
+        ctx.lineTo(20, -25);
+        ctx.lineTo(40, -15); // Windshield
+        ctx.lineTo(40, 15);
+        ctx.lineTo(20, 25);
+        ctx.lineTo(-40, 25); // Rear glass
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Reflections on glass (sky)
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        ctx.beginPath();
+        ctx.moveTo(-30, -20);
+        ctx.lineTo(10, -20);
+        ctx.lineTo(-10, 20);
+        ctx.lineTo(-30, 20);
+        ctx.fill();
+
+        // 4. Hood details
+        ctx.fillStyle = '#111';
+        ctx.beginPath();
+        ctx.moveTo(40, -20);
+        ctx.lineTo(75, -10);
+        ctx.lineTo(75, 10);
+        ctx.lineTo(40, 20);
+        ctx.fill();
+
+        // 5. Wheels
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#222';
+        // Front steering angle
+        const steerAngle = this.state === 'DRIFT' ? -0.4 : 0; 
+        
+        this.wheels.forEach((wheel, i) => {
+            ctx.save();
+            ctx.translate(wheel.x, wheel.y);
+            // Front wheels steer, rear don't
+            if (i < 2) ctx.rotate(steerAngle);
+            
+            // Tire
+            ctx.fillStyle = '#111';
+            ctx.fillRect(-14, -8, 28, 16);
+            
+            // Rim Blur (Motion)
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 5, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // Motion blur lines on rim
+            ctx.strokeStyle = 'rgba(200,200,200,0.5)';
+            ctx.beginPath();
+            ctx.moveTo(-10, 0); ctx.lineTo(10, 0);
+            ctx.rotate(this.wheelRotation % Math.PI);
+            ctx.stroke();
+            
+            ctx.restore();
+        });
+
+        // 6. Lights
+        // Headlights
+        ctx.shadowColor = '#fff';
+        ctx.shadowBlur = 20;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(78, -25, 3, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(78, 25, 3, 0, Math.PI*2); ctx.fill();
+        
+        // Taillights (GT-R Circles)
+        ctx.shadowColor = '#ff0000';
+        ctx.shadowBlur = 15;
+        ctx.fillStyle = '#ff0000';
+        ctx.beginPath(); ctx.arc(-80, -20, 3, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(-76, -20, 3, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(-80, 20, 3, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(-76, 20, 3, 0, Math.PI*2); ctx.fill();
+
+        // Light Cones (Headlights projection)
+        ctx.globalCompositeOperation = 'screen';
+        const grad = ctx.createLinearGradient(80, 0, 300, 0);
+        grad.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+        grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(80, -25);
+        ctx.lineTo(300, -80);
+        ctx.lineTo(300, 20); // Narrow beam
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(80, 25);
+        ctx.lineTo(300, 80);
+        ctx.lineTo(300, -20);
+        ctx.fill();
+        
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.restore();
+    }
+}
+
+// --- Main Application ---
+class App {
+    constructor() {
+        this.canvas = document.getElementById('stage');
+        this.ctx = this.canvas.getContext('2d', { alpha: false }); // Optmize
+        
+        // Skidmark layer (Offscreen)
+        this.skidCanvas = document.createElement('canvas');
+        this.skidCtx = this.skidCanvas.getContext('2d');
+        
+        this.loader = document.getElementById('loader');
+        this.replayBtn = document.getElementById('replayBtn');
+        
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+        
+        this.car = new Car();
+        this.particles = [];
+        this.poolSize = 800;
+        this.sound = new SoundEngine();
+        
+        this.textState = 0; // 0: Hidden, 1: Animating, 2: Done
+        this.textProgress = 0;
+        
+        this.cameraShake = 0;
+
+        this.init();
+    }
+
+    init() {
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        
+        // Init Object Pool
+        for(let i=0; i<this.poolSize; i++) {
+            this.particles.push(new Particle());
+        }
+
+        // Start Loop
+        requestAnimationFrame(t => this.loop(t));
+
+        // Interaction
+        this.replayBtn.addEventListener('click', () => this.reset());
+        document.body.addEventListener('click', () => {
+            this.sound.init(); // Audio context needs user gesture
+        });
+        
+        // Hide loader
+        setTimeout(() => {
+            this.loader.style.opacity = 0;
+            setTimeout(() => this.loader.remove(), 800);
+            this.sound.init();
+        }, 1000);
+
+        this.reset();
+    }
+
+    reset() {
+        this.car.reset(this.width, this.height);
+        this.skidCtx.clearRect(0, 0, this.width, this.height);
+        this.textState = 0;
+        this.textProgress = 0;
+        // Keep rain particles, clear others
+        this.particles.forEach(p => {
+            if(p.type !== 'rain') p.active = false;
+        });
+    }
+
+    resize() {
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+        this.skidCanvas.width = this.width;
+        this.skidCanvas.height = this.height;
+    }
+
+    spawnParticle(type, x, y, vx, vy) {
+        // Find dead particle
+        const p = this.particles.find(p => !p.active);
+        if (p) {
+            if(type === 'smoke') p.spawnSmoke(x, y, vx, vy);
+            if(type === 'spark') p.spawnSpark(x, y);
+            if(type === 'rain') p.spawnRain(this.width, this.height);
+        }
+    }
+
+    drawRoad(ctx) {
+        // Gradient Road
+        const grad = ctx.createLinearGradient(0, 0, 0, this.height);
+        grad.addColorStop(0, '#020205');
+        grad.addColorStop(0.5, '#0a0a0c'); // Horizon
+        grad.addColorStop(1, '#15151a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        // Moving Street Lights (Simulation)
+        const time = Date.now() * 0.002;
+        ctx.strokeStyle = 'rgba(255, 160, 0, 0.2)';
+        ctx.lineWidth = 2;
+        
+        // Perspective lines
+        for(let i=0; i<5; i++) {
+            const y = (time + i * 200) % (this.height * 0.5);
+            // Simple perspective math
+            const pX = this.width * 0.5; // Vanishing point X
+            const pY = this.height * 0.4; // Vanishing point Y
+            
+            // Draw lines passing by
+            const offset = (this.width * 0.8) * (y / (this.height*0.5));
+            
+            ctx.beginPath();
+            ctx.moveTo(pX - offset, pY + y);
+            ctx.lineTo(pX - offset * 1.5, pY + y + 50);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(pX + offset, pY + y);
+            ctx.lineTo(pX + offset * 1.5, pY + y + 50);
+            ctx.stroke();
+        }
+    }
+
+    drawSkidMarks() {
+        // Draw to offscreen canvas
+        if (this.car.state === 'DRIFT') {
+            const ctx = this.skidCtx;
+            ctx.save();
+            ctx.translate(this.car.pos.x, this.car.pos.y);
+            ctx.rotate(this.car.angle);
+            
+            ctx.strokeStyle = 'rgba(10, 10, 10, 0.4)'; // Dark rubber
+            ctx.lineWidth = 14;
+            ctx.lineCap = 'round';
+
+            // Rear wheels
+            this.car.wheels.slice(2, 4).forEach(w => {
+                // Determine previous position roughly based on speed
+                // For a perfect curve we'd store history, but for speed lines this works visually
+                ctx.beginPath();
+                ctx.moveTo(w.x - (this.car.speed * 0.8), w.y); 
+                ctx.lineTo(w.x, w.y);
+                ctx.stroke();
+            });
+            ctx.restore();
+        }
+        // Draw offscreen to main
+        this.ctx.drawImage(this.skidCanvas, 0, 0);
+    }
+
+    drawReflections() {
+        // Fake wet road reflection
+        this.ctx.save();
+        this.ctx.translate(0, this.car.pos.y * 2 + 50); // Flip below
+        this.ctx.scale(1, -1);
+        this.ctx.globalAlpha = 0.2;
+        this.ctx.filter = 'blur(4px)';
+        this.car.draw(this.ctx, this.width, this.height);
+        this.ctx.restore();
+    }
+
+    drawText() {
+        if (this.textState === 0 && this.car.state === 'DRIFT' && this.car.pos.x > this.width/2 - 100) {
+            this.textState = 1;
+        }
+
+        if (this.textState > 0) {
+            if (this.textProgress < 1) this.textProgress += 0.01;
+
+            const ctx = this.ctx;
+            const text = "SAMAN";
+            const fontSize = Math.min(this.width * 0.2, 180);
+            
+            ctx.save();
+            ctx.font = `900 ${fontSize}px "Segoe UI", Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const centerX = this.width / 2;
+            const centerY = this.height / 2;
+
+            // Positioning and reveal
+            ctx.translate(centerX, centerY);
+
+            // Chrome Gradient
+            const grad = ctx.createLinearGradient(0, -fontSize/2, 0, fontSize/2);
+            CONFIG.colors.textChrome.forEach((col, i) => {
+                grad.addColorStop(i / (CONFIG.colors.textChrome.length-1), col);
+            });
+
+            // Draw Letters individually for stagger effect
+            const startX = -(ctx.measureText(text).width / 2);
+            let currentX = startX;
+
+            for(let i=0; i<text.length; i++) {
+                const char = text[i];
+                const charWidth = ctx.measureText(char).width;
+                
+                // Stagger logic
+                const charProg = Math.max(0, Math.min(1, (this.textProgress * 2) - (i * 0.2)));
+                
+                if (charProg > 0) {
+                    ctx.save();
+                    // Slide up and scale in
+                    const yOff = (1 - charProg) * 100;
+                    const scale = 0.8 + (charProg * 0.2);
+                    const blur = (1 - charProg) * 20;
+
+                    ctx.translate(currentX + charWidth/2, yOff);
+                    ctx.scale(scale, scale);
+                    ctx.filter = `blur(${blur}px)`;
+                    
+                    // Neon Stroke / Glow
+                    ctx.shadowColor = CONFIG.colors.neon;
+                    ctx.shadowBlur = 30 * charProg;
+                    ctx.strokeStyle = CONFIG.colors.neon;
+                    ctx.lineWidth = 4;
+                    ctx.strokeText(char, 0, 0);
+
+                    // Chrome Fill
+                    ctx.fillStyle = grad;
+                    ctx.fillText(char, 0, 0);
+
+                    // Shine effect
+                    if(charProg > 0.8) {
+                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                        ctx.globalCompositeOperation = 'overlay';
+                        ctx.fillText(char, 0, 0);
+                    }
+
+                    ctx.restore();
+                }
+                currentX += charWidth;
+            }
+            ctx.restore();
+        }
+    }
+
+    loop(time) {
+        const ctx = this.ctx;
+        
+        // 1. Update Physics
+        this.car.update(this.width, this.height);
+        this.sound.update(this.car.speed, this.car.state === 'DRIFT');
+
+        // Camera Shake
+        if (this.car.state === 'DRIFT') {
+            this.cameraShake = Math.random() * 4 - 2;
+            // Spawn smoke
+            const rearWheels = this.car.wheels.slice(2, 4);
+            const cos = Math.cos(this.car.angle);
+            const sin = Math.sin(this.car.angle);
+
+            rearWheels.forEach(w => {
+                // Transform local wheel to world
+                const wx = this.car.pos.x + (w.x * cos - w.y * sin);
+                const wy = this.car.pos.y + (w.x * sin + w.y * cos);
+                
+                // Emit rate
+                for(let k=0; k<2; k++) {
+                    this.spawnParticle('smoke', wx, wy, -this.car.speed * 0.5, 0);
+                }
+                
+                if (Math.random() > 0.8) this.spawnParticle('spark', wx, wy + 15, 0, 0);
+            });
+        } else {
+            this.cameraShake *= 0.9;
+        }
+
+        // Rain
+        if(Math.random() > 0.5) this.spawnParticle('rain', 0, 0, 0, 0);
+
+        // 2. Clear & Background
+        ctx.save();
+        ctx.translate(0, this.cameraShake); // Apply Shake
+        
+        this.drawRoad(ctx);
+        this.drawSkidMarks(); // Persistent layer
+
+        // 3. Render Reflection (Wet Road)
+        this.drawReflections();
+
+        // 4. Render Car
+        this.car.draw(ctx, this.width, this.height);
+
+        // 5. Render Particles (Smoke is crucial here)
+        ctx.globalCompositeOperation = 'screen'; // Volumetric feel
+        this.particles.forEach(p => {
+            p.update();
+            p.draw(ctx);
+        });
+        ctx.globalCompositeOperation = 'source-over';
+
+        // 6. Text Reveal
+        this.drawText();
+        
+        ctx.restore();
+
+        // 7. Vignette
+        const grad = ctx.createRadialGradient(this.width/2, this.height/2, this.height/2, this.width/2, this.height/2, this.width);
+        grad.addColorStop(0, 'rgba(0,0,0,0)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.8)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        requestAnimationFrame(t => this.loop(t));
+    }
+}
+
+// Start App
+window.onload = () => new App();
+
+    </script>
+</body>
+</html>
