@@ -1,1 +1,760 @@
-<script language=javascript>document.write(unescape('%3C%21DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22en%22%3E%0A%3Chead%3E%0A%20%20%20%20%3Cmeta%20charset%3D%22UTF-8%22%3E%0A%20%20%20%20%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1.0%2C%20maximum-scale%3D1.0%2C%20user-scalable%3Dno%22%3E%0A%20%20%20%20%3Ctitle%3EPremium%20Ludo%20Pro%203D%20-%20Dark%20Edition%3C/title%3E%0A%20%20%20%20%3Cstyle%3E%0A%20%20%20%20%20%20%20%20%3Aroot%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20--yellow%3A%20%23FFD700%3B%20--yellow-dark%3A%20%23ccaa00%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--blue%3A%20%2300E5FF%3B%20--blue-dark%3A%20%230088cc%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--red%3A%20%23FF3366%3B%20--red-dark%3A%20%23cc0033%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--green%3A%20%2300FF66%3B%20--green-dark%3A%20%23009933%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--board-bg%3A%20%23121216%3B%20--line-color%3A%20rgba%28255%2C255%2C255%2C0.1%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--safe-star%3A%20url%28%22data%3Aimage/svg+xml%3Butf8%2C%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27%2523FFD700%27%20stroke%3D%27%2523FFA500%27%20stroke-width%3D%271%27%3E%3Cpath%20d%3D%27M12%202l3.09%206.26L22%209.27l-5%204.87%201.18%206.88L12%2017.77l-6.18%203.25L7%2014.14%202%209.27l6.91-1.01L12%202z%27/%3E%3C/svg%3E%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--home-crown%3A%20url%28%22data%3Aimage/svg+xml%3Butf8%2C%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27%2523FFF%27%3E%3Cpath%20d%3D%27M5%2016L3%205l5.5%205L12%202l3.5%208L21%205l-2%2011H5zm14%203c0%20.6-.4%201-1%201H6c-.6%200-1-.4-1-1v-1h14v1z%27/%3E%3C/svg%3E%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--wood-bg%3A%20url%28%22https%3A//www.transparenttextures.com/patterns/black-scales.png%22%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20*%20%7B%20box-sizing%3A%20border-box%3B%20margin%3A%200%3B%20padding%3A%200%3B%20font-family%3A%20%27Poppins%27%2C%20%27Segoe%20UI%27%2C%20sans-serif%3B%20user-select%3A%20none%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20body%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20background-color%3A%20%230a0a0e%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background-image%3A%20var%28--wood-bg%29%2C%20radial-gradient%28circle%20at%20center%2C%20%231a1a24%200%25%2C%20%23050508%20100%25%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20align-items%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20min-height%3A%20100vh%3B%20overflow%3A%20hidden%3B%20touch-action%3A%20manipulation%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20color%3A%20white%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20---%20Splash%20Screen%20---%20*/%0A%20%20%20%20%20%20%20%20%23splash-screen%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20fixed%3B%20inset%3A%200%3B%20z-index%3A%209999%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20%230a0a0e%3B%20background-image%3A%20var%28--wood-bg%29%2C%20radial-gradient%28circle%20at%20center%2C%20%231a1a24%200%25%2C%20%23050508%20100%25%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20justify-content%3A%20center%3B%20align-items%3A%20center%3B%20text-align%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20transition%3A%20opacity%200.5s%20ease-out%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.splash-wrapper%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20inline-flex%3B%20flex-direction%3A%20column%3B%20align-items%3A%20flex-end%3B%20justify-content%3A%20center%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.splash-logo%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20font-size%3A%2060px%3B%20font-weight%3A%20900%3B%20letter-spacing%3A%205px%3B%20margin-bottom%3A%200px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20linear-gradient%28135deg%2C%20var%28--red%29%2C%20var%28--blue%29%2C%20var%28--yellow%29%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20-webkit-background-clip%3A%20text%3B%20color%3A%20transparent%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20animation%3A%20splashPulse%201.5s%20infinite%20alternate%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20text-shadow%3A%200%2010px%2030px%20rgba%280%2C229%2C255%2C0.3%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20text-align%3A%20center%3B%20width%3A%20100%25%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.splash-powered%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20font-size%3A%2011px%3B%20font-weight%3A%20900%3B%20letter-spacing%3A%202px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20color%3A%20var%28--green%29%3B%20margin-top%3A%20-5px%3B%20margin-bottom%3A%2040px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20text-shadow%3A%200%200%2010px%20rgba%280%2C%20255%2C%20102%2C%200.5%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20text-transform%3A%20uppercase%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.circular-spinner%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%2050px%3B%20height%3A%2050px%3B%20margin%3A%200%20auto%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20border%3A%206px%20solid%20rgba%28255%2C%20255%2C%20255%2C%200.05%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20/*%20Game%20Theme%20Colors%20applied%20to%20the%20spinner%20*/%0A%20%20%20%20%20%20%20%20%20%20%20%20border-top-color%3A%20var%28--blue%29%3B%20border-right-color%3A%20var%28--yellow%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20border-bottom-color%3A%20var%28--green%29%3B%20border-left-color%3A%20var%28--red%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2050%25%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20animation%3A%20spin%201s%20cubic-bezier%280.68%2C%20-0.55%2C%200.265%2C%201.55%29%20infinite%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20@keyframes%20spin%20%7B%200%25%20%7B%20transform%3A%20rotate%280deg%29%3B%20%7D%20100%25%20%7B%20transform%3A%20rotate%28360deg%29%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20/*%20Bug%20fixed%3A%20translate%20removed%20from%20splash%20animation%20to%20keep%20it%20centered%20properly%20*/%0A%20%20%20%20%20%20%20%20@keyframes%20splashPulse%20%7B%20from%20%7B%20filter%3A%20brightness%281%29%3B%20transform%3A%20scale%281%29%3B%20%7D%20to%20%7B%20filter%3A%20brightness%281.3%29%3B%20transform%3A%20scale%281.05%29%3B%20%7D%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20---%20Modals%20%28Menu%2C%20Settings%2C%20Info%2C%20Exit%29%20---%20*/%0A%20%20%20%20%20%20%20%20.modal-overlay%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20fixed%3B%20inset%3A%200%3B%20z-index%3A%202000%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20rgba%280%2C%200%2C%200%2C%200.85%29%3B%20backdrop-filter%3A%20blur%2815px%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20none%3B%20justify-content%3A%20center%3B%20align-items%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20animation%3A%20fadeIn%200.4s%20ease-out%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.modal-box%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20rgba%2820%2C%2020%2C%2030%2C%200.9%29%3B%20border%3A%201px%20solid%20rgba%28255%2C%20255%2C%20255%2C%200.1%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2020px%3B%20width%3A%20350px%3B%20padding%3A%2030px%3B%20text-align%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20box-shadow%3A%200%2020px%2050px%20rgba%280%2C0%2C0%2C0.8%29%2C%20inset%200%200%2020px%20rgba%28255%2C255%2C255%2C0.05%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20max-height%3A%2090vh%3B%20overflow-y%3A%20auto%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20h1%2C%20h2%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20font-size%3A%2034px%3B%20font-weight%3A%20900%3B%20letter-spacing%3A%202px%3B%20margin-bottom%3A%2025px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20linear-gradient%28135deg%2C%20%23FFD700%2C%20%23FF3366%2C%20%2300E5FF%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20-webkit-background-clip%3A%20text%3B%20color%3A%20transparent%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20.menu-btn%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20padding%3A%2015px%3B%20border%3A%20none%3B%20border-radius%3A%2012px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20font-size%3A%2015px%3B%20font-weight%3A%20bold%3B%20text-transform%3A%20uppercase%3B%20letter-spacing%3A%201px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20color%3A%20white%3B%20cursor%3A%20pointer%3B%20margin-bottom%3A%2012px%3B%20transition%3A%20all%200.2s%20ease%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.btn-gold%20%7B%20background%3A%20linear-gradient%28135deg%2C%20%23FFD700%2C%20%23ccaa00%29%3B%20color%3A%20%23000%3B%20box-shadow%3A%200%200%2015px%20rgba%28255%2C%20215%2C%200%2C%200.3%29%3B%20border%3A%201px%20solid%20%23FFD700%3B%20%7D%0A%20%20%20%20%20%20%20%20.btn-blue%20%7B%20background%3A%20linear-gradient%28135deg%2C%20%230088cc%2C%20%23003366%29%3B%20box-shadow%3A%200%200%2015px%20rgba%280%2C%20229%2C%20255%2C%200.3%29%3B%20border%3A%201px%20solid%20%2300E5FF%3B%20%7D%0A%20%20%20%20%20%20%20%20.btn-green%20%7B%20background%3A%20linear-gradient%28135deg%2C%20%23009933%2C%20%23004d1a%29%3B%20box-shadow%3A%200%200%2015px%20rgba%280%2C%20255%2C%20102%2C%200.3%29%3B%20border%3A%201px%20solid%20%2300FF66%3B%20%7D%0A%20%20%20%20%20%20%20%20.btn-gray%20%7B%20background%3A%20%23333%3B%20color%3A%20%23fff%3B%20border%3A%201px%20solid%20%23555%3B%20%7D%0A%20%20%20%20%20%20%20%20.btn-red%20%7B%20background%3A%20linear-gradient%28135deg%2C%20%23cc0033%2C%20%2366001a%29%3B%20border%3A%201px%20solid%20%23FF3366%3B%20%7D%0A%20%20%20%20%20%20%20%20.menu-btn%3Ahover%20%7B%20filter%3A%20brightness%281.2%29%3B%20transform%3A%20scale%281.02%29%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20Settings%20%26%20Info%20Views%20*/%0A%20%20%20%20%20%20%20%20.settings-view%2C%20.info-view%20%7B%20display%3A%20none%3B%20animation%3A%20fadeIn%200.3s%3B%20%7D%0A%20%20%20%20%20%20%20%20.settings-row%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20space-between%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20rgba%28255%2C255%2C255%2C0.05%29%3B%20padding%3A%2012px%3B%20border-radius%3A%2010px%3B%20margin-bottom%3A%2010px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20border%3A%201px%20solid%20rgba%28255%2C255%2C255%2C0.05%29%3B%20transition%3A%200.2s%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.settings-row%3Ahover%20%7B%20background%3A%20rgba%28255%2C255%2C255%2C0.1%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.settings-input%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20flex%3A%201%3B%20background%3A%20transparent%3B%20border%3A%20none%3B%20border-bottom%3A%202px%20solid%20%23555%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20color%3A%20%23fff%3B%20font-size%3A%2015px%3B%20padding%3A%205px%3B%20margin%3A%200%2010px%3B%20outline%3A%20none%3B%20text-transform%3A%20uppercase%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.settings-avatar-btn%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%2045px%3B%20height%3A%2045px%3B%20border-radius%3A%2050%25%3B%20border%3A%202px%20solid%20%23fff%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background-size%3A%20cover%3B%20cursor%3A%20pointer%3B%20box-shadow%3A%200%200%2010px%20rgba%280%2C0%2C0%2C0.5%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20/*%20Avatar%20Picker%20*/%0A%20%20%20%20%20%20%20%20.avatar-grid%20%7B%20display%3A%20grid%3B%20grid-template-columns%3A%20repeat%285%2C%201fr%29%3B%20gap%3A%2012px%3B%20margin-bottom%3A%2020px%3B%20%7D%0A%20%20%20%20%20%20%20%20.avatar-option%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%2045px%3B%20height%3A%2045px%3B%20border-radius%3A%2050%25%3B%20border%3A%202px%20solid%20transparent%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background-size%3A%20cover%3B%20cursor%3A%20pointer%3B%20transition%3A%200.2s%3B%20background-color%3A%20%23222%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.avatar-option.selected%20%7B%20border-color%3A%20%2300E5FF%3B%20transform%3A%20scale%281.15%29%3B%20box-shadow%3A%200%200%2015px%20%2300E5FF%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20---%20Game%20UI%20---%20*/%0A%20%20%20%20%20%20%20%20%23game-ui%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20none%3B%20flex-direction%3A%20column%3B%20align-items%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20max-width%3A%20600px%3B%20gap%3A%2015px%3B%20padding%3A%2010px%3B%20height%3A%20100vh%3B%20justify-content%3A%20center%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.top-bar%20%7B%20display%3A%20flex%3B%20justify-content%3A%20space-between%3B%20width%3A%20100%25%3B%20padding%3A%200%2010px%3B%20%7D%0A%20%20%20%20%20%20%20%20.back-icon%20%7B%20font-size%3A%2024px%3B%20cursor%3A%20pointer%3B%20color%3A%20%23fff%3B%20transition%3A%200.2s%3B%20text-shadow%3A%200%200%205px%20rgba%28255%2C255%2C255%2C0.5%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.back-icon%3Ahover%20%7B%20transform%3A%20scale%281.1%29%3B%20color%3A%20%23FF3366%3B%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20.player-row%20%7B%20display%3A%20flex%3B%20justify-content%3A%20space-between%3B%20width%3A%20100%25%3B%20padding%3A%200%205px%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20%23log-bar%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%2095%25%3B%20padding%3A%2010px%2015px%3B%20border-radius%3A%2030px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20rgba%2820%2C%2020%2C%2030%2C%200.9%29%3B%20color%3A%20%23fff%3B%20font-weight%3A%20600%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20border%3A%201px%20solid%20rgba%28255%2C%20255%2C%20255%2C%200.1%29%3B%20text-align%3A%20center%3B%20font-size%3A%2013px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20box-shadow%3A%200%205px%2020px%20rgba%280%2C0%2C0%2C0.5%29%3B%20letter-spacing%3A%201px%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20.player-card%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20rgba%2820%2C%2020%2C%2030%2C%200.6%29%3B%20border-radius%3A%2015px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20padding%3A%208px%2012px%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20gap%3A%2010px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20opacity%3A%200.4%3B%20transition%3A%20all%200.4s%3B%20border%3A%201px%20solid%20rgba%28255%2C255%2C255%2C0.1%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20min-width%3A%20135px%3B%20filter%3A%20grayscale%2880%25%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.player-card.active%20%7B%20opacity%3A%201%3B%20transform%3A%20scale%281.05%29%3B%20filter%3A%20grayscale%280%25%29%3B%20background%3A%20rgba%2830%2C%2030%2C%2040%2C%200.9%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.player-avatar%20%7B%20width%3A%2038px%3B%20height%3A%2038px%3B%20border-radius%3A%2050%25%3B%20background-color%3A%20%23222%3B%20background-size%3A%20cover%3B%20border%3A%202px%20solid%20%23555%3B%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%23card-red.active%20%7B%20border-color%3A%20var%28--red%29%3B%20box-shadow%3A%200%200%2015px%20rgba%28255%2C%2051%2C%20102%2C%200.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%23card-blue.active%20%7B%20border-color%3A%20var%28--blue%29%3B%20box-shadow%3A%200%200%2015px%20rgba%280%2C%20229%2C%20255%2C%200.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%23card-yellow.active%20%7B%20border-color%3A%20var%28--yellow%29%3B%20box-shadow%3A%200%200%2015px%20rgba%28255%2C%20215%2C%200%2C%200.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%23card-green.active%20%7B%20border-color%3A%20var%28--green%29%3B%20box-shadow%3A%200%200%2015px%20rgba%280%2C%20255%2C%20102%2C%200.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.player-name%20%7B%20font-weight%3A%20700%3B%20font-size%3A%2013px%3B%20flex%3A%201%3B%20text-transform%3A%20uppercase%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20---%203D%20Dice%20---%20*/%0A%20%20%20%20%20%20%20%20.dice-scene%20%7B%20width%3A%2042px%3B%20height%3A%2042px%3B%20perspective%3A%20600px%3B%20cursor%3A%20pointer%3B%20%7D%0A%20%20%20%20%20%20%20%20.dice-cube%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20position%3A%20relative%3B%20transform-style%3A%20preserve-3d%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20transform%3A%20translateZ%28-21px%29%20rotateX%28-15deg%29%20rotateY%28-15deg%29%3B%20transition%3A%20transform%200.6s%20cubic-bezier%280.175%2C%200.885%2C%200.32%2C%201.275%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.dice-face%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20absolute%3B%20width%3A%2042px%3B%20height%3A%2042px%3B%20background%3A%20radial-gradient%28circle%2C%20%232a2a35%2C%20%23121216%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20border%3A%201px%20solid%20rgba%28255%2C255%2C255%2C0.2%29%3B%20border-radius%3A%208px%3B%20padding%3A%204px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20grid%3B%20grid-template-columns%3A%20repeat%283%2C%201fr%29%3B%20grid-template-rows%3A%20repeat%283%2C%201fr%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20justify-items%3A%20center%3B%20align-items%3A%20center%3B%20box-shadow%3A%20inset%200%200%2010px%20rgba%280%2C0%2C0%2C0.8%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.dot%20%7B%20width%3A%208px%3B%20height%3A%208px%3B%20background%3A%20%23fff%3B%20border-radius%3A%2050%25%3B%20visibility%3A%20hidden%3B%20box-shadow%3A%200%200%205px%20%23fff%3B%20%7D%0A%20%20%20%20%20%20%20%20.front%20%7B%20transform%3A%20rotateY%280deg%29%20translateZ%2821px%29%3B%20%7D%20.bottom%20%7B%20transform%3A%20rotateX%28-90deg%29%20translateZ%2821px%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.right%20%7B%20transform%3A%20rotateY%2890deg%29%20translateZ%2821px%29%3B%20%7D%20.left%20%7B%20transform%3A%20rotateY%28-90deg%29%20translateZ%2821px%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.top%20%7B%20transform%3A%20rotateX%2890deg%29%20translateZ%2821px%29%3B%20%7D%20.back%20%7B%20transform%3A%20rotateY%28180deg%29%20translateZ%2821px%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.dice-scene.disabled%20%7B%20pointer-events%3A%20none%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20---%20Board%20---%20*/%0A%20%20%20%20%20%20%20%20%23board-container%20%7B%20padding%3A%2012px%3B%20background%3A%20rgba%2820%2C20%2C30%2C0.6%29%3B%20border-radius%3A%2020px%3B%20border%3A%201px%20solid%20rgba%28255%2C255%2C255%2C0.05%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%23board%20%7B%20width%3A%2092vw%3B%20height%3A%2092vw%3B%20max-width%3A%20450px%3B%20max-height%3A%20450px%3B%20background%3A%20var%28--board-bg%29%3B%20background-image%3A%20var%28--wood-bg%29%3B%20border%3A%202px%20solid%20rgba%28255%2C255%2C255%2C0.1%29%3B%20border-radius%3A%2012px%3B%20position%3A%20relative%3B%20box-shadow%3A%200%2010px%2030px%20rgba%280%2C0%2C0%2C1%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%23grid%20%7B%20display%3A%20grid%3B%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20grid-template-columns%3A%20repeat%2815%2C%201fr%29%3B%20grid-template-rows%3A%20repeat%2815%2C%201fr%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.cell%20%7B%20border%3A%201px%20solid%20var%28--line-color%29%3B%20position%3A%20relative%3B%20background%3A%20rgba%2830%2C30%2C40%2C0.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.star%20%7B%20background-image%3A%20var%28--safe-star%29%3B%20background-size%3A%2065%25%3B%20background-position%3A%20center%3B%20background-repeat%3A%20no-repeat%3B%20%7D%0A%20%20%20%20%20%20%20%20.bg-red%20%7B%20background%3A%20rgba%28255%2C%2051%2C%20102%2C%200.2%29%20%21important%3B%20border-color%3A%20rgba%28255%2C%2051%2C%20102%2C%200.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.bg-blue%20%7B%20background%3A%20rgba%280%2C%20229%2C%20255%2C%200.2%29%20%21important%3B%20border-color%3A%20rgba%280%2C%20229%2C%20255%2C%200.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.bg-yellow%20%7B%20background%3A%20rgba%28255%2C%20215%2C%200%2C%200.2%29%20%21important%3B%20border-color%3A%20rgba%28255%2C%20215%2C%200%2C%200.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.bg-green%20%7B%20background%3A%20rgba%280%2C%20255%2C%20102%2C%200.2%29%20%21important%3B%20border-color%3A%20rgba%280%2C%20255%2C%20102%2C%200.4%29%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20.base%20%7B%20position%3A%20absolute%3B%20width%3A%2040%25%3B%20height%3A%2040%25%3B%20z-index%3A%201%3B%20display%3A%20flex%3B%20justify-content%3A%20center%3B%20align-items%3A%20center%3B%20%7D%0A%20%20%20%20%20%20%20%20.base-red%20%7B%20top%3A0%3B%20left%3A0%3B%20background%3A%20linear-gradient%28135deg%2C%20var%28--red-dark%29%2C%20%234a0011%29%3B%20border-bottom%3A%202px%20solid%20var%28--line-color%29%3B%20border-right%3A%202px%20solid%20var%28--line-color%29%3B%7D%0A%20%20%20%20%20%20%20%20.base-blue%20%7B%20top%3A0%3B%20right%3A0%3B%20background%3A%20linear-gradient%28135deg%2C%20var%28--blue-dark%29%2C%20%23001a33%29%3B%20border-bottom%3A%202px%20solid%20var%28--line-color%29%3B%20border-left%3A%202px%20solid%20var%28--line-color%29%3B%7D%0A%20%20%20%20%20%20%20%20.base-yellow%20%7B%20bottom%3A0%3B%20right%3A0%3B%20background%3A%20linear-gradient%28135deg%2C%20var%28--yellow-dark%29%2C%20%23332a00%29%3B%20border-top%3A%202px%20solid%20var%28--line-color%29%3B%20border-left%3A%202px%20solid%20var%28--line-color%29%3B%7D%0A%20%20%20%20%20%20%20%20.base-green%20%7B%20bottom%3A0%3B%20left%3A0%3B%20background%3A%20linear-gradient%28135deg%2C%20var%28--green-dark%29%2C%20%23003311%29%3B%20border-top%3A%202px%20solid%20var%28--line-color%29%3B%20border-right%3A%202px%20solid%20var%28--line-color%29%3B%7D%0A%20%20%20%20%20%20%20%20.base-inner%20%7B%20width%3A%2065%25%3B%20height%3A%2065%25%3B%20background%3A%20%231a1a24%3B%20background-image%3A%20var%28--wood-bg%29%3B%20border-radius%3A%2015%25%3B%20box-shadow%3A%20inset%200%205px%2020px%20rgba%280%2C0%2C0%2C0.8%29%3B%20border%3A%201px%20solid%20rgba%28255%2C255%2C255%2C0.05%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.center-area%20%7B%20position%3A%20absolute%3B%20top%3A%2040%25%3B%20left%3A%2040%25%3B%20width%3A%2020%25%3B%20height%3A%2020%25%3B%20z-index%3A%202%3B%20background%3A%20conic-gradient%28from%2045deg%2C%20var%28--blue-dark%29%200deg%2090deg%2C%20var%28--yellow-dark%29%2090deg%20180deg%2C%20var%28--green-dark%29%20180deg%20270deg%2C%20var%28--red-dark%29%20270deg%20360deg%29%3B%20border%3A%202px%20solid%20var%28--line-color%29%3B%20display%3A%20flex%3B%20justify-content%3A%20center%3B%20align-items%3A%20center%3B%20%7D%0A%20%20%20%20%20%20%20%20.center-area%3A%3Aafter%20%7B%20content%3A%20%27%27%3B%20width%3A%2055%25%3B%20height%3A%2055%25%3B%20background-image%3A%20var%28--home-crown%29%3B%20background-size%3A%20contain%3B%20background-repeat%3A%20no-repeat%3B%20background-position%3A%20center%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20Tokens%20*/%0A%20%20%20%20%20%20%20%20.token%20%7B%20position%3A%20absolute%3B%20width%3A%20calc%28100%25%20/%2015%20*%200.75%29%3B%20height%3A%20calc%28100%25%20/%2015%20*%200.75%29%3B%20border-radius%3A%2050%25%3B%20z-index%3A%2010%3B%20transition%3A%20top%200.3s%2C%20left%200.3s%2C%20transform%200.2s%3B%20transform%3A%20translate%28-50%25%2C%20-50%25%29%3B%20cursor%3A%20pointer%3B%20border%3A%202px%20solid%20rgba%28255%2C255%2C255%2C0.8%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.token%3A%3Aafter%20%7B%20content%3A%20%27%27%3B%20position%3A%20absolute%3B%20top%3A%2015%25%3B%20left%3A%2020%25%3B%20width%3A%2030%25%3B%20height%3A%2030%25%3B%20background%3A%20rgba%28255%2C255%2C255%2C0.8%29%3B%20border-radius%3A%2050%25%3B%20filter%3A%20blur%281px%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.token-red%20%7B%20background%3A%20radial-gradient%28circle%20at%2030%25%2030%25%2C%20%23ff8a8a%2C%20var%28--red%29%29%3B%20box-shadow%3A%200%205px%2010px%20rgba%280%2C0%2C0%2C0.8%29%2C%200%200%2010px%20var%28--red%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.token-blue%20%7B%20background%3A%20radial-gradient%28circle%20at%2030%25%2030%25%2C%20%238adeff%2C%20var%28--blue%29%29%3B%20box-shadow%3A%200%205px%2010px%20rgba%280%2C0%2C0%2C0.8%29%2C%200%200%2010px%20var%28--blue%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.token-yellow%20%7B%20background%3A%20radial-gradient%28circle%20at%2030%25%2030%25%2C%20%23ffeb8a%2C%20var%28--yellow%29%29%3B%20box-shadow%3A%200%205px%2010px%20rgba%280%2C0%2C0%2C0.8%29%2C%200%200%2010px%20var%28--yellow%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.token-green%20%7B%20background%3A%20radial-gradient%28circle%20at%2030%25%2030%25%2C%20%238aff9e%2C%20var%28--green%29%29%3B%20box-shadow%3A%200%205px%2010px%20rgba%280%2C0%2C0%2C0.8%29%2C%200%200%2010px%20var%28--green%29%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20.highlight%20%7B%20animation%3A%20tokenPulse%201s%20infinite%20alternate%3B%20z-index%3A%20999%20%21important%3B%20border%3A%202px%20solid%20%23fff%3B%20%7D%0A%20%20%20%20%20%20%20%20.moving%20%7B%20animation%3A%20bounceStep%200.3s%20cubic-bezier%280.25%2C%201%2C%200.5%2C%201%29%20%21important%3B%20z-index%3A%201000%20%21important%3B%20%7D%0A%20%20%20%20%20%20%20%20.pointer%20%7B%20position%3A%20absolute%3B%20top%3A%20-25px%3B%20left%3A%2050%25%3B%20transform%3A%20translateX%28-50%25%29%3B%20width%3A%200%3B%20height%3A%200%3B%20border-left%3A%206px%20solid%20transparent%3B%20border-right%3A%206px%20solid%20transparent%3B%20border-top%3A%2012px%20solid%20%23fff%3B%20animation%3A%20pointerBounce%200.5s%20infinite%20alternate%3B%20%7D%0A%20%20%20%20%20%20%20%20.turn-red%20.token%3Anot%28.token-red%29%2C%20.turn-blue%20.token%3Anot%28.token-blue%29%2C%20.turn-yellow%20.token%3Anot%28.token-yellow%29%2C%20.turn-green%20.token%3Anot%28.token-green%29%20%7B%20pointer-events%3A%20none%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20Effects%20Overlay%20%28Win%20Only%29%20*/%0A%20%20%20%20%20%20%20%20%23effect-overlay%20%7B%20position%3A%20fixed%3B%20inset%3A%200%3B%20z-index%3A%209999%3B%20background%3A%20rgba%280%2C0%2C0%2C0.85%29%3B%20backdrop-filter%3A%20blur%288px%29%3B%20display%3A%20none%3B%20flex-direction%3A%20column%3B%20justify-content%3A%20center%3B%20align-items%3A%20center%3B%20%7D%0A%20%20%20%20%20%20%20%20%23effect-text%20%7B%20font-size%3A%2050px%3B%20font-weight%3A%20900%3B%20color%3A%20%23FFD700%3B%20text-align%3A%20center%3B%20text-shadow%3A%200%200%2030px%20%23FFD700%3B%20margin-bottom%3A%2025px%3B%20animation%3A%20popIn%200.5s%3B%20%7D%0A%20%20%20%20%20%20%20%20%23effect-img%20%7B%20max-width%3A%2080%25%3B%20border-radius%3A%2020px%3B%20animation%3A%20slideUp%200.6s%3B%20box-shadow%3A%200%2010px%2040px%20rgba%280%2C0%2C0%2C0.8%29%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20Animations%20*/%0A%20%20%20%20%20%20%20%20@keyframes%20fadeIn%20%7B%20from%20%7B%20opacity%3A%200%3B%20%7D%20to%20%7B%20opacity%3A%201%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20tokenPulse%20%7B%20from%20%7B%20filter%3A%20brightness%281%29%3B%20transform%3A%20translate%28-50%25%2C%20-50%25%29%20scale%281%29%3B%20%7D%20to%20%7B%20filter%3A%20brightness%281.5%29%3B%20transform%3A%20translate%28-50%25%2C%20-50%25%29%20scale%281.15%29%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20pointerBounce%20%7B%20from%20%7B%20top%3A%20-20px%3B%20%7D%20to%20%7B%20top%3A%20-28px%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20diceThrow%20%7B%200%25%20%7B%20transform%3A%20translateZ%28-21px%29%20scale%281%29%20rotateX%280%29%20rotateY%280%29%3B%20%7D%2050%25%20%7B%20transform%3A%20translateZ%28100px%29%20scale%281.5%29%20rotateX%28400deg%29%20rotateY%28360deg%29%3B%20%7D%20100%25%20%7B%20transform%3A%20translateZ%28-21px%29%20scale%281%29%20rotateX%28720deg%29%20rotateY%28720deg%29%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20bounceStep%20%7B%200%25%20%7B%20transform%3A%20translate%28-50%25%2C%20-50%25%29%20scale%281%29%3B%20%7D%2050%25%20%7B%20transform%3A%20translate%28-50%25%2C%20-100%25%29%20scale%281.2%29%3B%20%7D%20100%25%20%7B%20transform%3A%20translate%28-50%25%2C%20-50%25%29%20scale%281%29%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20captureAnim%20%7B%200%25%20%7B%20transform%3A%20translate%28-50%25%2C%20-50%25%29%20scale%281%29%20rotate%280%29%3B%20opacity%3A%201%3B%20%7D%2030%25%20%7B%20transform%3A%20translate%28-50%25%2C%20-50%25%29%20scale%281.8%29%20rotate%2845deg%29%3B%20opacity%3A%201%3B%20filter%3A%20brightness%282%29%3B%20%7D%20100%25%20%7B%20transform%3A%20translate%28-50%25%2C%20-50%25%29%20scale%280%29%20rotate%28360deg%29%3B%20opacity%3A%200%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20.captured%20%7B%20animation%3A%20captureAnim%200.5s%20forwards%20%21important%3B%20z-index%3A%201001%20%21important%3B%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20popIn%20%7B%200%25%20%7B%20transform%3A%20scale%280.2%29%3B%20opacity%3A%200%3B%20%7D%20100%25%20%7B%20transform%3A%20scale%281%29%3B%20opacity%3A%201%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20slideUp%20%7B%200%25%20%7B%20transform%3A%20translateY%2850px%29%3B%20opacity%3A%200%3B%20%7D%20100%25%20%7B%20transform%3A%20translateY%280%29%3B%20opacity%3A%201%3B%20%7D%20%7D%0A%0A%20%20%20%20%3C/style%3E%0A%3C/head%3E%0A%3Cbody%3E%0A%0A%20%20%20%20%3C%21--%20Splash%20Screen%20--%3E%0A%20%20%20%20%3Cdiv%20id%3D%22splash-screen%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22splash-wrapper%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22splash-logo%22%3ELUDO%20PRO%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22splash-powered%22%3EPowered%20by%20MOD%20APPs%3C/div%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22circular-spinner%22%3E%3C/div%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3C%21--%20Main%20Menu%20--%3E%0A%20%20%20%20%3Cdiv%20id%3D%22menu-modal%22%20class%3D%22modal-overlay%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22modal-box%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ch1%3ELUDO%20PRO%3C/h1%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20id%3D%22btn-continue%22%20class%3D%22menu-btn%20btn-gold%22%20style%3D%22display%3Anone%3B%22%20onclick%3D%22continueGame%28%29%22%3E%u25B6%20Resume%20Game%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-blue%22%20onclick%3D%22startNewGame%28true%29%22%3E%uD83E%uDD16%201%20Player%20vs%20CPU%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-green%22%20onclick%3D%22startNewGame%28false%29%22%3E%uD83D%uDC65%20Pass%20%26%20Play%20%284P%29%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20onclick%3D%22openSettings%28%29%22%3E%u2699%uFE0F%20Settings%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20onclick%3D%22openInfo%28%29%22%3E%u2139%uFE0F%20Info%3C/button%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3C%21--%20Settings%20Modal%20--%3E%0A%20%20%20%20%3Cdiv%20id%3D%22settings-modal%22%20class%3D%22modal-overlay%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22modal-box%22%20id%3D%22settings-content%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%21--%20Main%20Settings%20Menu%20--%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22view-main%22%20class%3D%22settings-view%22%20style%3D%22display%3Ablock%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ch2%3ESETTINGS%3C/h2%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-blue%22%20onclick%3D%22switchSettingsView%28%27view-names%27%29%22%3E%uD83D%uDC64%20Player%20Names%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-green%22%20onclick%3D%22switchSettingsView%28%27view-avatars%27%29%22%3E%uD83C%uDFA8%20Player%20Avatars%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-red%22%20onclick%3D%22switchSettingsView%28%27view-reset%27%29%22%3E%uD83D%uDDD1%uFE0F%20Data%20Reset%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20style%3D%22margin-top%3A15px%3B%22%20onclick%3D%22closeSettings%28%29%22%3E%u274C%20Close%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%21--%201.%20Player%20Names%20View%20--%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22view-names%22%20class%3D%22settings-view%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ch2%20style%3D%22font-size%3A24px%3B%22%3EPLAYER%20NAMES%3C/h2%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22name-inputs-container%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-green%22%20style%3D%22margin-top%3A15px%3B%22%20onclick%3D%22saveNames%28%29%22%3ESave%20Names%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20onclick%3D%22switchSettingsView%28%27view-main%27%29%22%3EBack%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%21--%202.%20Player%20Avatars%20View%20--%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22view-avatars%22%20class%3D%22settings-view%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ch2%20style%3D%22font-size%3A24px%3B%22%3ECHOOSE%20AVATARS%3C/h2%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22avatar-selectors-container%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20style%3D%22margin-top%3A15px%3B%22%20onclick%3D%22switchSettingsView%28%27view-main%27%29%22%3EBack%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%21--%203.%20Data%20Reset%20View%20--%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22view-reset%22%20class%3D%22settings-view%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ch2%20style%3D%22font-size%3A24px%3B%20color%3A%23FF3366%3B%22%3EDATA%20RESET%3C/h2%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cp%20style%3D%22color%3A%23ddd%3B%20font-size%3A14px%3B%20margin-bottom%3A20px%3B%20line-height%3A%201.5%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Are%20you%20sure%20you%20want%20to%20reset%20all%20data%3F%3Cbr%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstrong%20style%3D%22color%3A%23FF3366%3B%22%3EThis%20will%20permanently%20delete%20your%20saved%20game%20and%20player%20profiles%21%3C/strong%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/p%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-red%22%20onclick%3D%22confirmResetData%28%29%22%3EYes%2C%20Reset%20Everything%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20onclick%3D%22switchSettingsView%28%27view-main%27%29%22%3ECancel%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3C%21--%20Info%20Modal%20--%3E%0A%20%20%20%20%3Cdiv%20id%3D%22info-modal%22%20class%3D%22modal-overlay%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22modal-box%22%20id%3D%22info-content%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%21--%20Main%20Info%20Menu%20--%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22view-info-main%22%20class%3D%22info-view%22%20style%3D%22display%3Ablock%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ch2%3EINFO%3C/h2%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-blue%22%20onclick%3D%22switchInfoView%28%27view-app-details%27%29%22%3E%uD83D%uDCF1%20App%20Details%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-green%22%20onclick%3D%22switchInfoView%28%27view-privacy%27%29%22%3E%uD83D%uDD12%20Privacy%20Policy%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gold%22%20onclick%3D%22switchInfoView%28%27view-creator%27%29%22%3E%u2139%uFE0F%20Created%20Info%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20style%3D%22margin-top%3A15px%3B%22%20onclick%3D%22closeInfo%28%29%22%3E%u274C%20Close%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%21--%201.%20App%20Details%20View%20--%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22view-app-details%22%20class%3D%22info-view%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ch2%20style%3D%22font-size%3A24px%3B%22%3EAPP%20DETAILS%3C/h2%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20style%3D%22background%3A%20rgba%280%2C0%2C0%2C0.4%29%3B%20padding%3A%2015px%3B%20border-radius%3A%2015px%3B%20margin-bottom%3A%2020px%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ch3%20style%3D%22color%3A%2300E5FF%3B%20margin-bottom%3A%2010px%3B%22%3ELUDO%20PRO%203D%3C/h3%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cp%20style%3D%22color%3A%23ccc%3B%20font-size%3A14px%3B%20line-height%3A%201.6%3B%22%3EVersion%3A%201.0.0%3Cbr%3E%3Cbr%3EPremium%20Dark%20Edition%20featuring%20smooth%203D%20animations%2C%20smart%20UI%2C%20and%20auto-save%20technology.%3C/p%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20onclick%3D%22switchInfoView%28%27view-info-main%27%29%22%3EBack%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%21--%202.%20Privacy%20Policy%20View%20--%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22view-privacy%22%20class%3D%22info-view%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ch2%20style%3D%22font-size%3A24px%3B%22%3EPRIVACY%20POLICY%3C/h2%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20style%3D%22background%3A%20rgba%280%2C0%2C0%2C0.4%29%3B%20padding%3A%2015px%3B%20border-radius%3A%2015px%3B%20margin-bottom%3A%2020px%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cp%20style%3D%22color%3A%23ccc%3B%20font-size%3A14px%3B%20line-height%3A%201.6%3B%22%3ENo%20personal%20data%20is%20collected%20or%20shared.%20All%20game%20data%20and%20profiles%20are%20saved%20locally%20on%20your%20device.%3C/p%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20onclick%3D%22switchInfoView%28%27view-info-main%27%29%22%3EBack%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%21--%203.%20Creator%20Info%20View%20--%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22view-creator%22%20class%3D%22info-view%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ch2%20style%3D%22font-size%3A24px%3B%22%3ECREATED%20INFO%3C/h2%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20style%3D%22background%3A%20rgba%280%2C0%2C0%2C0.4%29%3B%20padding%3A%2015px%3B%20border-radius%3A%2015px%3B%20margin-bottom%3A%2020px%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cp%20style%3D%22color%3A%23ccc%3B%20font-size%3A15px%3B%20line-height%3A%201.8%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstrong%3ECreated%20by%20Saman%20%2C%20Sri%20Lanka%3C/strong%3E%3Cbr%3E%3Cbr%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cspan%20style%3D%22color%3Avar%28--blue%29%3B%22%3EFacebook%20%3A%20MOD%20APPs%20-%20Android%20Device%3C/span%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/p%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20onclick%3D%22switchInfoView%28%27view-info-main%27%29%22%3EBack%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3C%21--%20Avatar%20Picker%20Modal%20--%3E%0A%20%20%20%20%3Cdiv%20id%3D%22avatar-modal%22%20class%3D%22modal-overlay%22%20style%3D%22z-index%3A%202001%3B%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22modal-box%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ch3%20style%3D%22margin-bottom%3A%2015px%3B%22%3ESelect%20Avatar%3C/h3%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22avatar-grid%22%20id%3D%22avatar-grid%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20onclick%3D%22closeAvatarPicker%28%29%22%3ECancel%3C/button%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3C%21--%20Exit%20Confirmation%20Modal%20--%3E%0A%20%20%20%20%3Cdiv%20id%3D%22exit-modal%22%20class%3D%22modal-overlay%22%20style%3D%22z-index%3A%203000%3B%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22modal-box%22%20style%3D%22padding%3A%2025px%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ch3%20style%3D%22margin-bottom%3A%2015px%3B%20color%3A%23FF3366%3B%22%3EExit%20Game%3F%3C/h3%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cp%20style%3D%22margin-bottom%3A%2020px%3B%20color%3A%23ccc%3B%20font-size%3A14px%3B%22%3EAre%20you%20sure%20you%20want%20to%20exit%20the%20competition%3F%3Cbr%3E%28Your%20progress%20will%20be%20saved%20automatically.%29%3C/p%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-red%22%20onclick%3D%22confirmExit%28%29%22%3EYes%2C%20Exit%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gray%22%20onclick%3D%22cancelExit%28%29%22%3ECancel%3C/button%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3C%21--%20Special%20Effects%20Overlay%20%28Only%20Win%29%20--%3E%0A%20%20%20%20%3Cdiv%20id%3D%22effect-overlay%22%3E%0A%20%20%20%20%20%20%20%20%3Ch2%20id%3D%22effect-text%22%3EWINNER%21%3C/h2%3E%0A%20%20%20%20%20%20%20%20%3Cimg%20id%3D%22effect-img%22%20src%3D%22%22%20alt%3D%22Effect%22%3E%0A%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22menu-btn%20btn-gold%22%20style%3D%22width%3A%20200px%3B%20margin-top%3A%2030px%3B%22%20onclick%3D%22location.reload%28%29%22%3EMain%20Menu%3C/button%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3C%21--%20Game%20User%20Interface%20--%3E%0A%20%20%20%20%3Cdiv%20id%3D%22game-ui%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22top-bar%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22back-icon%22%20onclick%3D%22triggerExit%28%29%22%3E%uD83D%uDD19%20Menu%3C/div%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-row%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22card-red%22%20class%3D%22player-card%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-avatar%22%20id%3D%22av-red%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-name%22%20id%3D%22name-red%22%20style%3D%22color%3Avar%28--red%29%22%3ERed%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-scene%22%20id%3D%22dice-red%22%20onclick%3D%22handleDiceClick%28%27red%27%29%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22card-blue%22%20class%3D%22player-card%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-scene%22%20id%3D%22dice-blue%22%20onclick%3D%22handleDiceClick%28%27blue%27%29%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-name%22%20id%3D%22name-blue%22%20style%3D%22color%3Avar%28--blue%29%3B%20text-align%3Aright%22%3EBlue%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-avatar%22%20id%3D%22av-blue%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22log-bar%22%3EWelcome%21%20Let%20the%20game%20begin.%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22board-container%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22board%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22base%20base-red%22%3E%3Cdiv%20class%3D%22base-inner%22%3E%3C/div%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22base%20base-blue%22%3E%3Cdiv%20class%3D%22base-inner%22%3E%3C/div%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22base%20base-yellow%22%3E%3Cdiv%20class%3D%22base-inner%22%3E%3C/div%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22base%20base-green%22%3E%3Cdiv%20class%3D%22base-inner%22%3E%3C/div%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22center-area%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22grid%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-row%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22card-green%22%20class%3D%22player-card%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-avatar%22%20id%3D%22av-green%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-name%22%20id%3D%22name-green%22%20style%3D%22color%3Avar%28--green%29%22%3EGreen%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-scene%22%20id%3D%22dice-green%22%20onclick%3D%22handleDiceClick%28%27green%27%29%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22card-yellow%22%20class%3D%22player-card%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-scene%22%20id%3D%22dice-yellow%22%20onclick%3D%22handleDiceClick%28%27yellow%27%29%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-name%22%20id%3D%22name-yellow%22%20style%3D%22color%3Avar%28--yellow%29%3B%20text-align%3Aright%22%3EYellow%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22player-avatar%22%20id%3D%22av-yellow%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3Cscript%3E%0A%20%20%20%20%20%20%20%20//%20---%20Core%20Data%20%26%20Paths%20---%0A%20%20%20%20%20%20%20%20const%20COLORS%20%3D%5B%27red%27%2C%20%27blue%27%2C%20%27yellow%27%2C%20%27green%27%5D%3B%0A%20%20%20%20%20%20%20%20const%20MAIN_PATH%20%3D%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20%5B6%2C1%5D%2C%5B6%2C2%5D%2C%5B6%2C3%5D%2C%5B6%2C4%5D%2C%5B6%2C5%5D%2C%5B5%2C6%5D%2C%5B4%2C6%5D%2C%5B3%2C6%5D%2C%5B2%2C6%5D%2C%5B1%2C6%5D%2C%5B0%2C6%5D%2C%5B0%2C7%5D%2C%5B0%2C8%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%5B1%2C8%5D%2C%5B2%2C8%5D%2C%5B3%2C8%5D%2C%5B4%2C8%5D%2C%5B5%2C8%5D%2C%5B6%2C9%5D%2C%5B6%2C10%5D%2C%5B6%2C11%5D%2C%5B6%2C12%5D%2C%5B6%2C13%5D%2C%5B6%2C14%5D%2C%5B7%2C14%5D%2C%5B8%2C14%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%5B8%2C13%5D%2C%5B8%2C12%5D%2C%5B8%2C11%5D%2C%5B8%2C10%5D%2C%5B8%2C9%5D%2C%20%5B9%2C8%5D%2C%5B10%2C8%5D%2C%5B11%2C8%5D%2C%5B12%2C8%5D%2C%5B13%2C8%5D%2C%5B14%2C8%5D%2C%5B14%2C7%5D%2C%5B14%2C6%5D%2C%5B13%2C6%5D%2C%5B12%2C6%5D%2C%5B11%2C6%5D%2C%5B10%2C6%5D%2C%5B9%2C6%5D%2C%5B8%2C5%5D%2C%5B8%2C4%5D%2C%5B8%2C3%5D%2C%5B8%2C2%5D%2C%5B8%2C1%5D%2C%5B8%2C0%5D%2C%5B7%2C0%5D%2C%5B6%2C0%5D%0A%20%20%20%20%20%20%20%20%5D%3B%0A%20%20%20%20%20%20%20%20const%20HOME_PATHS%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20red%3A%20%5B%5B7%2C1%5D%2C%5B7%2C2%5D%2C%5B7%2C3%5D%2C%5B7%2C4%5D%2C%5B7%2C5%5D%5D%2C%20blue%3A%20%5B%5B1%2C7%5D%2C%5B2%2C7%5D%2C%5B3%2C7%5D%2C%5B4%2C7%5D%2C%5B5%2C7%5D%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20yellow%3A%20%5B%5B7%2C13%5D%2C%5B7%2C12%5D%2C%5B7%2C11%5D%2C%5B7%2C10%5D%2C%5B7%2C9%5D%5D%2C%20green%3A%20%5B%5B13%2C7%5D%2C%5B12%2C7%5D%2C%5B11%2C7%5D%2C%5B10%2C7%5D%2C%5B9%2C7%5D%5D%0A%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20const%20BASE_SPOTS%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20red%3A%20%5B%5B1.5%2C1.5%5D%2C%5B1.5%2C3.5%5D%2C%5B3.5%2C1.5%5D%2C%5B3.5%2C3.5%5D%5D%2C%20blue%3A%20%5B%5B1.5%2C10.5%5D%2C%5B1.5%2C12.5%5D%2C%5B3.5%2C10.5%5D%2C%5B3.5%2C12.5%5D%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20yellow%3A%20%5B%5B10.5%2C10.5%5D%2C%5B10.5%2C12.5%5D%2C%5B12.5%2C10.5%5D%2C%5B12.5%2C12.5%5D%5D%2C%20green%3A%20%5B%5B10.5%2C1.5%5D%2C%5B10.5%2C3.5%5D%2C%5B12.5%2C1.5%5D%2C%5B12.5%2C3.5%5D%5D%0A%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20const%20START_IDX%20%3D%20%7B%20red%3A%200%2C%20blue%3A%2013%2C%20yellow%3A%2026%2C%20green%3A%2039%20%7D%3B%0A%20%20%20%20%20%20%20%20const%20SAFE_COORDS%20%3D%20new%20Set%28%5B%226%2C1%22%2C%228%2C2%22%2C%221%2C8%22%2C%222%2C6%22%2C%228%2C13%22%2C%226%2C12%22%2C%2213%2C6%22%2C%2212%2C8%22%5D%29%3B%0A%20%20%20%20%20%20%20%20const%20DICE_TRANSFORMS%20%3D%20%7B%201%3A%27rotateX%280deg%29%20rotateY%280deg%29%27%2C%202%3A%27rotateX%2890deg%29%27%2C%203%3A%27rotateY%28-90deg%29%27%2C%204%3A%27rotateY%2890deg%29%27%2C%205%3A%27rotateX%28-90deg%29%27%2C%206%3A%27rotateX%28180deg%29%27%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20//%20---%20Avatars%20%2810%20Options%29%20---%0A%20%20%20%20%20%20%20%20const%20AVATARS%20%3D%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DSam%22%2C%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DNimal%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DKamali%22%2C%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DBot1%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DHero%22%2C%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DKing%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DQueen%22%2C%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DNinja%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DPro%22%2C%20%22https%3A//api.dicebear.com/7.x/avataaars/svg%3Fseed%3DMax%22%0A%20%20%20%20%20%20%20%20%5D%3B%0A%0A%20%20%20%20%20%20%20%20//%20---%20Profiles%20Management%20---%0A%20%20%20%20%20%20%20%20let%20profiles%20%3D%20JSON.parse%28localStorage.getItem%28%27ludo_profiles%27%29%29%20%7C%7C%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20red%3A%20%7B%20name%3A%20%27Player%201%27%2C%20avatar%3A%20AVATARS%5B0%5D%20%7D%2C%20blue%3A%20%7B%20name%3A%20%27Player%202%27%2C%20avatar%3A%20AVATARS%5B1%5D%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20yellow%3A%20%7B%20name%3A%20%27Player%203%27%2C%20avatar%3A%20AVATARS%5B2%5D%20%7D%2C%20green%3A%20%7B%20name%3A%20%27Player%204%27%2C%20avatar%3A%20AVATARS%5B3%5D%20%7D%0A%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20//%20---%20Game%20State%20---%0A%20%20%20%20%20%20%20%20let%20state%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20turnIndex%3A%200%2C%20diceValue%3A%200%2C%20diceRolled%3A%20false%2C%20isAnimating%3A%20false%2C%20consecutiveSixes%3A%200%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20isVsCPU%3A%20false%2C%20gameOver%3A%20false%2C%20tokens%3A%20%7B%20red%3A%5B-1%2C-1%2C-1%2C-1%5D%2C%20blue%3A%5B-1%2C-1%2C-1%2C-1%5D%2C%20yellow%3A%5B-1%2C-1%2C-1%2C-1%5D%2C%20green%3A%5B-1%2C-1%2C-1%2C-1%5D%20%7D%0A%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20//%20Initialize%20App%0A%20%20%20%20%20%20%20%20window.onload%20%3D%20%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27splash-screen%27%29.style.opacity%20%3D%20%270%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27splash-screen%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20checkSavedGame%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27menu-modal%27%29.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%20500%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%202500%29%3B%20//%20Circular%20Splash%20visible%20for%202.5s%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20//%20Back%20Button%20Interception%0A%20%20%20%20%20%20%20%20%20%20%20%20window.history.pushState%28%7B%20page%3A%201%20%7D%2C%20%22%22%2C%20%22%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20window.onpopstate%20%3D%20function%28event%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28document.getElementById%28%27game-ui%27%29.style.display%20%3D%3D%3D%20%27flex%27%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20triggerExit%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20window.history.pushState%28%7B%20page%3A%201%20%7D%2C%20%22%22%2C%20%22%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20window.history.back%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20//%20---%20Save/Load%20Game%20Logic%20---%0A%20%20%20%20%20%20%20%20function%20checkSavedGame%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20saved%20%3D%20localStorage.getItem%28%27ludo_save%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28saved%29%20document.getElementById%28%27btn-continue%27%29.style.display%20%3D%20%27block%27%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20function%20saveGame%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21state.gameOver%29%20localStorage.setItem%28%27ludo_save%27%2C%20JSON.stringify%28state%29%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20---%20Menu%20Functions%20---%0A%20%20%20%20%20%20%20%20function%20startNewGame%28vsCPU%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20localStorage.removeItem%28%27ludo_save%27%29%3B%20//%20Clear%20old%20save%0A%20%20%20%20%20%20%20%20%20%20%20%20state%20%3D%20%7B%20turnIndex%3A%200%2C%20diceValue%3A%200%2C%20diceRolled%3A%20false%2C%20isAnimating%3A%20false%2C%20consecutiveSixes%3A%200%2C%20isVsCPU%3A%20vsCPU%2C%20gameOver%3A%20false%2C%20tokens%3A%20%7B%20red%3A%5B-1%2C-1%2C-1%2C-1%5D%2C%20blue%3A%5B-1%2C-1%2C-1%2C-1%5D%2C%20yellow%3A%5B-1%2C-1%2C-1%2C-1%5D%2C%20green%3A%5B-1%2C-1%2C-1%2C-1%5D%20%7D%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20launchGame%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20function%20continueGame%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20saved%20%3D%20JSON.parse%28localStorage.getItem%28%27ludo_save%27%29%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28saved%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20state%20%3D%20saved%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20state.isAnimating%20%3D%20false%3B%20//%20Prevent%20animation%20lock%20from%20old%20save%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20launchGame%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20launchGame%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20initAudio%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27menu-modal%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27game-ui%27%29.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20applyProfilesToUI%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20initBoard%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20updateUI%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20//%20Resume%20logic%20when%20Dice%20was%20already%20rolled%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28state.diceRolled%20%26%26%20%21state.gameOver%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28processPostRoll%2C%20500%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20---%20Info%20Logic%20---%0A%20%20%20%20%20%20%20%20function%20openInfo%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27info-modal%27%29.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20switchInfoView%28%27view-info-main%27%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20function%20closeInfo%28%29%20%7B%20document.getElementById%28%27info-modal%27%29.style.display%20%3D%20%27none%27%3B%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20function%20switchInfoView%28viewId%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.querySelectorAll%28%27.info-view%27%29.forEach%28v%20%3D%3E%20v.style.display%20%3D%20%27none%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28viewId%29.style.display%20%3D%20%27block%27%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20---%20Settings%20Logic%20---%0A%20%20%20%20%20%20%20%20function%20openSettings%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27settings-modal%27%29.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20switchSettingsView%28%27view-main%27%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20function%20closeSettings%28%29%20%7B%20document.getElementById%28%27settings-modal%27%29.style.display%20%3D%20%27none%27%3B%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20function%20switchSettingsView%28viewId%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.querySelectorAll%28%27.settings-view%27%29.forEach%28v%20%3D%3E%20v.style.display%20%3D%20%27none%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28viewId%29.style.display%20%3D%20%27block%27%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20//%20Populate%20Names%20View%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28viewId%20%3D%3D%3D%20%27view-names%27%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20html%20%3D%20%27%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20COLORS.forEach%28c%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20html%20+%3D%20%60%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22settings-row%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20style%3D%22width%3A15px%3B%20height%3A15px%3B%20border-radius%3A50%25%3B%20background%3Avar%28--%24%7Bc%7D%29%3B%20box-shadow%3A0%200%205px%20var%28--%24%7Bc%7D%29%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22text%22%20id%3D%22input-name-%24%7Bc%7D%22%20class%3D%22settings-input%22%20value%3D%22%24%7Bprofiles%5Bc%5D.name%7D%22%20maxlength%3D%2210%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27name-inputs-container%27%29.innerHTML%20%3D%20html%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20//%20Populate%20Avatars%20View%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28viewId%20%3D%3D%3D%20%27view-avatars%27%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20html%20%3D%20%27%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20COLORS.forEach%28c%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20html%20+%3D%20%60%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22settings-row%22%20style%3D%22cursor%3Apointer%3B%22%20onclick%3D%22openAvatarPicker%28%27%24%7Bc%7D%27%29%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20style%3D%22color%3Avar%28--%24%7Bc%7D%29%3B%20font-weight%3Abold%3B%20text-transform%3Auppercase%3B%20flex%3A1%3B%20text-align%3Aleft%3B%22%3E%24%7Bprofiles%5Bc%5D.name%7D%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22settings-avatar-btn%22%20style%3D%22background-image%3Aurl%28%27%24%7Bprofiles%5Bc%5D.avatar%7D%27%29%22%20id%3D%22btn-av-%24%7Bc%7D%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20style%3D%22font-size%3A18px%3B%20margin-left%3A15px%3B%20color%3A%23aaa%3B%22%3E%u270E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27avatar-selectors-container%27%29.innerHTML%20%3D%20html%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20saveNames%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20COLORS.forEach%28c%20%3D%3E%20%7B%20profiles%5Bc%5D.name%20%3D%20document.getElementById%28%60input-name-%24%7Bc%7D%60%29.value%20%7C%7C%20profiles%5Bc%5D.name%3B%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20localStorage.setItem%28%27ludo_profiles%27%2C%20JSON.stringify%28profiles%29%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20applyProfilesToUI%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20switchSettingsView%28%27view-main%27%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20let%20currentEditingColor%20%3D%20%27%27%3B%0A%20%20%20%20%20%20%20%20function%20openAvatarPicker%28color%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20currentEditingColor%20%3D%20color%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20grid%20%3D%20document.getElementById%28%27avatar-grid%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20grid.innerHTML%20%3D%20%27%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20AVATARS.forEach%28url%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20isSelected%20%3D%20profiles%5Bcolor%5D.avatar%20%3D%3D%3D%20url%20%3F%20%27selected%27%20%3A%20%27%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20grid.innerHTML%20+%3D%20%60%3Cdiv%20class%3D%22avatar-option%20%24%7BisSelected%7D%22%20style%3D%22background-image%3Aurl%28%27%24%7Burl%7D%27%29%22%20onclick%3D%22selectAvatar%28%27%24%7Burl%7D%27%29%22%3E%3C/div%3E%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27avatar-modal%27%29.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20selectAvatar%28url%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20profiles%5BcurrentEditingColor%5D.avatar%20%3D%20url%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20localStorage.setItem%28%27ludo_profiles%27%2C%20JSON.stringify%28profiles%29%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20applyProfilesToUI%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%60btn-av-%24%7BcurrentEditingColor%7D%60%29.style.backgroundImage%20%3D%20%60url%28%27%24%7Burl%7D%27%29%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20closeAvatarPicker%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20function%20closeAvatarPicker%28%29%20%7B%20document.getElementById%28%27avatar-modal%27%29.style.display%20%3D%20%27none%27%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20confirmResetData%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20localStorage.clear%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20location.reload%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20applyProfilesToUI%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20COLORS.forEach%28c%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%60name-%24%7Bc%7D%60%29.innerText%20%3D%20profiles%5Bc%5D.name%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%60av-%24%7Bc%7D%60%29.style.backgroundImage%20%3D%20%60url%28%27%24%7Bprofiles%5Bc%5D.avatar%7D%27%29%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20---%20Exit%20Control%20---%0A%20%20%20%20%20%20%20%20function%20triggerExit%28%29%20%7B%20document.getElementById%28%27exit-modal%27%29.style.display%20%3D%20%27flex%27%3B%20%7D%0A%20%20%20%20%20%20%20%20function%20cancelExit%28%29%20%7B%20document.getElementById%28%27exit-modal%27%29.style.display%20%3D%20%27none%27%3B%20%7D%0A%20%20%20%20%20%20%20%20function%20confirmExit%28%29%20%7B%20saveGame%28%29%3B%20location.reload%28%29%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20---%20Audio%20%28Step%2C%20Capture%2C%20Win%20-%20NO%20DICE%20ROLL%20SOUND%29%20---%0A%20%20%20%20%20%20%20%20let%20audioCtx%3B%0A%20%20%20%20%20%20%20%20function%20initAudio%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21audioCtx%29%20audioCtx%20%3D%20new%20%28window.AudioContext%20%7C%7C%20window.webkitAudioContext%29%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28audioCtx.state%20%3D%3D%3D%20%27suspended%27%29%20audioCtx.resume%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20function%20playSound%28type%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21audioCtx%29%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20t%20%3D%20audioCtx.currentTime%3B%20const%20osc%20%3D%20audioCtx.createOscillator%28%29%3B%20const%20gain%20%3D%20audioCtx.createGain%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20osc.connect%28gain%29%3B%20gain.connect%28audioCtx.destination%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28type%20%3D%3D%3D%20%27step%27%29%20%7B%20osc.type%20%3D%20%27sine%27%3B%20osc.frequency.setValueAtTime%28600%2C%20t%29%3B%20osc.frequency.exponentialRampToValueAtTime%28150%2C%20t%20+%200.1%29%3B%20gain.gain.setValueAtTime%280.3%2C%20t%29%3B%20gain.gain.exponentialRampToValueAtTime%280.01%2C%20t%20+%200.1%29%3B%20osc.start%28t%29%3B%20osc.stop%28t%20+%200.1%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20if%28type%20%3D%3D%3D%20%27capture%27%29%20%7B%20osc.type%20%3D%20%27sawtooth%27%3B%20osc.frequency.setValueAtTime%28150%2C%20t%29%3B%20osc.frequency.exponentialRampToValueAtTime%2820%2C%20t%20+%200.3%29%3B%20gain.gain.setValueAtTime%280.5%2C%20t%29%3B%20gain.gain.exponentialRampToValueAtTime%280.01%2C%20t%20+%200.3%29%3B%20osc.start%28t%29%3B%20osc.stop%28t%20+%200.3%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20if%28type%20%3D%3D%3D%20%27win%27%29%20%7B%20osc.type%20%3D%20%27triangle%27%3B%20osc.frequency.setValueAtTime%28400%2C%20t%29%3B%20osc.frequency.linearRampToValueAtTime%28800%2C%20t%20+%201%29%3B%20gain.gain.setValueAtTime%280.5%2C%20t%29%3B%20gain.gain.linearRampToValueAtTime%280.01%2C%20t%20+%201%29%3B%20osc.start%28t%29%3B%20osc.stop%28t%20+%201%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20showWinEffect%28colorName%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20overlay%20%3D%20document.getElementById%28%27effect-overlay%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27effect-text%27%29.innerText%20%3D%20%60%24%7Bprofiles%5BcolorName%5D.name%7D%20WINS%21%20%uD83C%uDFC6%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20playSound%28%27win%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27effect-img%27%29.src%20%3D%20%22https%3A//media.giphy.com/media/l41JRsph73VokN6ik/giphy.gif%22%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20overlay.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20---%20Game%20Logic%20---%0A%20%20%20%20%20%20%20%20function%20initBoard%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20grid%20%3D%20document.getElementById%28%27grid%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20grid.innerHTML%20%3D%20%27%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20for%28let%20r%3D0%3B%20r%3C15%3B%20r++%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%28let%20c%3D0%3B%20c%3C15%3B%20c++%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20cell%20%3D%20document.createElement%28%27div%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20isBase%20%3D%20%28r%3C6%20%26%26%20c%3C6%29%20%7C%7C%20%28r%3C6%20%26%26%20c%3E8%29%20%7C%7C%20%28r%3E8%20%26%26%20c%3C6%29%20%7C%7C%20%28r%3E8%20%26%26%20c%3E8%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20isCenter%20%3D%20%28r%3E%3D6%20%26%26%20r%3C%3D8%20%26%26%20c%3E%3D6%20%26%26%20c%3C%3D8%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28%21isBase%20%26%26%20%21isCenter%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20cell.className%20%3D%20%27cell%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28SAFE_COORDS.has%28%60%24%7Br%7D%2C%24%7Bc%7D%60%29%29%20cell.classList.add%28%27star%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28r%3D%3D%3D6%20%26%26%20c%3D%3D%3D1%20%7C%7C%20r%3D%3D%3D7%20%26%26%20c%3E%3D1%20%26%26%20c%3C%3D5%29%20cell.classList.add%28%27bg-red%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28r%3D%3D%3D1%20%26%26%20c%3D%3D%3D8%20%7C%7C%20c%3D%3D%3D7%20%26%26%20r%3E%3D1%20%26%26%20r%3C%3D5%29%20cell.classList.add%28%27bg-blue%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28r%3D%3D%3D8%20%26%26%20c%3D%3D%3D13%20%7C%7C%20r%3D%3D%3D7%20%26%26%20c%3E%3D9%20%26%26%20c%3C%3D13%29%20cell.classList.add%28%27bg-yellow%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28r%3D%3D%3D13%20%26%26%20c%3D%3D%3D6%20%7C%7C%20c%3D%3D%3D7%20%26%26%20r%3E%3D9%20%26%26%20r%3C%3D13%29%20cell.classList.add%28%27bg-green%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20grid.appendChild%28cell%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20COLORS.forEach%28color%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%60dice-%24%7Bcolor%7D%60%29.innerHTML%20%3D%20%60%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-cube%22%20id%3D%22cube-%24%7Bcolor%7D%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-face%20front%22%3E%24%7BdotDivs%285%29%7D%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-face%20bottom%22%3E%24%7BdotDivs%281%2C9%29%7D%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-face%20right%22%3E%24%7BdotDivs%281%2C5%2C9%29%7D%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-face%20left%22%3E%24%7BdotDivs%281%2C3%2C7%2C9%29%7D%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-face%20top%22%3E%24%7BdotDivs%281%2C3%2C5%2C7%2C9%29%7D%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22dice-face%20back%22%3E%24%7BdotDivs%281%2C4%2C7%2C3%2C6%2C9%29%7D%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20//%20Set%20initial%20dice%20visuals%20if%20loaded%20from%20save%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28state.diceRolled%20%26%26%20color%20%3D%3D%3D%20COLORS%5Bstate.turnIndex%5D%20%26%26%20state.diceValue%20%3E%200%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%60cube-%24%7Bcolor%7D%60%29.style.transform%20%3D%20%60translateZ%28-21px%29%20%24%7BDICE_TRANSFORMS%5Bstate.diceValue%5D%7D%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20//%20Tokens%20setup%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%28let%20i%3D0%3B%20i%3C4%3B%20i++%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20oldT%20%3D%20document.getElementById%28%60token-%24%7Bcolor%7D-%24%7Bi%7D%60%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28oldT%29%20oldT.remove%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20t%20%3D%20document.createElement%28%27div%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20t.id%20%3D%20%60token-%24%7Bcolor%7D-%24%7Bi%7D%60%3B%20t.className%20%3D%20%60token%20token-%24%7Bcolor%7D%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20t.onclick%20%3D%20%28%29%20%3D%3E%20handleTokenClick%28color%2C%20i%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27board%27%29.appendChild%28t%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20dotDivs%28...active%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20html%20%3D%20%27%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20for%28let%20i%3D1%3B%20i%3C%3D9%3B%20i++%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20vis%20%3D%20active.includes%28i%29%20%3F%20%27visible%27%20%3A%20%27hidden%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20html%20+%3D%20%60%3Cdiv%20class%3D%22dot%22%20style%3D%22visibility%3A%20%24%7Bvis%7D%3B%22%3E%3C/div%3E%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20html%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20updateUI%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20curColor%20%3D%20COLORS%5Bstate.turnIndex%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20COLORS.forEach%28c%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%60card-%24%7Bc%7D%60%29.classList.toggle%28%27active%27%2C%20c%20%3D%3D%3D%20curColor%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%60dice-%24%7Bc%7D%60%29.classList.toggle%28%27disabled%27%2C%20c%20%21%3D%3D%20curColor%20%7C%7C%20state.diceRolled%20%7C%7C%20state.isAnimating%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27board%27%29.className%20%3D%20%60turn-%24%7BcurColor%7D%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20renderTokens%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20saveGame%28%29%3B%20//%20Auto-save%20game%20continuously%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28state.isVsCPU%20%26%26%20curColor%20%21%3D%3D%20%27red%27%20%26%26%20%21state.diceRolled%20%26%26%20%21state.gameOver%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28rollDice%2C%201000%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20getCoords%28color%2C%20pos%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28pos%20%3D%3D%3D%20-1%29%20return%20BASE_SPOTS%5Bcolor%5D%5Bstate.tokens%5Bcolor%5D.filter%28%28p%2C%20i%29%20%3D%3E%20state.tokens%5Bcolor%5D.indexOf%28p%29%20%3C%20i%29.length%5D%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28pos%20%3C%2051%29%20return%20MAIN_PATH%5B%28START_IDX%5Bcolor%5D%20+%20pos%29%20%25%2052%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28pos%20%3C%2056%29%20return%20HOME_PATHS%5Bcolor%5D%5Bpos%20-%2051%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20return%5B7%2C%207%5D%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20renderTokens%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20cellMap%20%3D%20%7B%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20COLORS.forEach%28color%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20state.tokens%5Bcolor%5D.forEach%28%28pos%2C%20i%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20coords%20%3D%20%28pos%20%3D%3D%3D%20-1%29%20%3F%20BASE_SPOTS%5Bcolor%5D%5Bi%5D%20%3A%20getCoords%28color%2C%20pos%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20key%20%3D%20coords.join%28%27%2C%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28%21cellMap%5Bkey%5D%29%20cellMap%5Bkey%5D%20%3D%20%5B%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20cellMap%5Bkey%5D.push%28%7B%20color%2C%20i%2C%20pos%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20offsetMap%20%3D%5B%7Bx%3A0%2Cy%3A0%7D%2C%7Bx%3A-8%2Cy%3A-8%7D%2C%7Bx%3A8%2Cy%3A8%7D%2C%7Bx%3A-8%2Cy%3A8%7D%2C%7Bx%3A8%2Cy%3A-8%7D%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20for%28const%20key%20in%20cellMap%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20items%20%3D%20cellMap%5Bkey%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20isSafe%20%3D%20SAFE_COORDS.has%28key%29%20%7C%7C%20key%20%3D%3D%3D%20%227%2C7%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20items.forEach%28%28item%2C%20idx%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20el%20%3D%20document.getElementById%28%60token-%24%7Bitem.color%7D-%24%7Bitem.i%7D%60%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28el.classList.contains%28%27captured%27%29%29%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%5Br%2C%20c%5D%20%3D%20key.split%28%27%2C%27%29.map%28Number%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20el.style.top%20%3D%20%60%24%7B%28r%20+%200.5%29%20*%20%28100/15%29%7D%25%60%3B%20el.style.left%20%3D%20%60%24%7B%28c%20+%200.5%29%20*%20%28100/15%29%7D%25%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28%21isSafe%20%26%26%20items.length%20%3E%201%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20off%20%3D%20offsetMap%5Bidx%20%25%205%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20el.style.transform%20%3D%20%60translate%28calc%28-50%25%20+%20%24%7Boff.x%7Dpx%29%2C%20calc%28-50%25%20+%20%24%7Boff.y%7Dpx%29%29%20scale%280.85%29%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20el.style.transform%20%3D%20%60translate%28-50%25%2C%20-50%25%29%20scale%281%29%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20async%20function%20rollDice%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28state.diceRolled%20%7C%7C%20state.isAnimating%29%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20state.diceRolled%20%3D%20true%3B%20initAudio%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20color%20%3D%20COLORS%5Bstate.turnIndex%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20cube%20%3D%20document.getElementById%28%60cube-%24%7Bcolor%7D%60%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20cube.style.animation%20%3D%20%27diceThrow%200.6s%20ease-out%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20await%20new%20Promise%28r%20%3D%3E%20setTimeout%28r%2C%20600%29%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20state.diceValue%20%3D%20Math.floor%28Math.random%28%29%20*%206%29%20+%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20cube.style.animation%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20cube.style.transform%20%3D%20%60translateZ%28-21px%29%20%24%7BDICE_TRANSFORMS%5Bstate.diceValue%5D%7D%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20log%28%60%24%7Bprofiles%5Bcolor%5D.name%7D%20rolled%20a%20%24%7Bstate.diceValue%7D%21%60%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28state.diceValue%20%3D%3D%3D%206%29%20state.consecutiveSixes++%3B%20else%20state.consecutiveSixes%20%3D%200%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28state.consecutiveSixes%20%3D%3D%3D%203%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20log%28%22Three%206s%21%20Turn%20forfeited.%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28nextTurn%2C%201500%29%3B%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20saveGame%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20processPostRoll%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20processPostRoll%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20color%20%3D%20COLORS%5Bstate.turnIndex%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20validIndices%20%3D%20getValidMoves%28color%2C%20state.diceValue%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28validIndices.length%20%3D%3D%3D%200%29%20%7B%20setTimeout%28nextTurn%2C%201000%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28state.isVsCPU%20%26%26%20color%20%21%3D%3D%20%27red%27%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20handleTokenClick%28color%2C%20validIndices%5B0%5D%29%2C%20800%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20validIndices.forEach%28idx%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20el%20%3D%20document.getElementById%28%60token-%24%7Bcolor%7D-%24%7Bidx%7D%60%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20el.classList.add%28%27highlight%27%29%3B%20el.innerHTML%20%3D%20%27%3Cdiv%20class%3D%22pointer%22%3E%3C/div%3E%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20getValidMoves%28color%2C%20roll%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20moves%20%3D%5B%5D%3B%20const%20blockades%20%3D%20getBlockades%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20state.tokens%5Bcolor%5D.forEach%28%28pos%2C%20i%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28pos%20%3D%3D%3D%20-1%20%26%26%20roll%20%21%3D%3D%206%29%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28pos%20%3D%3D%3D%2056%29%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28pos%20+%20roll%20%3E%2056%29%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20blocked%20%3D%20false%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28pos%20%21%3D%3D%20-1%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%28let%20step%3D1%3B%20step%3C%3Droll%3B%20step++%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20stepPos%20%3D%20pos%20+%20step%3B%20if%28stepPos%20%3E%2051%29%20break%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20absIdx%20%3D%20%28START_IDX%5Bcolor%5D%20+%20stepPos%29%20%25%2052%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28blockades.has%28absIdx%29%20%26%26%20step%20%3C%20roll%29%20%7B%20blocked%20%3D%20true%3B%20break%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28%21blocked%29%20moves.push%28i%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20moves%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20getBlockades%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20b%20%3D%20new%20Set%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20COLORS.forEach%28c%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20counts%20%3D%20%7B%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20state.tokens%5Bc%5D.forEach%28pos%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28pos%20%3E%3D%200%20%26%26%20pos%20%3C%2051%29%20%7B%20const%20abs%20%3D%20%28START_IDX%5Bc%5D%20+%20pos%29%20%25%2052%3B%20counts%5Babs%5D%20%3D%20%28counts%5Babs%5D%20%7C%7C%200%29%20+%201%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%28let%20k%20in%20counts%29%20if%28counts%5Bk%5D%20%3E%201%29%20b.add%28parseInt%28k%29%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20b%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20async%20function%20handleTokenClick%28color%2C%20index%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21state.diceRolled%20%7C%7C%20state.isAnimating%20%7C%7C%20color%20%21%3D%3D%20COLORS%5Bstate.turnIndex%5D%29%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20valid%20%3D%20getValidMoves%28color%2C%20state.diceValue%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21valid.includes%28index%29%29%20return%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20document.querySelectorAll%28%27.token%27%29.forEach%28t%20%3D%3E%20%7B%20t.classList.remove%28%27highlight%27%29%3B%20t.innerHTML%20%3D%20%27%27%3B%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20state.isAnimating%20%3D%20true%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20currentPos%20%3D%20state.tokens%5Bcolor%5D%5Bindex%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20el%20%3D%20document.getElementById%28%60token-%24%7Bcolor%7D-%24%7Bindex%7D%60%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28currentPos%20%3D%3D%3D%20-1%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20el.classList.add%28%27moving%27%29%3B%20state.tokens%5Bcolor%5D%5Bindex%5D%20%3D%200%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20playSound%28%27step%27%29%3B%20renderTokens%28%29%3B%20await%20new%20Promise%28r%20%3D%3E%20setTimeout%28r%2C%20300%29%29%3B%20el.classList.remove%28%27moving%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%28let%20i%3D0%3B%20i%3Cstate.diceValue%3B%20i++%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20el.classList.add%28%27moving%27%29%3B%20state.tokens%5Bcolor%5D%5Bindex%5D++%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20playSound%28%27step%27%29%3B%20renderTokens%28%29%3B%20await%20new%20Promise%28r%20%3D%3E%20setTimeout%28r%2C%20300%29%29%3B%20el.classList.remove%28%27moving%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20await%20checkCapture%28color%2C%20index%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28state.tokens%5Bcolor%5D.every%28p%20%3D%3E%20p%20%3D%3D%3D%2056%29%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20state.gameOver%20%3D%20true%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20localStorage.removeItem%28%27ludo_save%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showWinEffect%28color%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20state.isAnimating%20%3D%20false%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28state.diceValue%20%3D%3D%3D%206%20%7C%7C%20state.lastActionWasCapture%20%7C%7C%20state.tokens%5Bcolor%5D%5Bindex%5D%20%3D%3D%3D%2056%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20state.diceRolled%20%3D%20false%3B%20state.lastActionWasCapture%20%3D%20false%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20log%28%60Bonus%20turn%20for%20%24%7Bprofiles%5Bcolor%5D.name%7D%21%60%29%3B%20updateUI%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20nextTurn%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20async%20function%20checkCapture%28color%2C%20index%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20pos%20%3D%20state.tokens%5Bcolor%5D%5Bindex%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28pos%20%3C%200%20%7C%7C%20pos%20%3E%3D%2051%29%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20absIdx%20%3D%20%28START_IDX%5Bcolor%5D%20+%20pos%29%20%25%2052%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20coords%20%3D%20MAIN_PATH%5BabsIdx%5D.join%28%27%2C%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28SAFE_COORDS.has%28coords%29%29%20return%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20for%20%28let%20opp%20of%20COLORS%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28opp%20%3D%3D%3D%20color%29%20continue%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20%28let%20oi%3D0%3B%20oi%3C4%3B%20oi++%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20oPos%20%3D%20state.tokens%5Bopp%5D%5Boi%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28oPos%20%3E%3D%200%20%26%26%20oPos%20%3C%2051%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20oAbs%20%3D%20%28START_IDX%5Bopp%5D%20+%20oPos%29%20%25%2052%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28oAbs%20%3D%3D%3D%20absIdx%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20capturedEl%20%3D%20document.getElementById%28%60token-%24%7Bopp%7D-%24%7Boi%7D%60%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20capturedEl.classList.add%28%27captured%27%29%3B%20playSound%28%27capture%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20log%28%60%uD83D%uDCA5%20%24%7Bprofiles%5Bcolor%5D.name%7D%20captured%20%24%7Bprofiles%5Bopp%5D.name%7D%21%60%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20await%20new%20Promise%28r%20%3D%3E%20setTimeout%28r%2C%20500%29%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20capturedEl.classList.remove%28%27captured%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20state.tokens%5Bopp%5D%5Boi%5D%20%3D%20-1%3B%20state.lastActionWasCapture%20%3D%20true%3B%20renderTokens%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20nextTurn%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20state.turnIndex%20%3D%20%28state.turnIndex%20+%201%29%20%25%204%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20state.diceRolled%20%3D%20false%3B%20state.diceValue%20%3D%200%3B%20state.consecutiveSixes%20%3D%200%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20log%28%60It%27s%20%24%7Bprofiles%5BCOLORS%5Bstate.turnIndex%5D%5D.name%7D%27s%20turn.%60%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20updateUI%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20log%28msg%29%20%7B%20document.getElementById%28%27log-bar%27%29.innerText%20%3D%20msg%3B%20%7D%0A%20%20%20%20%20%20%20%20function%20handleDiceClick%28color%29%20%7B%20if%28color%20%3D%3D%3D%20COLORS%5Bstate.turnIndex%5D%29%20rollDice%28%29%3B%20%7D%0A%20%20%20%20%3C/script%3E%0A%3C/body%3E%0A%3C/html%3E'))</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Premium Ludo Pro 3D - Dark Edition</title>
+    
+    <!-- PWA Setup for Blogger (Single File Config) -->
+    <meta name="theme-color" content="#0a0a0e">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/YWKBBMJ.png">
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Premium%20Ludo%20Pro%203D%22%2C%22short_name%22%3A%22Ludo%20Pro%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230a0a0e%22%2C%22theme_color%22%3A%22%2300E5FF%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fi.imgur.com%2FYWKBBMJ.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fi.imgur.com%2FYWKBBMJ.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+
+    <style>
+        :root {
+            --yellow: #FFD700; --yellow-dark: #ccaa00;
+            --blue: #00E5FF; --blue-dark: #0088cc;
+            --red: #FF3366; --red-dark: #cc0033;
+            --green: #00FF66; --green-dark: #009933;
+            --board-bg: #121216; --line-color: rgba(255,255,255,0.1);
+            --safe-star: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFD700' stroke='%23FFA500' stroke-width='1'><path d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/></svg>");
+            --home-crown: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFF'><path d='M5 16L3 5l5.5 5L12 2l3.5 8L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z'/></svg>");
+            --wood-bg: url("https://www.transparenttextures.com/patterns/black-scales.png");
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', 'Segoe UI', sans-serif; user-select: none; }
+
+        body {
+            background-color: #0a0a0e;
+            background-image: var(--wood-bg), radial-gradient(circle at center, #1a1a24 0%, #050508 100%);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; overflow: hidden; touch-action: manipulation;
+            color: white;
+        }
+
+        /* --- Splash Screen --- */
+        #splash-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #0a0a0e; background-image: var(--wood-bg), radial-gradient(circle at center, #1a1a24 0%, #050508 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            transition: opacity 0.5s ease-out;
+        }
+        .splash-wrapper { display: inline-flex; flex-direction: column; align-items: flex-end; justify-content: center; }
+        .splash-logo {
+            font-size: 60px; font-weight: 900; letter-spacing: 5px; margin-bottom: 0px;
+            background: linear-gradient(135deg, var(--red), var(--blue), var(--yellow));
+            -webkit-background-clip: text; color: transparent;
+            animation: splashPulse 1.5s infinite alternate;
+            text-shadow: 0 10px 30px rgba(0,229,255,0.3);
+            text-align: center; width: 100%;
+        }
+        .splash-powered {
+            font-size: 11px; font-weight: 900; letter-spacing: 2px;
+            color: var(--green); margin-top: -5px; margin-bottom: 40px;
+            text-shadow: 0 0 10px rgba(0, 255, 102, 0.5); text-transform: uppercase;
+        }
+        .circular-spinner {
+            width: 50px; height: 50px; margin: 0 auto;
+            border: 6px solid rgba(255, 255, 255, 0.05);
+            border-top-color: var(--blue); border-right-color: var(--yellow); 
+            border-bottom-color: var(--green); border-left-color: var(--red);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes splashPulse { from { filter: brightness(1); transform: scale(1); } to { filter: brightness(1.3); transform: scale(1.05); } }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 2000;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .modal-box {
+            background: rgba(20, 20, 30, 0.9); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; width: 350px; padding: 30px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
+            max-height: 90vh; overflow-y: auto;
+        }
+
+        h1, h2 {
+            font-size: 34px; font-weight: 900; letter-spacing: 2px; margin-bottom: 25px;
+            background: linear-gradient(135deg, #FFD700, #FF3366, #00E5FF);
+            -webkit-background-clip: text; color: transparent;
+        }
+
+        .menu-btn {
+            width: 100%; padding: 15px; border: none; border-radius: 12px;
+            font-size: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
+            color: white; cursor: pointer; margin-bottom: 12px; transition: all 0.2s ease;
+        }
+        .btn-gold { background: linear-gradient(135deg, #FFD700, #ccaa00); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); border: 1px solid #FFD700; }
+        .btn-blue { background: linear-gradient(135deg, #0088cc, #003366); box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); border: 1px solid #00E5FF; }
+        .btn-green { background: linear-gradient(135deg, #009933, #004d1a); box-shadow: 0 0 15px rgba(0, 255, 102, 0.3); border: 1px solid #00FF66; }
+        .btn-gray { background: #333; color: #fff; border: 1px solid #555; }
+        .btn-red { background: linear-gradient(135deg, #cc0033, #66001a); border: 1px solid #FF3366; }
+        .btn-install { background: linear-gradient(135deg, #FF3366, #ff8a8a); border: 1px solid #fff; box-shadow: 0 0 20px rgba(255, 51, 102, 0.6); animation: splashPulse 1.5s infinite alternate; }
+        .menu-btn:hover { filter: brightness(1.2); transform: scale(1.02); }
+
+        .settings-view, .info-view { display: none; animation: fadeIn 0.3s; }
+        .settings-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .settings-input {
+            flex: 1; background: transparent; border: none; border-bottom: 2px solid #555;
+            color: #fff; font-size: 15px; padding: 5px; margin: 0 10px; outline: none; text-transform: uppercase;
+        }
+        .settings-avatar-btn {
+            width: 45px; height: 45px; border-radius: 50%; border: 2px solid #fff;
+            background-size: cover; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        
+        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+        .avatar-option {
+            width: 45px; height: 45px; border-radius: 50%; border: 2px solid transparent;
+            background-size: cover; cursor: pointer; transition: 0.2s; background-color: #222;
+        }
+        .avatar-option.selected { border-color: #00E5FF; transform: scale(1.15); box-shadow: 0 0 15px #00E5FF; }
+
+        /* --- Game UI --- */
+        #game-ui {
+            display: none; flex-direction: column; align-items: center;
+            width: 100%; max-width: 600px; gap: 15px; padding: 10px; height: 100vh; justify-content: center;
+        }
+        .top-bar { display: flex; justify-content: space-between; width: 100%; padding: 0 10px; }
+        .back-icon { font-size: 24px; cursor: pointer; color: #fff; transition: 0.2s; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        .back-icon:hover { transform: scale(1.1); color: #FF3366; }
+        
+        .player-row { display: flex; justify-content: space-between; width: 100%; padding: 0 5px; }
+
+        #log-bar {
+            width: 95%; padding: 10px 15px; border-radius: 30px;
+            background: rgba(20, 20, 30, 0.9); color: #fff; font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; font-size: 13px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .player-card {
+            background: rgba(20, 20, 30, 0.6); border-radius: 15px;
+            padding: 8px 12px; display: flex; align-items: center; gap: 10px;
+            opacity: 0.4; transition: all 0.4s; border: 1px solid rgba(255,255,255,0.1);
+            min-width: 135px; filter: grayscale(80%);
+        }
+        .player-card.active { opacity: 1; transform: scale(1.05); filter: grayscale(0%); background: rgba(30, 30, 40, 0.9); }
+        .player-avatar { width: 38px; height: 38px; border-radius: 50%; background-color: #222; background-size: cover; border: 2px solid #555; }
+        
+        #card-red.active { border-color: var(--red); box-shadow: 0 0 15px rgba(255, 51, 102, 0.4); }
+        #card-blue.active { border-color: var(--blue); box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
+        #card-yellow.active { border-color: var(--yellow); box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+        #card-green.active { border-color: var(--green); box-shadow: 0 0 15px rgba(0, 255, 102, 0.4); }
+        .player-name { font-weight: 700; font-size: 13px; flex: 1; text-transform: uppercase; }
+
+        /* --- 3D Dice --- */
+        .dice-scene { width: 42px; height: 42px; perspective: 600px; cursor: pointer; }
+        .dice-cube {
+            width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+            transform: translateZ(-21px) rotateX(-15deg) rotateY(-15deg); transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .dice-face {
+            position: absolute; width: 42px; height: 42px; background: radial-gradient(circle, #2a2a35, #121216);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 4px;
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+            justify-items: center; align-items: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+        .dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; visibility: hidden; box-shadow: 0 0 5px #fff; }
+        .front { transform: rotateY(0deg) translateZ(21px); } .bottom { transform: rotateX(-90deg) translateZ(21px); }
+        .right { transform: rotateY(90deg) translateZ(21px); } .left { transform: rotateY(-90deg) translateZ(21px); }
+        .top { transform: rotateX(90deg) translateZ(21px); } .back { transform: rotateY(180deg) translateZ(21px); }
+        .dice-scene.disabled { pointer-events: none; }
+
+        /* --- Board --- */
+        #board-container { padding: 12px; background: rgba(20,20,30,0.6); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        #board { width: 92vw; height: 92vw; max-width: 450px; max-height: 450px; background: var(--board-bg); background-image: var(--wood-bg); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,1); }
+        #grid { display: grid; width: 100%; height: 100%; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr); }
+        .cell { border: 1px solid var(--line-color); position: relative; background: rgba(30,30,40,0.4); }
+        .star { background-image: var(--safe-star); background-size: 65%; background-position: center; background-repeat: no-repeat; }
+        .bg-red { background: rgba(255, 51, 102, 0.2) !important; border-color: rgba(255, 51, 102, 0.4); }
+        .bg-blue { background: rgba(0, 229, 255, 0.2) !important; border-color: rgba(0, 229, 255, 0.4); }
+        .bg-yellow { background: rgba(255, 215, 0, 0.2) !important; border-color: rgba(255, 215, 0, 0.4); }
+        .bg-green { background: rgba(0, 255, 102, 0.2) !important; border-color: rgba(0, 255, 102, 0.4); }
+
+        .base { position: absolute; width: 40%; height: 40%; z-index: 1; display: flex; justify-content: center; align-items: center; }
+        .base-red { top:0; left:0; background: linear-gradient(135deg, var(--red-dark), #4a0011); border-bottom: 2px solid var(--line-color); border-right: 2px solid var(--line-color);}
+        .base-blue { top:0; right:0; background: linear-gradient(135deg, var(--blue-dark), #001a33); border-bottom: 2px solid var(--line-color); border-left: 2px solid var(--line-color);}
+        .base-yellow { bottom:0; right:0; background: linear-gradient(135deg, var(--yellow-dark), #332a00); border-top: 2px solid var(--line-color); border-left: 2px solid var(--line-color);}
+        .base-green { bottom:0; left:0; background: linear-gradient(135deg, var(--green-dark), #003311); border-top: 2px solid var(--line-color); border-right: 2px solid var(--line-color);}
+        .base-inner { width: 65%; height: 65%; background: #1a1a24; background-image: var(--wood-bg); border-radius: 15%; box-shadow: inset 0 5px 20px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.05); }
+        .center-area { position: absolute; top: 40%; left: 40%; width: 20%; height: 20%; z-index: 2; background: conic-gradient(from 45deg, var(--blue-dark) 0deg 90deg, var(--yellow-dark) 90deg 180deg, var(--green-dark) 180deg 270deg, var(--red-dark) 270deg 360deg); border: 2px solid var(--line-color); display: flex; justify-content: center; align-items: center; }
+        .center-area::after { content: ''; width: 55%; height: 55%; background-image: var(--home-crown); background-size: contain; background-repeat: no-repeat; background-position: center; }
+
+        /* Tokens */
+        .token { position: absolute; width: calc(100% / 15 * 0.75); height: calc(100% / 15 * 0.75); border-radius: 50%; z-index: 10; transition: top 0.3s, left 0.3s, transform 0.2s; transform: translate(-50%, -50%); cursor: pointer; border: 2px solid rgba(255,255,255,0.8); }
+        .token::after { content: ''; position: absolute; top: 15%; left: 20%; width: 30%; height: 30%; background: rgba(255,255,255,0.8); border-radius: 50%; filter: blur(1px); }
+        .token-red { background: radial-gradient(circle at 30% 30%, #ff8a8a, var(--red)); box-shadow: 0 5px 10px rgba(0,0,0,0.8), 0 0 10px var(--red); }
+        .token-blue { background: radial-gradient(circle at 30% 30%, #8adeff, var(--blue)); box-shadow: 0 5px 10px rgba(0,0,0,0.8), 0 0 10px var(--blue); }
+        .token-yellow { background: radial-gradient(circle at 30% 30%, #ffeb8a, var(--yellow)); box-shadow: 0 5px 10px rgba(0,0,0,0.8), 0 0 10px var(--yellow); }
+        .token-green { background: radial-gradient(circle at 30% 30%, #8aff9e, var(--green)); box-shadow: 0 5px 10px rgba(0,0,0,0.8), 0 0 10px var(--green); }
+
+        .highlight { animation: tokenPulse 1s infinite alternate; z-index: 999 !important; border: 2px solid #fff; }
+        .moving { animation: bounceStep 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important; z-index: 1000 !important; }
+        .pointer { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 12px solid #fff; animation: pointerBounce 0.5s infinite alternate; }
+        .turn-red .token:not(.token-red), .turn-blue .token:not(.token-blue), .turn-yellow .token:not(.token-yellow), .turn-green .token:not(.token-green) { pointer-events: none; }
+
+        #effect-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; flex-direction: column; justify-content: center; align-items: center; }
+        #effect-text { font-size: 50px; font-weight: 900; color: #FFD700; text-align: center; text-shadow: 0 0 30px #FFD700; margin-bottom: 25px; animation: popIn 0.5s; }
+        #effect-img { max-width: 80%; border-radius: 20px; animation: slideUp 0.6s; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes tokenPulse { from { filter: brightness(1); transform: translate(-50%, -50%) scale(1); } to { filter: brightness(1.5); transform: translate(-50%, -50%) scale(1.15); } }
+        @keyframes pointerBounce { from { top: -20px; } to { top: -28px; } }
+        @keyframes diceThrow { 0% { transform: translateZ(-21px) scale(1) rotateX(0) rotateY(0); } 50% { transform: translateZ(100px) scale(1.5) rotateX(400deg) rotateY(360deg); } 100% { transform: translateZ(-21px) scale(1) rotateX(720deg) rotateY(720deg); } }
+        @keyframes bounceStep { 0% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -100%) scale(1.2); } 100% { transform: translate(-50%, -50%) scale(1); } }
+        @keyframes captureAnim { 0% { transform: translate(-50%, -50%) scale(1) rotate(0); opacity: 1; } 30% { transform: translate(-50%, -50%) scale(1.8) rotate(45deg); opacity: 1; filter: brightness(2); } 100% { transform: translate(-50%, -50%) scale(0) rotate(360deg); opacity: 0; } }
+        .captured { animation: captureAnim 0.5s forwards !important; z-index: 1001 !important; }
+        @keyframes popIn { 0% { transform: scale(0.2); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes slideUp { 0% { transform: translateY(50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-wrapper">
+            <div class="splash-logo">LUDO PRO</div>
+            <div class="splash-powered">Powered by MOD APPs</div>
+        </div>
+        <div class="circular-spinner"></div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="menu-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h1>LUDO PRO</h1>
+            
+            <!-- PWA Install Button -->
+            <button id="btn-install" class="menu-btn btn-install" style="display:none;" onclick="installPWA()">📥 Install App</button>
+            
+            <button id="btn-continue" class="menu-btn btn-gold" style="display:none;" onclick="continueGame()">▶ Resume Game</button>
+            <button class="menu-btn btn-blue" onclick="startNewGame(true)">🤖 1 Player vs CPU</button>
+            <button class="menu-btn btn-green" onclick="startNewGame(false)">👥 Pass & Play (4P)</button>
+            <button class="menu-btn btn-gray" onclick="openSettings()">⚙️ Settings</button>
+            <button class="menu-btn btn-gray" onclick="openInfo()">ℹ️ Info</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box" id="settings-content">
+            <div id="view-main" class="settings-view" style="display:block;">
+                <h2>SETTINGS</h2>
+                <button class="menu-btn btn-blue" onclick="switchSettingsView('view-names')">👤 Player Names</button>
+                <button class="menu-btn btn-green" onclick="switchSettingsView('view-avatars')">🎨 Player Avatars</button>
+                <button class="menu-btn btn-red" onclick="switchSettingsView('view-reset')">🗑️ Data Reset</button>
+                <button class="menu-btn btn-gray" style="margin-top:15px;" onclick="closeSettings()">❌ Close</button>
+            </div>
+            <div id="view-names" class="settings-view">
+                <h2 style="font-size:24px;">PLAYER NAMES</h2>
+                <div id="name-inputs-container"></div>
+                <button class="menu-btn btn-green" style="margin-top:15px;" onclick="saveNames()">Save Names</button>
+                <button class="menu-btn btn-gray" onclick="switchSettingsView('view-main')">Back</button>
+            </div>
+            <div id="view-avatars" class="settings-view">
+                <h2 style="font-size:24px;">CHOOSE AVATARS</h2>
+                <div id="avatar-selectors-container"></div>
+                <button class="menu-btn btn-gray" style="margin-top:15px;" onclick="switchSettingsView('view-main')">Back</button>
+            </div>
+            <div id="view-reset" class="settings-view">
+                <h2 style="font-size:24px; color:#FF3366;">DATA RESET</h2>
+                <p style="color:#ddd; font-size:14px; margin-bottom:20px; line-height: 1.5;">Are you sure you want to reset all data?<br><strong style="color:#FF3366;">This will permanently delete your saved game and player profiles!</strong></p>
+                <button class="menu-btn btn-red" onclick="confirmResetData()">Yes, Reset Everything</button>
+                <button class="menu-btn btn-gray" onclick="switchSettingsView('view-main')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-box" id="info-content">
+            <div id="view-info-main" class="info-view" style="display:block;">
+                <h2>INFO</h2>
+                <button class="menu-btn btn-blue" onclick="switchInfoView('view-app-details')">📱 App Details</button>
+                <button class="menu-btn btn-green" onclick="switchInfoView('view-privacy')">🔒 Privacy Policy</button>
+                <button class="menu-btn btn-gold" onclick="switchInfoView('view-creator')">ℹ️ Created Info</button>
+                <button class="menu-btn btn-gray" style="margin-top:15px;" onclick="closeInfo()">❌ Close</button>
+            </div>
+            <div id="view-app-details" class="info-view">
+                <h2 style="font-size:24px;">APP DETAILS</h2>
+                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                    <h3 style="color:#00E5FF; margin-bottom: 10px;">LUDO PRO 3D</h3>
+                    <p style="color:#ccc; font-size:14px; line-height: 1.6;">Version: 1.0.0<br><br>Premium Dark Edition featuring smooth 3D animations, smart UI, and auto-save technology.</p>
+                </div>
+                <button class="menu-btn btn-gray" onclick="switchInfoView('view-info-main')">Back</button>
+            </div>
+            <div id="view-privacy" class="info-view">
+                <h2 style="font-size:24px;">PRIVACY POLICY</h2>
+                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                    <p style="color:#ccc; font-size:14px; line-height: 1.6;">No personal data is collected or shared. All game data and profiles are saved locally on your device.</p>
+                </div>
+                <button class="menu-btn btn-gray" onclick="switchInfoView('view-info-main')">Back</button>
+            </div>
+            <div id="view-creator" class="info-view">
+                <h2 style="font-size:24px;">CREATED INFO</h2>
+                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                    <p style="color:#ccc; font-size:15px; line-height: 1.8;"><strong>Created by Saman , Sri Lanka</strong><br><br><span style="color:var(--blue);">Facebook : MOD APPs - Android Device</span></p>
+                </div>
+                <button class="menu-btn btn-gray" onclick="switchInfoView('view-info-main')">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Picker Modal -->
+    <div id="avatar-modal" class="modal-overlay" style="z-index: 2001;">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 15px;">Select Avatar</h3>
+            <div class="avatar-grid" id="avatar-grid"></div>
+            <button class="menu-btn btn-gray" onclick="closeAvatarPicker()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Exit Confirmation Modal -->
+    <div id="exit-modal" class="modal-overlay" style="z-index: 3000;">
+        <div class="modal-box" style="padding: 25px;">
+            <h3 style="margin-bottom: 15px; color:#FF3366;">Exit Game?</h3>
+            <p style="margin-bottom: 20px; color:#ccc; font-size:14px;">Are you sure you want to exit the competition?<br>(Your progress will be saved automatically.)</p>
+            <button class="menu-btn btn-red" onclick="confirmExit()">Yes, Exit</button>
+            <button class="menu-btn btn-gray" onclick="cancelExit()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Special Effects Overlay (Only Win) -->
+    <div id="effect-overlay">
+        <h2 id="effect-text">WINNER!</h2>
+        <img id="effect-img" src="" alt="Effect">
+        <button class="menu-btn btn-gold" style="width: 200px; margin-top: 30px;" onclick="location.reload()">Main Menu</button>
+    </div>
+
+    <!-- Game User Interface -->
+    <div id="game-ui">
+        <div class="top-bar"><div class="back-icon" onclick="triggerExit()">🔙 Menu</div></div>
+        <div class="player-row">
+            <div id="card-red" class="player-card"><div class="player-avatar" id="av-red"></div><div class="player-name" id="name-red" style="color:var(--red)">Red</div><div class="dice-scene" id="dice-red" onclick="handleDiceClick('red')"></div></div>
+            <div id="card-blue" class="player-card"><div class="dice-scene" id="dice-blue" onclick="handleDiceClick('blue')"></div><div class="player-name" id="name-blue" style="color:var(--blue); text-align:right">Blue</div><div class="player-avatar" id="av-blue"></div></div>
+        </div>
+        <div id="log-bar">Welcome! Let the game begin.</div>
+        <div id="board-container">
+            <div id="board">
+                <div class="base base-red"><div class="base-inner"></div></div>
+                <div class="base base-blue"><div class="base-inner"></div></div>
+                <div class="base base-yellow"><div class="base-inner"></div></div>
+                <div class="base base-green"><div class="base-inner"></div></div>
+                <div class="center-area"></div>
+                <div id="grid"></div>
+            </div>
+        </div>
+        <div class="player-row">
+            <div id="card-green" class="player-card"><div class="player-avatar" id="av-green"></div><div class="player-name" id="name-green" style="color:var(--green)">Green</div><div class="dice-scene" id="dice-green" onclick="handleDiceClick('green')"></div></div>
+            <div id="card-yellow" class="player-card"><div class="dice-scene" id="dice-yellow" onclick="handleDiceClick('yellow')"></div><div class="player-name" id="name-yellow" style="color:var(--yellow); text-align:right">Yellow</div><div class="player-avatar" id="av-yellow"></div></div>
+        </div>
+    </div>
+
+    <script>
+        // --- PWA Installation Logic (Single File Config) ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Chrome හරහා Install කිරීමට සුදුසු නම් පමණක් "Install App" බටන් එක දර්ශනය වේ
+            document.getElementById('btn-install').style.display = 'block';
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the PWA install prompt');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('btn-install').style.display = 'none';
+                });
+            }
+        }
+
+
+
+// --- Screen Wake Lock API (To keep screen ON) ---
+let wakeLock = null;
+
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('Screen Wake Lock Active! (Screen will not turn off)');
+            
+            wakeLock.addEventListener('release', () => {
+                console.log('Screen Wake Lock Released');
+            });
+        }
+    } catch (err) {
+        console.error('Wake Lock error: ', err.message);
+    }
+}
+
+// User Game එකෙන් වෙනත් App එකකට ගොස් නැවත එන විට (Tab switch)
+// නැති වූ Wake Lock එක නැවත ලබා ගැනීමට
+document.addEventListener('visibilitychange', () => {
+    if (wakeLock !== null && document.visibilityState === 'visible') {
+        requestWakeLock();
+    }
+});
+
+
+        // --- Core Data & Paths ---
+        const COLORS =['red', 'blue', 'yellow', 'green'];
+        const MAIN_PATH =[
+            [6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],[0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],[7,14],[8,14],
+            [8,13],[8,12],[8,11],[8,10],[8,9], [9,8],[10,8],[11,8],[12,8],[13,8],[14,8],[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0],[7,0],[6,0]
+        ];
+        const HOME_PATHS = {
+            red: [[7,1],[7,2],[7,3],[7,4],[7,5]], blue: [[1,7],[2,7],[3,7],[4,7],[5,7]],
+            yellow: [[7,13],[7,12],[7,11],[7,10],[7,9]], green: [[13,7],[12,7],[11,7],[10,7],[9,7]]
+        };
+        const BASE_SPOTS = {
+            red: [[1.5,1.5],[1.5,3.5],[3.5,1.5],[3.5,3.5]], blue: [[1.5,10.5],[1.5,12.5],[3.5,10.5],[3.5,12.5]],
+            yellow: [[10.5,10.5],[10.5,12.5],[12.5,10.5],[12.5,12.5]], green: [[10.5,1.5],[10.5,3.5],[12.5,1.5],[12.5,3.5]]
+        };
+        const START_IDX = { red: 0, blue: 13, yellow: 26, green: 39 };
+        const SAFE_COORDS = new Set(["6,1","8,2","1,8","2,6","8,13","6,12","13,6","12,8"]);
+        const DICE_TRANSFORMS = { 1:'rotateX(0deg) rotateY(0deg)', 2:'rotateX(90deg)', 3:'rotateY(-90deg)', 4:'rotateY(90deg)', 5:'rotateX(-90deg)', 6:'rotateX(180deg)' };
+
+        const AVATARS =[
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam", "https://api.dicebear.com/7.x/avataaars/svg?seed=Nimal",
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Kamali", "https://api.dicebear.com/7.x/avataaars/svg?seed=Bot1",
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Hero", "https://api.dicebear.com/7.x/avataaars/svg?seed=King",
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Queen", "https://api.dicebear.com/7.x/avataaars/svg?seed=Ninja",
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Pro", "https://api.dicebear.com/7.x/avataaars/svg?seed=Max"
+        ];
+
+        let profiles = JSON.parse(localStorage.getItem('ludo_profiles')) || {
+            red: { name: 'Player 1', avatar: AVATARS[0] }, blue: { name: 'Player 2', avatar: AVATARS[1] },
+            yellow: { name: 'Player 3', avatar: AVATARS[2] }, green: { name: 'Player 4', avatar: AVATARS[3] }
+        };
+
+        let state = {
+            turnIndex: 0, diceValue: 0, diceRolled: false, isAnimating: false, consecutiveSixes: 0,
+            isVsCPU: false, gameOver: false, tokens: { red:[-1,-1,-1,-1], blue:[-1,-1,-1,-1], yellow:[-1,-1,-1,-1], green:[-1,-1,-1,-1] }
+        };
+
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    checkSavedGame();
+                    document.getElementById('menu-modal').style.display = 'flex';
+                }, 500);
+            }, 2500);
+            
+            window.history.pushState({ page: 1 }, "", "");
+            window.onpopstate = function(event) {
+                if(document.getElementById('game-ui').style.display === 'flex') {
+                    triggerExit();
+                    window.history.pushState({ page: 1 }, "", "");
+                } else { window.history.back(); }
+            };
+        };
+
+        function checkSavedGame() {
+            const saved = localStorage.getItem('ludo_save');
+            if(saved) document.getElementById('btn-continue').style.display = 'block';
+        }
+        function saveGame() { if(!state.gameOver) localStorage.setItem('ludo_save', JSON.stringify(state)); }
+
+        function startNewGame(vsCPU) {
+            localStorage.removeItem('ludo_save');
+            state = { turnIndex: 0, diceValue: 0, diceRolled: false, isAnimating: false, consecutiveSixes: 0, isVsCPU: vsCPU, gameOver: false, tokens: { red:[-1,-1,-1,-1], blue:[-1,-1,-1,-1], yellow:[-1,-1,-1,-1], green:[-1,-1,-1,-1] } };
+            launchGame();
+        }
+        
+        function continueGame() {
+            const saved = JSON.parse(localStorage.getItem('ludo_save'));
+            if(saved) { state = saved; state.isAnimating = false; }
+            launchGame();
+        }
+
+        function launchGame() {
+    initAudio();
+    
+    // මෙන්න මේ පේළිය අලුතෙන් එකතු කරන්න
+    requestWakeLock(); 
+
+    document.getElementById('menu-modal').style.display = 'none';
+    document.getElementById('game-ui').style.display = 'flex';
+    applyProfilesToUI(); initBoard(); updateUI();
+    if(state.diceRolled && !state.gameOver) { setTimeout(processPostRoll, 500); }
+}
+
+        function openInfo() { document.getElementById('info-modal').style.display = 'flex'; switchInfoView('view-info-main'); }
+        function closeInfo() { document.getElementById('info-modal').style.display = 'none'; }
+        function switchInfoView(viewId) { document.querySelectorAll('.info-view').forEach(v => v.style.display = 'none'); document.getElementById(viewId).style.display = 'block'; }
+
+        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; switchSettingsView('view-main'); }
+        function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+        
+        function switchSettingsView(viewId) {
+            document.querySelectorAll('.settings-view').forEach(v => v.style.display = 'none');
+            document.getElementById(viewId).style.display = 'block';
+
+            if(viewId === 'view-names') {
+                let html = '';
+                COLORS.forEach(c => {
+                    html += `<div class="settings-row"><div style="width:15px; height:15px; border-radius:50%; background:var(--${c}); box-shadow:0 0 5px var(--${c})"></div><input type="text" id="input-name-${c}" class="settings-input" value="${profiles[c].name}" maxlength="10"></div>`;
+                });
+                document.getElementById('name-inputs-container').innerHTML = html;
+            }
+            if(viewId === 'view-avatars') {
+                let html = '';
+                COLORS.forEach(c => {
+                    html += `<div class="settings-row" style="cursor:pointer;" onclick="openAvatarPicker('${c}')"><div style="color:var(--${c}); font-weight:bold; text-transform:uppercase; flex:1; text-align:left;">${profiles[c].name}</div><div class="settings-avatar-btn" style="background-image:url('${profiles[c].avatar}')" id="btn-av-${c}"></div><div style="font-size:18px; margin-left:15px; color:#aaa;">✎</div></div>`;
+                });
+                document.getElementById('avatar-selectors-container').innerHTML = html;
+            }
+        }
+
+        function saveNames() {
+            COLORS.forEach(c => { profiles[c].name = document.getElementById(`input-name-${c}`).value || profiles[c].name; });
+            localStorage.setItem('ludo_profiles', JSON.stringify(profiles));
+            applyProfilesToUI(); switchSettingsView('view-main');
+        }
+
+        let currentEditingColor = '';
+        function openAvatarPicker(color) {
+            currentEditingColor = color; const grid = document.getElementById('avatar-grid'); grid.innerHTML = '';
+            AVATARS.forEach(url => {
+                const isSelected = profiles[color].avatar === url ? 'selected' : '';
+                grid.innerHTML += `<div class="avatar-option ${isSelected}" style="background-image:url('${url}')" onclick="selectAvatar('${url}')"></div>`;
+            });
+            document.getElementById('avatar-modal').style.display = 'flex';
+        }
+
+        function selectAvatar(url) {
+            profiles[currentEditingColor].avatar = url; localStorage.setItem('ludo_profiles', JSON.stringify(profiles));
+            applyProfilesToUI(); document.getElementById(`btn-av-${currentEditingColor}`).style.backgroundImage = `url('${url}')`; closeAvatarPicker();
+        }
+        function closeAvatarPicker() { document.getElementById('avatar-modal').style.display = 'none'; }
+        function confirmResetData() { localStorage.clear(); location.reload(); }
+
+        function applyProfilesToUI() {
+            COLORS.forEach(c => {
+                document.getElementById(`name-${c}`).innerText = profiles[c].name;
+                document.getElementById(`av-${c}`).style.backgroundImage = `url('${profiles[c].avatar}')`;
+            });
+        }
+
+        function triggerExit() { document.getElementById('exit-modal').style.display = 'flex'; }
+        function cancelExit() { document.getElementById('exit-modal').style.display = 'none'; }
+        function confirmExit() { 
+    saveGame(); 
+    releaseWakeLock(); // <--- Wake lock එක අයින් කිරීම
+    location.reload(); 
+}
+
+        let audioCtx;
+        function initAudio() {
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        function playSound(type) {
+            if(!audioCtx) return;
+            const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            if(type === 'step') { osc.type = 'sine'; osc.frequency.setValueAtTime(600, t); osc.frequency.exponentialRampToValueAtTime(150, t + 0.1); gain.gain.setValueAtTime(0.3, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1); osc.start(t); osc.stop(t + 0.1); }
+            else if(type === 'capture') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, t); osc.frequency.exponentialRampToValueAtTime(20, t + 0.3); gain.gain.setValueAtTime(0.5, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3); osc.start(t); osc.stop(t + 0.3); }
+            else if(type === 'win') { osc.type = 'triangle'; osc.frequency.setValueAtTime(400, t); osc.frequency.linearRampToValueAtTime(800, t + 1); gain.gain.setValueAtTime(0.5, t); gain.gain.linearRampToValueAtTime(0.01, t + 1); osc.start(t); osc.stop(t + 1); }
+        }
+
+        function showWinEffect(colorName) {
+            const overlay = document.getElementById('effect-overlay');
+            document.getElementById('effect-text').innerText = `${profiles[colorName].name} WINS! 🏆`;
+            playSound('win'); document.getElementById('effect-img').src = "https://media.giphy.com/media/l41JRsph73VokN6ik/giphy.gif"; 
+            overlay.style.display = 'flex';
+        }
+
+        function initBoard() {
+            const grid = document.getElementById('grid'); grid.innerHTML = '';
+            for(let r=0; r<15; r++) {
+                for(let c=0; c<15; c++) {
+                    const cell = document.createElement('div');
+                    const isBase = (r<6 && c<6) || (r<6 && c>8) || (r>8 && c<6) || (r>8 && c>8);
+                    const isCenter = (r>=6 && r<=8 && c>=6 && c<=8);
+                    if(!isBase && !isCenter) {
+                        cell.className = 'cell';
+                        if(SAFE_COORDS.has(`${r},${c}`)) cell.classList.add('star');
+                        if(r===6 && c===1 || r===7 && c>=1 && c<=5) cell.classList.add('bg-red');
+                        if(r===1 && c===8 || c===7 && r>=1 && r<=5) cell.classList.add('bg-blue');
+                        if(r===8 && c===13 || r===7 && c>=9 && c<=13) cell.classList.add('bg-yellow');
+                        if(r===13 && c===6 || c===7 && r>=9 && r<=13) cell.classList.add('bg-green');
+                    }
+                    grid.appendChild(cell);
+                }
+            }
+            COLORS.forEach(color => {
+                document.getElementById(`dice-${color}`).innerHTML = `<div class="dice-cube" id="cube-${color}"><div class="dice-face front">${dotDivs(5)}</div><div class="dice-face bottom">${dotDivs(1,9)}</div><div class="dice-face right">${dotDivs(1,5,9)}</div><div class="dice-face left">${dotDivs(1,3,7,9)}</div><div class="dice-face top">${dotDivs(1,3,5,7,9)}</div><div class="dice-face back">${dotDivs(1,4,7,3,6,9)}</div></div>`;
+                if(state.diceRolled && color === COLORS[state.turnIndex] && state.diceValue > 0) {
+                     document.getElementById(`cube-${color}`).style.transform = `translateZ(-21px) ${DICE_TRANSFORMS[state.diceValue]}`;
+                }
+                for(let i=0; i<4; i++) {
+                    let oldT = document.getElementById(`token-${color}-${i}`); if(oldT) oldT.remove();
+                    const t = document.createElement('div');
+                    t.id = `token-${color}-${i}`; t.className = `token token-${color}`;
+                    t.onclick = () => handleTokenClick(color, i);
+                    document.getElementById('board').appendChild(t);
+                }
+            });
+        }
+
+        function dotDivs(...active) {
+            let html = '';
+            for(let i=1; i<=9; i++) { const vis = active.includes(i) ? 'visible' : 'hidden'; html += `<div class="dot" style="visibility: ${vis};"></div>`; }
+            return html;
+        }
+
+        function updateUI() {
+            const curColor = COLORS[state.turnIndex];
+            COLORS.forEach(c => {
+                document.getElementById(`card-${c}`).classList.toggle('active', c === curColor);
+                document.getElementById(`dice-${c}`).classList.toggle('disabled', c !== curColor || state.diceRolled || state.isAnimating);
+            });
+            document.getElementById('board').className = `turn-${curColor}`;
+            renderTokens(); saveGame();
+            if(state.isVsCPU && curColor !== 'red' && !state.diceRolled && !state.gameOver) { setTimeout(rollDice, 1000); }
+        }
+
+        function getCoords(color, pos) {
+            if(pos === -1) return BASE_SPOTS[color][state.tokens[color].filter((p, i) => state.tokens[color].indexOf(p) < i).length]; 
+            if(pos < 51) return MAIN_PATH[(START_IDX[color] + pos) % 52];
+            if(pos < 56) return HOME_PATHS[color][pos - 51]; return[7, 7];
+        }
+
+        function renderTokens() {
+            const cellMap = {};
+            COLORS.forEach(color => {
+                state.tokens[color].forEach((pos, i) => {
+                    const coords = (pos === -1) ? BASE_SPOTS[color][i] : getCoords(color, pos);
+                    const key = coords.join(','); if(!cellMap[key]) cellMap[key] = []; cellMap[key].push({ color, i, pos });
+                });
+            });
+            const offsetMap =[{x:0,y:0},{x:-8,y:-8},{x:8,y:8},{x:-8,y:8},{x:8,y:-8}];
+            for(const key in cellMap) {
+                const items = cellMap[key]; const isSafe = SAFE_COORDS.has(key) || key === "7,7";
+                items.forEach((item, idx) => {
+                    const el = document.getElementById(`token-${item.color}-${item.i}`);
+                    if(el.classList.contains('captured')) return;
+                    const[r, c] = key.split(',').map(Number);
+                    el.style.top = `${(r + 0.5) * (100/15)}%`; el.style.left = `${(c + 0.5) * (100/15)}%`;
+                    if(!isSafe && items.length > 1) { const off = offsetMap[idx % 5]; el.style.transform = `translate(calc(-50% + ${off.x}px), calc(-50% + ${off.y}px)) scale(0.85)`; } 
+                    else { el.style.transform = `translate(-50%, -50%) scale(1)`; }
+                });
+            }
+        }
+
+        async function rollDice() {
+            if(state.diceRolled || state.isAnimating) return;
+            state.diceRolled = true; initAudio();
+            const color = COLORS[state.turnIndex]; const cube = document.getElementById(`cube-${color}`);
+            cube.style.animation = 'diceThrow 0.6s ease-out';
+            await new Promise(r => setTimeout(r, 600));
+            state.diceValue = Math.floor(Math.random() * 6) + 1;
+            cube.style.animation = 'none'; cube.style.transform = `translateZ(-21px) ${DICE_TRANSFORMS[state.diceValue]}`;
+            log(`${profiles[color].name} rolled a ${state.diceValue}!`);
+            if(state.diceValue === 6) state.consecutiveSixes++; else state.consecutiveSixes = 0;
+            if(state.consecutiveSixes === 3) { log("Three 6s! Turn forfeited."); setTimeout(nextTurn, 1500); return; }
+            saveGame(); processPostRoll();
+        }
+
+        function processPostRoll() {
+            const color = COLORS[state.turnIndex]; const validIndices = getValidMoves(color, state.diceValue);
+            if(validIndices.length === 0) { setTimeout(nextTurn, 1000); }
+            else {
+                if(state.isVsCPU && color !== 'red') { setTimeout(() => handleTokenClick(color, validIndices[0]), 800); } 
+                else { validIndices.forEach(idx => { const el = document.getElementById(`token-${color}-${idx}`); el.classList.add('highlight'); el.innerHTML = '<div class="pointer"></div>'; }); }
+            }
+        }
+
+        function getValidMoves(color, roll) {
+            const moves =[]; const blockades = getBlockades();
+            state.tokens[color].forEach((pos, i) => {
+                if(pos === -1 && roll !== 6) return; if(pos === 56) return; if(pos + roll > 56) return;
+                let blocked = false;
+                if(pos !== -1) {
+                    for(let step=1; step<=roll; step++) {
+                        const stepPos = pos + step; if(stepPos > 51) break; 
+                        const absIdx = (START_IDX[color] + stepPos) % 52;
+                        if(blockades.has(absIdx) && step < roll) { blocked = true; break; }
+                    }
+                }
+                if(!blocked) moves.push(i);
+            });
+            return moves;
+        }
+
+        function getBlockades() {
+            const b = new Set();
+            COLORS.forEach(c => { const counts = {}; state.tokens[c].forEach(pos => { if(pos >= 0 && pos < 51) { const abs = (START_IDX[c] + pos) % 52; counts[abs] = (counts[abs] || 0) + 1; } }); for(let k in counts) if(counts[k] > 1) b.add(parseInt(k)); });
+            return b;
+        }
+
+        async function handleTokenClick(color, index) {
+            if(!state.diceRolled || state.isAnimating || color !== COLORS[state.turnIndex]) return;
+            const valid = getValidMoves(color, state.diceValue); if(!valid.includes(index)) return;
+            document.querySelectorAll('.token').forEach(t => { t.classList.remove('highlight'); t.innerHTML = ''; });
+            state.isAnimating = true; let currentPos = state.tokens[color][index]; const el = document.getElementById(`token-${color}-${index}`);
+
+            if(currentPos === -1) {
+                el.classList.add('moving'); state.tokens[color][index] = 0; playSound('step'); renderTokens(); await new Promise(r => setTimeout(r, 300)); el.classList.remove('moving');
+            } else {
+                for(let i=0; i<state.diceValue; i++) { el.classList.add('moving'); state.tokens[color][index]++; playSound('step'); renderTokens(); await new Promise(r => setTimeout(r, 300)); el.classList.remove('moving'); }
+            }
+            await checkCapture(color, index);
+            if(state.tokens[color].every(p => p === 56)) { state.gameOver = true; localStorage.removeItem('ludo_save'); showWinEffect(color); return; }
+            state.isAnimating = false;
+            if(state.diceValue === 6 || state.lastActionWasCapture || state.tokens[color][index] === 56) {
+                state.diceRolled = false; state.lastActionWasCapture = false; log(`Bonus turn for ${profiles[color].name}!`); updateUI();
+            } else { nextTurn(); }
+        }
+
+        async function checkCapture(color, index) {
+            const pos = state.tokens[color][index]; if(pos < 0 || pos >= 51) return;
+            const absIdx = (START_IDX[color] + pos) % 52; const coords = MAIN_PATH[absIdx].join(',');
+            if(SAFE_COORDS.has(coords)) return;
+            for (let opp of COLORS) {
+                if(opp === color) continue;
+                for (let oi=0; oi<4; oi++) {
+                    let oPos = state.tokens[opp][oi];
+                    if(oPos >= 0 && oPos < 51) {
+                        const oAbs = (START_IDX[opp] + oPos) % 52;
+                        if(oAbs === absIdx) {
+                            const capturedEl = document.getElementById(`token-${opp}-${oi}`);
+                            capturedEl.classList.add('captured'); playSound('capture');
+                            log(`💥 ${profiles[color].name} captured ${profiles[opp].name}!`);
+                            await new Promise(r => setTimeout(r, 500));
+                            capturedEl.classList.remove('captured');
+                            state.tokens[opp][oi] = -1; state.lastActionWasCapture = true; renderTokens();
+                        }
+                    }
+                }
+            }
+        }
+
+        function nextTurn() {
+            state.turnIndex = (state.turnIndex + 1) % 4; state.diceRolled = false; state.diceValue = 0; state.consecutiveSixes = 0;
+            log(`It's ${profiles[COLORS[state.turnIndex]].name}'s turn.`); updateUI();
+        }
+
+        function log(msg) { document.getElementById('log-bar').innerText = msg; }
+        function handleDiceClick(color) { if(color === COLORS[state.turnIndex]) rollDice(); }
+    </script>
+</body>
+</html>
