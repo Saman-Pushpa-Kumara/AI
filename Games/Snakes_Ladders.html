@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snakes & Ladders Pro 3D - Ultra Premium</title>
+
+    <!-- PWA Setup for Blogger (Single File Config) -->
+    <meta name="theme-color" content="#0a0a0e">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/fDtwsox.png">
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Snakes%20%26%20Ladders%20Pro%203D%22%2C%22short_name%22%3A%22S%26L%20Pro%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23050508%22%2C%22theme_color%22%3A%22%23FF3366%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fi.imgur.com%2FfDtwsox.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+
+    
+    <style>
+        :root {
+            --yellow: #FFD700; --blue: #00E5FF;
+            --red: #FF3366; --green: #00FF66;
+            --board-bg: #0a0a0e; 
+            --wood-bg: url("https://www.transparenttextures.com/patterns/black-scales.png");
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; user-select: none; }
+
+        body {
+            background-color: #050508;
+            background-image: var(--wood-bg), radial-gradient(circle at center, #1a1a24 0%, #050508 100%);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; overflow: hidden; color: white;
+            touch-action: manipulation;
+        }
+
+        /* --- Splash Screen --- */
+        #splash-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #0a0a0e; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease-out;
+        }
+        .splash-logo {
+            font-size: 40px; font-weight: 900; letter-spacing: 5px;
+            background: linear-gradient(135deg, var(--red), var(--blue), var(--yellow));
+            -webkit-background-clip: text; color: transparent;
+            animation: splashPulse 1.5s infinite alternate; text-align: center;
+        }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 2000;
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .modal-box {
+            background: rgba(20, 20, 30, 0.95); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; width: 350px; padding: 40px 30px; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,1);
+            max-height: 90vh; overflow-y: auto;
+        }
+
+        h2, h3 {
+            font-size: 24px; font-weight: 900; letter-spacing: 2px; margin-bottom: 25px;
+            background: linear-gradient(135deg, #FFD700, #FF3366, #00E5FF);
+            -webkit-background-clip: text; color: transparent;
+        }
+
+        .menu-btn {
+            width: 100%; padding: 15px; border: none; border-radius: 12px;
+            font-size: 15px; font-weight: bold; text-transform: uppercase;
+            color: white; cursor: pointer; margin-bottom: 15px; transition: 0.3s;
+        }
+        .btn-blue { background: linear-gradient(135deg, #0088cc, #003366); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3); }
+        .btn-green { background: linear-gradient(135deg, #009933, #004d1a); box-shadow: 0 5px 15px rgba(0, 255, 102, 0.3); }
+        .btn-gold { background: linear-gradient(135deg, #FFD700, #ccaa00); color: #000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
+        .btn-gray { background: #333; color: #fff; border: 1px solid #555; }
+        .btn-red { background: linear-gradient(135deg, #cc0033, #66001a); border: 1px solid #FF3366; }
+        .btn-install { background: linear-gradient(135deg, #FF3366, #ff8a8a); border: 1px solid #fff; box-shadow: 0 0 20px rgba(255, 51, 102, 0.6); animation: splashPulse 1.5s infinite alternate; }
+
+        /* --- Settings & Info Styles --- */
+        .settings-view, .info-view { display: none; animation: fadeIn 0.3s; }
+        .settings-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .settings-input {
+            flex: 1; background: transparent; border: none; border-bottom: 2px solid #555;
+            color: #fff; font-size: 15px; padding: 5px; margin: 0 10px; outline: none; text-transform: uppercase;
+        }
+        .settings-avatar-btn {
+            width: 45px; height: 45px; border-radius: 50%; border: 2px solid #fff;
+            background-size: cover; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+        .avatar-option {
+            width: 45px; height: 45px; border-radius: 50%; border: 2px solid transparent;
+            background-size: cover; cursor: pointer; transition: 0.2s; background-color: #222;
+        }
+        .avatar-option.selected { border-color: #00E5FF; transform: scale(1.15); box-shadow: 0 0 15px #00E5FF; }
+
+        /* --- Game UI --- */
+        #game-ui { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 500px; gap: 15px; padding: 10px; height: 100vh; justify-content: center; }
+        
+        .top-bar { display: flex; justify-content: space-between; width: 100%; padding: 0 10px; }
+        .back-icon { font-size: 20px; font-weight: bold; cursor: pointer; color: #fff; transition: 0.2s; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        .back-icon:hover { transform: scale(1.1); color: #FF3366; }
+
+        .player-row { display: flex; justify-content: space-between; width: 100%; }
+        .player-card {
+            background: rgba(20, 20, 30, 0.6); border-radius: 15px;
+            padding: 10px; display: flex; align-items: center; gap: 10px;
+            opacity: 0.3; transition: 0.4s; border: 1px solid rgba(255,255,255,0.05);
+            min-width: 145px;
+        }
+        .player-card.active { opacity: 1; transform: scale(1.05); background: rgba(30, 30, 45, 0.9); border-color: rgba(255,255,255,0.3); box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+        .player-avatar { width: 40px; height: 40px; border-radius: 50%; background-size: cover; border: 2px solid #555; }
+        .player-name { font-weight: 700; font-size: 13px; text-transform: uppercase; }
+
+        /* --- Dice --- */
+        .dice-scene { width: 45px; height: 45px; perspective: 600px; cursor: pointer; }
+        .dice-cube {
+            width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+            transform: translateZ(-22px) rotateX(-15deg) rotateY(-15deg);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .dice-face {
+            position: absolute; width: 45px; height: 45px; background: radial-gradient(circle, #2a2a35, #121216);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 10px;
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+            justify-items: center; align-items: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+        .dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; visibility: hidden; box-shadow: 0 0 5px #fff; }
+        .front { transform: rotateY(0deg) translateZ(22.5px); } .back { transform: rotateY(180deg) translateZ(22.5px); }
+        .top { transform: rotateX(90deg) translateZ(22.5px); } .bottom { transform: rotateX(-90deg) translateZ(22.5px); }
+        .right { transform: rotateY(90deg) translateZ(22.5px); } .left { transform: rotateY(-90deg) translateZ(22.5px); }
+
+        /* --- Board --- */
+        #board-container { 
+            position: relative; padding: 12px; background: rgba(25,25,35,0.85); 
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+        }
+        #board {
+            display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr);
+            width: 90vw; height: 90vw; max-width: 420px; max-height: 420px;
+            background: #000; border: 1px solid #333; position: relative;
+        }
+        .cell {
+            border: 0.1px solid rgba(255,255,255,0.05); display: flex; align-items: center;
+            justify-content: center; font-size: 11px; color: rgba(255,255,255,0.9);
+            position: relative; z-index: 1; font-weight: bold;
+        }
+        .cell:nth-child(4n) { background: rgba(255, 51, 102, 0.3); }
+        .cell:nth-child(4n+1) { background: rgba(0, 229, 255, 0.3); }
+        .cell:nth-child(4n+2) { background: rgba(255, 215, 0, 0.3); }
+        .cell:nth-child(4n+3) { background: rgba(0, 255, 102, 0.3); }
+
+        /* --- Elements SVG --- */
+        #elements-svg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 5;
+        }
+
+        /* Tokens */
+        .token {
+            position: absolute; width: 22px; height: 22px; border-radius: 50%;
+            z-index: 10; transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+            transform: translate(-50%, -50%); 
+        }
+        .token-0 { background: radial-gradient(circle at 30% 30%, #ff8a8a, var(--red)); box-shadow: 0 0 15px var(--red); }
+        .token-1 { background: radial-gradient(circle at 30% 30%, #8adeff, var(--blue)); box-shadow: 0 0 15px var(--blue); }
+        .token-2 { background: radial-gradient(circle at 30% 30%, #ffeb8a, var(--yellow)); box-shadow: 0 0 15px var(--yellow); }
+        .token-3 { background: radial-gradient(circle at 30% 30%, #8aff9e, var(--green)); box-shadow: 0 0 15px var(--green); }
+
+        #log-bar {
+            width: 100%; padding: 12px; border-radius: 30px; background: rgba(20,20,30,0.9);
+            text-align: center; font-size: 14px; color: #00E5FF; border: 1px solid rgba(255,255,255,0.1);
+            font-weight: 600;
+        }
+
+        #effect-overlay {
+            position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95);
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            backdrop-filter: blur(15px);
+        }
+        #effect-text { font-size: 45px; font-weight: 900; color: var(--yellow); text-shadow: 0 0 30px var(--yellow); margin-bottom: 25px; }
+        #effect-img { width: 280px; border-radius: 20px; box-shadow: 0 0 40px rgba(255,255,255,0.2); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes splashPulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.1); opacity: 1; } }
+        @keyframes diceThrowAnim { 0% { transform: translateZ(50px) rotateX(0deg) rotateY(0deg); } 100% { transform: translateZ(-22px) rotateX(720deg) rotateY(720deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen">
+        <div class="splash-logo">SNAKE & LADDER<br><span style="font-size: 18px; color: #555; letter-spacing: 2px;">PREMIUM 3D</span></div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="menu-modal" class="modal-overlay" style="display:flex;">
+        <div class="modal-box">
+            <h1 style="color:var(--blue); margin-bottom:30px; letter-spacing: 2px; font-size:30px;">SELECT MODE</h1>
+            
+            <button id="btn-install" class="menu-btn btn-install" style="display:none;" onclick="installPWA()">📥 Install App</button>
+            <button id="btn-continue" class="menu-btn btn-gold" style="display:none;" onclick="continueGame()">▶ Resume Game</button>
+            
+            <button class="menu-btn btn-blue" onclick="startNewGame(true)">🤖 Vs Computer</button>
+            <button class="menu-btn btn-green" onclick="startNewGame(false)">👥 Pass & Play (4P)</button>
+            <button class="menu-btn btn-gray" onclick="openSettings()">⚙️ Settings</button>
+            <button class="menu-btn btn-gray" onclick="openInfo()">ℹ️ Info</button>
+            
+            <p style="font-size:11px; color:#555; margin-top:20px;">MOD APPs - SRI LANKA</p>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box" id="settings-content">
+            <div id="view-main" class="settings-view" style="display:block;">
+                <h2>SETTINGS</h2>
+                <button class="menu-btn btn-blue" onclick="switchSettingsView('view-names')">👤 Player Names</button>
+                <button class="menu-btn btn-green" onclick="switchSettingsView('view-avatars')">🎨 Player Avatars</button>
+                <button id="btn-sound" class="menu-btn btn-gold" onclick="toggleSound()">🔊 Sound: ON</button>
+                <button class="menu-btn btn-red" onclick="switchSettingsView('view-reset')">🗑️ Data Reset</button>
+                <button class="menu-btn btn-gray" style="margin-top:15px;" onclick="closeSettings()">❌ Close</button>
+            </div>
+            <div id="view-names" class="settings-view">
+                <h2>PLAYER NAMES</h2>
+                <div id="name-inputs-container"></div>
+                <button class="menu-btn btn-green" style="margin-top:15px;" onclick="saveNames()">Save Names</button>
+                <button class="menu-btn btn-gray" onclick="switchSettingsView('view-main')">Back</button>
+            </div>
+            <div id="view-avatars" class="settings-view">
+                <h2>CHOOSE AVATARS</h2>
+                <div id="avatar-selectors-container"></div>
+                <button class="menu-btn btn-gray" style="margin-top:15px;" onclick="switchSettingsView('view-main')">Back</button>
+            </div>
+            <div id="view-reset" class="settings-view">
+                <h2 style="color:#FF3366;">DATA RESET</h2>
+                <p style="color:#ddd; font-size:14px; margin-bottom:20px;">Are you sure you want to reset all data?<br><strong style="color:#FF3366;">This will permanently delete your saved game and player profiles!</strong></p>
+                <button class="menu-btn btn-red" onclick="confirmResetData()">Yes, Reset Everything</button>
+                <button class="menu-btn btn-gray" onclick="switchSettingsView('view-main')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-box" id="info-content">
+            <div id="view-info-main" class="info-view" style="display:block;">
+                <h2>INFO</h2>
+                <button class="menu-btn btn-blue" onclick="switchInfoView('view-app-details')">📱 App Details</button>
+                <button class="menu-btn btn-green" onclick="switchInfoView('view-privacy')">🔒 Privacy Policy</button>
+                <button class="menu-btn btn-gold" onclick="switchInfoView('view-creator')">ℹ️ Created Info</button>
+                <button class="menu-btn btn-gray" style="margin-top:15px;" onclick="closeInfo()">❌ Close</button>
+            </div>
+            <div id="view-app-details" class="info-view">
+                <h2>APP DETAILS</h2>
+                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                    <h3 style="color:#00E5FF; margin-bottom: 10px; font-size:18px;">SNAKE & LADDER PRO</h3>
+                    <p style="color:#ccc; font-size:14px; line-height: 1.6;">Version: 1.0.0<br><br>Premium 3D Edition featuring smooth animations, smart UI, auto-save technology, and offline support.</p>
+                </div>
+                <button class="menu-btn btn-gray" onclick="switchInfoView('view-info-main')">Back</button>
+            </div>
+            <div id="view-privacy" class="info-view">
+                <h2>PRIVACY POLICY</h2>
+                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                    <p style="color:#ccc; font-size:14px; line-height: 1.6;">No personal data is collected or shared. All game data and profiles are saved locally on your device.</p>
+                </div>
+                <button class="menu-btn btn-gray" onclick="switchInfoView('view-info-main')">Back</button>
+            </div>
+            <div id="view-creator" class="info-view">
+                <h2>CREATED INFO</h2>
+                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                    <p style="color:#ccc; font-size:15px; line-height: 1.8;"><strong>Created by Saman , Sri Lanka</strong><br><br><span style="color:var(--blue);">Facebook : MOD APPs - Android Device</span></p>
+                </div>
+                <button class="menu-btn btn-gray" onclick="switchInfoView('view-info-main')">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Picker Modal -->
+    <div id="avatar-modal" class="modal-overlay" style="z-index: 2001;">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 15px;">Select Avatar</h3>
+            <div class="avatar-grid" id="avatar-grid"></div>
+            <button class="menu-btn btn-gray" onclick="closeAvatarPicker()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Exit Confirmation Modal -->
+    <div id="exit-modal" class="modal-overlay" style="z-index: 3000;">
+        <div class="modal-box" style="padding: 25px;">
+            <h3 style="margin-bottom: 15px; color:#FF3366;">Exit Game?</h3>
+            <p style="margin-bottom: 20px; color:#ccc; font-size:14px;">Are you sure you want to exit the game?<br>(Your progress will be saved automatically.)</p>
+            <button class="menu-btn btn-red" onclick="confirmExit()">Yes, Exit</button>
+            <button class="menu-btn btn-gray" onclick="cancelExit()">Cancel</button>
+        </div>
+    </div>
+
+    <div id="effect-overlay">
+        <h2 id="effect-text">VICTORY!</h2>
+        <img id="effect-img" src="https://cdn.pixabay.com/animation/2024/12/15/18/36/18-36-43-625_512.gif" alt="Winner">
+        <button class="menu-btn btn-blue" style="width: 200px; margin-top: 40px;" onclick="location.reload()">PLAY AGAIN</button>
+    </div>
+
+    <div id="game-ui">
+        <!-- New Top Bar with Back Button -->
+        <div class="top-bar">
+            <div class="back-icon" onclick="triggerExit()">🔙 Menu</div>
+        </div>
+
+        <div class="player-row">
+            <div id="card-0" class="player-card"><div class="player-avatar" id="av-0"></div><div class="player-name" id="name-0" style="color:var(--red)">Red</div><div class="dice-scene" id="dice-0" onclick="handleDiceClick()"></div></div>
+            <div id="card-1" class="player-card"><div class="dice-scene" id="dice-1" onclick="handleDiceClick()"></div><div class="player-name" id="name-1" style="color:var(--blue); text-align:right">Blue</div><div class="player-avatar" id="av-1"></div></div>
+        </div>
+
+        <div id="log-bar">ROLL THE DICE TO BEGIN!</div>
+
+        <div id="board-container">
+            <div id="board"></div>
+            <svg id="elements-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="ladderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#d4a373;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#8b5a2b;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <div class="player-row">
+            <div id="card-3" class="player-card"><div class="player-avatar" id="av-3"></div><div class="player-name" id="name-3" style="color:var(--green)">Green</div><div class="dice-scene" id="dice-3" onclick="handleDiceClick()"></div></div>
+            <div id="card-2" class="player-card"><div class="dice-scene" id="dice-2" onclick="handleDiceClick()"></div><div class="player-name" id="name-2" style="color:var(--yellow); text-align:right">Yellow</div><div class="player-avatar" id="av-2"></div></div>
+        </div>
+    </div>
+
+    <script>
+        // --- PWA Installation Logic ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('btn-install').style.display = 'block';
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the PWA install prompt');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('btn-install').style.display = 'none';
+                });
+            }
+        }
+
+        // --- Screen Wake Lock API ---
+        let wakeLock = null;
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Screen Wake Lock Active!');
+                    wakeLock.addEventListener('release', () => console.log('Screen Wake Lock Released'));
+                }
+            } catch (err) { console.error('Wake Lock error: ', err.message); }
+        }
+        function releaseWakeLock() {
+            if (wakeLock !== null) { wakeLock.release().then(() => wakeLock = null); }
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock();
+        });
+
+
+        // --- Core Data & Variables ---
+        const SNAKES = { 23: 5, 33: 9, 44: 25, 60: 21, 68: 36, 83: 43, 89: 56, 91: 70, 94: 11, 96: 81 };
+        const LADDERS = { 4: 35, 8: 47, 20: 55, 31: 85, 40: 62, 42: 77, 64: 82, 72: 90, 86: 93 };
+        const COLORS = ['red', 'blue', 'yellow', 'green'];
+        const PLAYER_IDS = [0, 1, 2, 3];
+        const DICE_TRANSFORMS = { 1:'', 2:'rotateX(-90deg)', 3:'rotateY(-90deg)', 4:'rotateY(90deg)', 5:'rotateX(90deg)', 6:'rotateX(180deg)' };
+
+        const AVATARS =[
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam", "https://api.dicebear.com/7.x/avataaars/svg?seed=Nimal",
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Kamali", "https://api.dicebear.com/7.x/avataaars/svg?seed=Bot1",
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Hero", "https://api.dicebear.com/7.x/avataaars/svg?seed=King",
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Queen", "https://api.dicebear.com/7.x/avataaars/svg?seed=Ninja",
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Pro", "https://api.dicebear.com/7.x/avataaars/svg?seed=Max"
+        ];
+
+        let profiles = JSON.parse(localStorage.getItem('snl_profiles')) || {
+            0: { name: 'Red', avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=A" },
+            1: { name: 'Blue', avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=B" },
+            2: { name: 'Yellow', avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=D" },
+            3: { name: 'Green', avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=C" }
+        };
+
+        let soundEnabled = JSON.parse(localStorage.getItem('snl_sound')) ?? true;
+
+        let state = {
+            players:[0, 0, 0, 0], turn: 0, isVsCPU: false, isRolling: false, gameOver: false, audio: null
+        };
+
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    checkSavedGame();
+                }, 500);
+            }, 2000);
+            createBoard();
+            applyProfilesToUI();
+            
+            if (soundEnabled) document.getElementById('btn-sound').innerText = '🔊 Sound: ON';
+            else document.getElementById('btn-sound').innerText = '🔇 Sound: OFF';
+
+            // Custom Back Button History Logic
+            window.history.pushState({ page: 1 }, "", "");
+            window.onpopstate = function(event) {
+                if(document.getElementById('game-ui').style.display === 'flex') {
+                    triggerExit();
+                    window.history.pushState({ page: 1 }, "", "");
+                } else { 
+                    window.history.back(); 
+                }
+            };
+        };
+
+        function checkSavedGame() {
+            const saved = localStorage.getItem('snl_save');
+            if(saved) document.getElementById('btn-continue').style.display = 'block';
+        }
+
+        function saveGame() { 
+            if(!state.gameOver) {
+                let tempAudio = state.audio;
+                state.audio = null; // Don't stringify audio context
+                localStorage.setItem('snl_save', JSON.stringify(state)); 
+                state.audio = tempAudio;
+            }
+        }
+
+        function startNewGame(vsCPU) {
+            localStorage.removeItem('snl_save');
+            state = { players: [0, 0, 0, 0], turn: 0, isVsCPU: vsCPU, isRolling: false, gameOver: false, audio: null };
+            launchGame();
+        }
+
+        function continueGame() {
+            const saved = JSON.parse(localStorage.getItem('snl_save'));
+            if(saved) { state = saved; state.isRolling = false; state.audio = null; }
+            launchGame();
+        }
+
+        function launchGame() {
+            initAudio(); requestWakeLock();
+            document.getElementById('menu-modal').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'flex';
+            initDiceUI(); initTokens(); updateUI();
+            
+            // Move tokens to saved positions if resumed
+            for(let i=0; i<4; i++) moveTokenUI(i, state.players[i]);
+            
+            if(state.isVsCPU && state.turn !== 0 && !state.gameOver) setTimeout(handleDiceClick, 1000);
+        }
+
+        // --- Settings & Info Modals Functions ---
+        function openInfo() { document.getElementById('info-modal').style.display = 'flex'; switchInfoView('view-info-main'); }
+        function closeInfo() { document.getElementById('info-modal').style.display = 'none'; }
+        function switchInfoView(viewId) { document.querySelectorAll('.info-view').forEach(v => v.style.display = 'none'); document.getElementById(viewId).style.display = 'block'; }
+
+        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; switchSettingsView('view-main'); }
+        function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+        
+        function switchSettingsView(viewId) {
+            document.querySelectorAll('.settings-view').forEach(v => v.style.display = 'none');
+            document.getElementById(viewId).style.display = 'block';
+
+            if(viewId === 'view-names') {
+                let html = '';
+                PLAYER_IDS.forEach(c => {
+                    html += `<div class="settings-row"><div style="width:15px; height:15px; border-radius:50%; background:var(--${COLORS[c]}); box-shadow:0 0 5px var(--${COLORS[c]})"></div><input type="text" id="input-name-${c}" class="settings-input" value="${profiles[c].name}" maxlength="10"></div>`;
+                });
+                document.getElementById('name-inputs-container').innerHTML = html;
+            }
+            if(viewId === 'view-avatars') {
+                let html = '';
+                PLAYER_IDS.forEach(c => {
+                    html += `<div class="settings-row" style="cursor:pointer;" onclick="openAvatarPicker('${c}')"><div style="color:var(--${COLORS[c]}); font-weight:bold; text-transform:uppercase; flex:1; text-align:left;">${profiles[c].name}</div><div class="settings-avatar-btn" style="background-image:url('${profiles[c].avatar}')" id="btn-av-setting-${c}"></div><div style="font-size:18px; margin-left:15px; color:#aaa;">✎</div></div>`;
+                });
+                document.getElementById('avatar-selectors-container').innerHTML = html;
+            }
+        }
+
+        function saveNames() {
+            PLAYER_IDS.forEach(c => { profiles[c].name = document.getElementById(`input-name-${c}`).value || profiles[c].name; });
+            localStorage.setItem('snl_profiles', JSON.stringify(profiles));
+            applyProfilesToUI(); switchSettingsView('view-main');
+        }
+
+        let currentEditingColor = '';
+        function openAvatarPicker(id) {
+            currentEditingColor = id; const grid = document.getElementById('avatar-grid'); grid.innerHTML = '';
+            AVATARS.forEach(url => {
+                const isSelected = profiles[id].avatar === url ? 'selected' : '';
+                grid.innerHTML += `<div class="avatar-option ${isSelected}" style="background-image:url('${url}')" onclick="selectAvatar('${url}')"></div>`;
+            });
+            document.getElementById('avatar-modal').style.display = 'flex';
+        }
+
+        function selectAvatar(url) {
+            profiles[currentEditingColor].avatar = url; localStorage.setItem('snl_profiles', JSON.stringify(profiles));
+            applyProfilesToUI(); document.getElementById(`btn-av-setting-${currentEditingColor}`).style.backgroundImage = `url('${url}')`; closeAvatarPicker();
+        }
+        function closeAvatarPicker() { document.getElementById('avatar-modal').style.display = 'none'; }
+        
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            localStorage.setItem('snl_sound', JSON.stringify(soundEnabled));
+            document.getElementById('btn-sound').innerText = soundEnabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+        }
+
+        function confirmResetData() { localStorage.clear(); location.reload(); }
+
+        function applyProfilesToUI() {
+            PLAYER_IDS.forEach(c => {
+                let nameEl = document.getElementById(`name-${c}`);
+                let avEl = document.getElementById(`av-${c}`);
+                if(nameEl) nameEl.innerText = profiles[c].name;
+                if(avEl) avEl.style.backgroundImage = `url('${profiles[c].avatar}')`;
+            });
+        }
+
+        // --- Exit Menu Logic ---
+        function triggerExit() { document.getElementById('exit-modal').style.display = 'flex'; }
+        function cancelExit() { document.getElementById('exit-modal').style.display = 'none'; }
+        function confirmExit() { 
+            saveGame(); releaseWakeLock(); location.reload(); 
+        }
+
+        // --- Game Logic functions (Untouched inner logic, just added hooks) ---
+        function initAudio() {
+            if (!state.audio) state.audio = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playSound(f, t, d) {
+            if (!soundEnabled || !state.audio) return;
+            if(state.audio.state === 'suspended') state.audio.resume();
+            const o = state.audio.createOscillator();
+            const g = state.audio.createGain();
+            o.type = t; o.frequency.setValueAtTime(f, state.audio.currentTime);
+            g.gain.setValueAtTime(0.1, state.audio.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, state.audio.currentTime + d);
+            o.connect(g); g.connect(state.audio.destination);
+            o.start(); o.stop(state.audio.currentTime + d);
+        }
+
+        function createBoard() {
+            const board = document.getElementById('board');
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                let row = Math.floor(i / 10);
+                let col = i % 10;
+                let num = (row % 2 === 0) ? (100 - (row * 10 + col)) : (100 - (row * 10 + (9 - col)));
+                cell.id = `cell-${num}`;
+                cell.innerText = num;
+                board.appendChild(cell);
+            }
+            drawGraphics();
+        }
+
+
+
+        function drawGraphics() {
+            const svg = document.getElementById('elements-svg');
+            
+            // Ladders (නිවැරදි කරන ලද කේතය)
+            for (let sIdx in LADDERS) {
+                let s = getPos(sIdx), e = getPos(LADDERS[sIdx]);
+                let dx = e.x - s.x, dy = e.y - s.y;
+                
+                // ඉනිමගේ දිග සහ ලම්බක (perpendicular) අගයන් ගණනය කිරීම
+                let length = Math.sqrt(dx * dx + dy * dy);
+                let nx = -dy / length; // X සඳහා ලම්බක අගය
+                let ny = dx / length;  // Y සඳහා ලම්බක අගය
+                
+                let width = 1.8; // ඉනිමඟේ පළල (අවශ්‍ය නම් වෙනස් කර බලන්න)
+
+                svg.innerHTML += `
+                    <g opacity="0.6">
+                        <!-- වම් පස කණුව -->
+                        <line x1="${s.x - nx * width}" y1="${s.y - ny * width}" 
+                              x2="${e.x - nx * width}" y2="${e.y - ny * width}" 
+                              stroke="url(#ladderGrad)" stroke-width="2.5" stroke-linecap="round" />
+                        <!-- දකුණු පස කණුව -->
+                        <line x1="${s.x + nx * width}" y1="${s.y + ny * width}" 
+                              x2="${e.x + nx * width}" y2="${e.y + ny * width}" 
+                              stroke="url(#ladderGrad)" stroke-width="2.5" stroke-linecap="round" />
+                        
+                        <!-- ඉනිමඟේ පඩි (Rungs) -->
+                        ${Array.from({length: 6}).map((_, i) => {
+                            let fraction = (i + 1) / 7; // පඩි 6 සමාන දුරින් බෙදීම
+                            let rx = s.x + dx * fraction;
+                            let ry = s.y + dy * fraction;
+                            return `<line x1="${rx - nx * width}" y1="${ry - ny * width}" 
+                                          x2="${rx + nx * width}" y2="${ry + ny * width}" 
+                                          stroke="#8b5a2b" stroke-width="1.5" stroke-linecap="round" />`;
+                        }).join('')}
+                    </g>`;
+            }
+
+            // Snakes (පෙර තිබූ පරිදිම)
+            // ... (මෙතැනින් පහළට ඔබගේ සර්පයන් (Snakes) අඳින කේතය එලෙසම තබන්න)
+
+
+
+
+            // Snakes
+            for (let sIdx in SNAKES) {
+                let s = getPos(sIdx);
+                let e = getPos(SNAKES[sIdx]);
+                let cp1 = { x: s.x + (e.x - s.x) * 0.3 + 12, y: s.y + (e.y - s.y) * 0.3 };
+                let cp2 = { x: s.x + (e.x - s.x) * 0.7 - 12, y: s.y + (e.y - s.y) * 0.7 };
+                let pathData = `M ${s.x} ${s.y} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y}, ${e.x} ${e.y}`;
+
+                svg.innerHTML += `
+                    <g opacity="0.6">
+                        <path d="M ${s.x} ${s.y} L ${s.x} ${s.y-3} L ${s.x-1} ${s.y-4} M ${s.x} ${s.y-3} L ${s.x+1} ${s.y-4}" stroke="red" stroke-width="0.5" fill="none" />
+                        <path d="${pathData}" stroke="#1b5e20" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                        <path d="${pathData}" stroke="#000000" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-dasharray="1.5 2" />
+                        <ellipse cx="${s.x}" cy="${s.y}" rx="3" ry="2.5" fill="#1b5e20" />
+                        <circle cx="${s.x - 1.2}" cy="${s.y - 0.5}" r="0.6" fill="white" />
+                        <circle cx="${s.x + 1.2}" cy="${s.y - 0.5}" r="0.6" fill="white" />
+                        <circle cx="${s.x - 1.2}" cy="${s.y - 0.5}" r="0.3" fill="black" />
+                        <circle cx="${s.x + 1.2}" cy="${s.y - 0.5}" r="0.3" fill="black" />
+                    </g>`;
+            }
+        }
+
+        function getPos(n) {
+            let pos = 100 - n;
+            let row = Math.floor(pos / 10);
+            let col = pos % 10;
+            if (row % 2 !== 0) col = 9 - col;
+            return { x: col * 10 + 5, y: row * 10 + 5 };
+        }
+
+        function initDiceUI() {
+            for(let i=0; i<4; i++) {
+                document.getElementById(`dice-${i}`).innerHTML = `
+                <div class="dice-cube" id="cube-${i}">
+                    <div class="dice-face front">${dots(1)}</div><div class="dice-face back">${dots(6)}</div>
+                    <div class="dice-face top">${dots(2)}</div><div class="dice-face bottom">${dots(5)}</div>
+                    <div class="dice-face right">${dots(3)}</div><div class="dice-face left">${dots(4)}</div>
+                </div>`;
+            }
+        }
+
+        function dots(n) {
+            const m = { 1:[5], 2:[1,9], 3:[1,5,9], 4:[1,3,7,9], 5:[1,3,5,7,9], 6:[1,3,4,6,7,9] };
+            let h = ''; for(let i=1;i<=9;i++) h += `<div class="dot" style="visibility:${m[n].includes(i)?'visible':'hidden'}"></div>`;
+            return h;
+        }
+
+        function initTokens() {
+            for(let i=0; i<4; i++) {
+                let existing = document.getElementById(`token-${i}`);
+                if (!existing) {
+                    const t = document.createElement('div');
+                    t.id = `token-${i}`; t.className = `token token-${i}`;
+                    document.getElementById('board-container').appendChild(t);
+                }
+                // Don't reset to 0 if continuing a saved game! It is handled in launchGame.
+            }
+        }
+
+        function moveTokenUI(id, n) {
+            const t = document.getElementById(`token-${id}`);
+            if (n === 0) { t.style.left = "-30px"; t.style.top = "100%"; return; }
+            const p = getPos(n);
+            t.style.left = `${p.x}%`; 
+            t.style.top = `${p.y}%`;
+        }
+
+        async function handleDiceClick() {
+            if (state.isRolling || state.gameOver) return;
+            state.isRolling = true;
+            
+            const roll = Math.floor(Math.random() * 6) + 1;
+            const cube = document.getElementById(`cube-${state.turn}`);
+            
+            cube.style.animation = 'diceThrowAnim 0.6s linear';
+            playSound(300, 'square', 0.1);
+            
+            await new Promise(r => setTimeout(r, 600));
+            cube.style.animation = 'none';
+            cube.style.transform = `translateZ(-22px) ${DICE_TRANSFORMS[roll]}`;
+
+            log(`${profiles[state.turn].name.toUpperCase()} ROLLED ${roll}`);
+            await movePlayer(state.turn, roll);
+
+            if(!state.gameOver) {
+                state.turn = (state.turn + 1) % 4;
+                saveGame(); // Save state after a valid turn update
+                updateUI();
+                if(state.isVsCPU && state.turn !== 0) setTimeout(handleDiceClick, 1000);
+            }
+            state.isRolling = false;
+        }
+
+        async function movePlayer(id, steps) {
+            let cur = state.players[id];
+            if (cur + steps > 100) return;
+
+            for(let i=1; i<=steps; i++) {
+                cur++;
+                state.players[id] = cur;
+                moveTokenUI(id, cur);
+                playSound(600, 'sine', 0.05);
+                await new Promise(r => setTimeout(r, 250));
+            }
+
+            if(LADDERS[cur]) {
+                log("UP THE LADDER! 🪜"); playSound(800, 'triangle', 0.4);
+                cur = LADDERS[cur];
+                await new Promise(r => setTimeout(r, 500));
+                state.players[id] = cur; moveTokenUI(id, cur);
+            } else if (SNAKES[cur]) {
+                log("SNAKE BITE! 🐍"); playSound(150, 'sawtooth', 0.5);
+                cur = SNAKES[cur];
+                await new Promise(r => setTimeout(r, 500));
+                state.players[id] = cur; moveTokenUI(id, cur);
+            }
+
+            if(cur === 100) {
+                state.gameOver = true;
+                localStorage.removeItem('snl_save'); // Clear save on win
+                releaseWakeLock(); // Release screen lock on win
+                document.getElementById('effect-overlay').style.display = 'flex';
+                document.getElementById('effect-text').innerText = `${profiles[id].name.toUpperCase()} WINS!`;
+                playSound(500, 'sine', 1.5);
+            }
+        }
+
+        function updateUI() {
+            for(let i=0; i<4; i++) document.getElementById(`card-${i}`).classList.toggle('active', i === state.turn);
+        }
+
+        function log(m) { document.getElementById('log-bar').innerText = m; }
+    </script>
+</body>
+  </html>
