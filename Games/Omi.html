@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Omi - Dark Horror Edition Pro</title>
     
-    <!-- PWA Manifest & Theme (Ludo Game එකෙන් ගත් සැකසුම්) -->
-    <meta name="theme-color" content="#050505">
-    <link rel="apple-touch-icon" href="https://i.imgur.com/GCoRTKV.jpeg">
-    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22id%22%3A%22%2Fomi%22%2C%22name%22%3A%22Omi%20Pro%22%2C%22short_name%22%3A%22Omi%22%2C%22start_url%22%3A%22.%2Fomi.html%22%2C%22scope%22%3A%22.%2Fomi%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23050505%22%2C%22theme_color%22%3A%22%238a0303%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fi.imgur.com%2FGCoRTKV.jpeg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%2C%22purpose%22%3A%22any%20maskable%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fi.imgur.com%2FGCoRTKV.jpeg%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fjpeg%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
-    <style
+    <!-- FIX: 100% Valid PWA Manifest with Embedded 192x192 & 512x512 Icons to trigger "Install App" instead of "Add to Home screen" -->
+  <meta name="theme-color" content="#0a0a0e">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/kjtCA2K.jpeg">
+   <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Omi%20Dark%20Pro%22%2C%22short_name%22%3A%22Omi%20Pro%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23050505%22%2C%22theme_color%22%3A%22%238a0303%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fi.imgur.com%2FkjtCA2K.jpeg%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fi.imgur.com%2FkjtCA2K.jpeg%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%5D%7D">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -17,8 +16,8 @@
         :root {
             --bg-color: #050505; --accent-red: #8a0303; --accent-glow: #ff1a1a;
             --text-light: #e0e0e0; --glass-bg: rgba(15, 0, 0, 0.7);
-            --card-w: 52px; --card-h: 78px;
-            --user-card-w: 68px; --user-card-h: 105px;
+            --card-w: 82px; --card-h: 108px;
+            --user-card-w: 80px; --user-card-h: 115px;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -43,33 +42,24 @@
         h2 { color: var(--accent-glow); font-size: 24px; text-transform: uppercase; border-bottom: 2px solid var(--accent-red); padding-bottom: 5px; margin-bottom: 20px; text-align: center;}
         
         .btn {
-            width: 100%; max-width: 260px; padding: 14px 35px; border: none; border-radius: 25px;
-            font-size: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
-            color: white; cursor: pointer; margin-bottom: 12px; transition: all 0.2s ease;
-            display: block; text-align: center;
-            background: linear-gradient(135deg, #4a0000, #1a0000);
-            box-shadow: 0 5px 15px rgba(138, 3, 3, 0.4); border: 1px solid var(--accent-glow);
+            background: linear-gradient(135deg, #4a0000, #1a0000); color: #fff;
+            border: 1px solid var(--accent-glow); padding: 14px 35px; font-size: 15px; font-weight: 700;
+            border-radius: 25px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-transform: uppercase; width: 260px; margin: 8px 0; box-shadow: 0 5px 15px rgba(138, 3, 3, 0.4); letter-spacing: 1px;
         }
-        .btn:hover { background: var(--accent-red); box-shadow: 0 0 25px var(--accent-glow); transform: scale(1.02); }
+        .btn:hover { background: var(--accent-red); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-3px); }
+        .btn:active { transform: translateY(1px); }
         .btn.outline { background: transparent; border: 2px solid var(--accent-red); color: var(--accent-glow); }
+        .btn.outline:hover { background: rgba(138,3,3,0.2); }
 
-        /* Ludo එකෙන් ගත් Install Button එකේ Style එක */
-        .btn-install { 
-            background: linear-gradient(135deg, #FF3366, #ff8a8a); 
-            border: 1px solid #fff; 
-            box-shadow: 0 0 20px rgba(255, 51, 102, 0.6); 
-            animation: splashPulse 1.5s infinite alternate; 
-            color: #fff !important;
-            margin-bottom: 20px;
-        }
-
-        @keyframes splashPulse { from { filter: brightness(1); transform: scale(1); } to { filter: brightness(1.3); transform: scale(1.05); } }
+        /* Install App Button Theme Preserved */
+        #btn-install { display: none; background: linear-gradient(180deg, #004a11, #001a05); border-color: #00ff40; box-shadow: 0 5px 15px rgba(0, 255, 64, 0.3); }
+        #btn-install:hover { background: #008a20; box-shadow: 0 0 25px #00ff40; }
 
         /* --- IN-GAME HUD --- */
         .top-bar { position: absolute; top: 15px; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 20; }
        
         .resource-group { display: flex; flex-direction: column; gap: 5px; }
-
         .resource-pill { background: var(--glass-bg); border: 1px solid var(--accent-red); border-radius: 20px; padding: 4px 12px; display: flex; align-items: center; font-size: 12px; font-weight: 700; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.6); min-width: 80px;}
         .resource-pill span.label { color: #aaa; font-size: 9px; margin-right: 8px; text-transform: uppercase;}
         
@@ -78,85 +68,50 @@
         .top-icon:hover { background: var(--accent-red); box-shadow: 0 0 15px var(--accent-glow); transform: scale(1.1);}
 
         /* --- SCORE BOARD --- */
-        .score-board {
-            background: var(--glass-bg);
-            border: 1px solid var(--accent-red);
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 4px 15px;
-            width: 140px; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-            z-index: 30;
-        }
-
+        .score-board { background: var(--glass-bg); border: 1px solid var(--accent-red); border-radius: 30px; display: flex; align-items: center; justify-content: space-between; padding: 4px 15px; width: 140px; box-shadow: 0 5px 20px rgba(0,0,0,0.8); z-index: 30; }
         .score-num { font-size: 18px; font-weight: 800; color: var(--text-light); }
         .score-label { font-size: 9px; font-weight: 600; color: #aaa; text-transform: uppercase; }
-        .score-center { background: radial-gradient(circle, #fff, #ddd); border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-size: 14px; margin: 0 5px; box-shadow: inset 0 0 10px #ff0000; color: red; }
+        .score-center { background: radial-gradient(circle, #000, #ddd); border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-size: 14px; margin: 0 5px; box-shadow: inset 0 0 10px #ff0000; color: red; }
 
         #hud-trump { position: absolute; top: 140px; left: 15px; background: var(--glass-bg); backdrop-filter: blur(5px); padding: 8px 15px; border-radius: 12px; border: 1px solid var(--accent-red); z-index: 10; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
         .hud-title { color: #888; font-size: 10px; text-transform: uppercase; margin-bottom: 2px;}
         .hud-trump-icon { font-size: 28px; text-shadow: 0 0 15px var(--accent-glow); line-height: 1;}
 
         /* --- CENTER TABLE --- */
-        #center-table {
-            position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%);
-            width: 220px; height: 230px; border-radius: 20px;
-            background: linear-gradient(135deg, rgba(42, 8, 8, 0.8) 0%, rgba(10, 0, 0, 0.8) 100%);
-            border: 2px solid rgba(138,3,3,0.5); 
-            box-shadow: 0 0 40px rgba(0,0,0,0.9), inset 0 0 25px rgba(138,3,3,0.3);
-            z-index: 2; pointer-events: none;
-        }
-
+        #center-table { position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); width: 220px; height: 230px; border-radius: 20px; background: linear-gradient(135deg, rgba(42, 8, 8, 0.8) 0%, rgba(10, 0, 0, 0.8) 100%); border: 2px solid rgba(138,3,3,0.5); box-shadow: 0 0 40px rgba(0,0,0,0.9), inset 0 0 25px rgba(138,3,3,0.3); z-index: 2; pointer-events: none; }
         .bottom-curve { position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%); width: 150vw; height: 200px; background: radial-gradient(ellipse at top, rgba(26,0,0,0.9) 0%, #000 100%); border-top: 3px solid var(--accent-red); border-radius: 50%; z-index: 10; box-shadow: 0 -10px 40px rgba(138,3,3,0.3); }
         .bottom-banner { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.9); color: #ccc; font-size: 11px; font-weight: 500; padding: 8px 10px; text-align: center; z-index: 40; border-top: 1px solid #330000; letter-spacing: 1px; }
 
-        /* --- AVATARS --- */
-        .avatar {
-            width: 58px; height: 58px; border-radius: 50%; border: 2px solid #555;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.9); position: absolute;
-            background-size: cover; background-position: center; z-index: 25; 
-            display: flex; justify-content: center; align-items: flex-end; transition: all 0.3s;
-        }
+        /* --- AVATARS & PLACEMENTS --- */
+        .avatar { width: 58px; height: 58px; border-radius: 50%; border: 2px solid #555; box-shadow: 0 5px 15px rgba(0,0,0,0.9); position: absolute; background-size: cover; background-position: center; z-index: 25; display: flex; justify-content: center; align-items: flex-end; transition: all 0.3s; }
         .avatar .name { background: rgba(0,0,0,0.95); color: var(--text-light); font-size: 10px; padding: 3px 10px; border-radius: 12px; transform: translateY(16px); white-space: nowrap; font-weight: 600; border: 1px solid var(--accent-red); }
         .active-turn { border-color: var(--accent-glow); box-shadow: 0 0 25px var(--accent-red); transform: scale(1.15); z-index: 35;}
         .pro-badge { position: absolute; top: -5px; right: -5px; background: linear-gradient(45deg, #f1c40f, #d4ac0d); color: #000; font-size: 8px; font-weight: 900; padding: 2px 5px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.8);}
 
         #avatar-0 { bottom: 55px; left: 50%; transform: translateX(-50%); border-color: var(--accent-glow); width: 65px; height: 65px;} 
         #avatar-1 { top: 48%; left: 15px; transform: translateY(-50%); } 
-        #avatar-2 { top: 85px; left: 50%; transform: translateX(-50%); }
+        #avatar-2 { top: 130px; left: 50%; transform: translateX(-50%); } 
         #avatar-3 { top: 48%; right: 15px; transform: translateY(-50%); } 
 
         /* --- CARDS & HANDS --- */
         .hand { position: absolute; z-index: 20; pointer-events: none;}
         #hand-0 { bottom: 75px; left: 50%; transform: translateX(-50%); width: 320px; height: var(--user-card-h); z-index: 30; pointer-events: auto; }
         #hand-1 { top: 48%; left: 90px; transform: translateY(-50%); } 
-        #hand-2 { top: 15px; left: 50%; transform: translateX(-50%); } 
+        #hand-2 { top: 165px; left: 50%; transform: translateX(-50%); } 
         #hand-3 { top: 48%; right: 90px; transform: translateY(-50%); } 
 
-        .card {
-            width: var(--card-w); height: var(--card-h); position: absolute;
-            background-size: cover; background-position: center; border-radius: 5px;
-            box-shadow: -2px 4px 10px rgba(0,0,0,0.8); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            filter: grayscale(10%) contrast(110%) sepia(10%); transform-origin: bottom center;
-        }
-        
+        .card { width: var(--card-w); height: var(--card-h); position: absolute; background-size: cover; background-position: center; border-radius: 5px; box-shadow: -2px 4px 10px rgba(0,0,0,0.8); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); filter: grayscale(10%) contrast(110%) sepia(10%); transform-origin: bottom center; }
         .card-back-pattern { background-image: url('https://cdn.pixabay.com/photo/2016/08/13/15/29/grim-reaper-1590895_640.png'); background-color: #050000; background-size: cover; background-position: center top; border: 2px solid #222; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), -2px 5px 10px rgba(0,0,0,0.8); }
         .user-card { width: var(--user-card-w); height: var(--user-card-h); cursor: pointer; pointer-events: auto; border-radius: 6px; border: 1px solid #333;}
         .user-card:hover { transform: translateY(-25px) scale(1.15) !important; border: 2px solid var(--accent-glow); filter: none; z-index: 50; box-shadow: 0 10px 20px rgba(0,0,0,0.9); }
 
-        /* --- MODALS --- */
-        .modal-overlay { position: absolute; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.9); z-index: 200; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px);}
-        .game-modal { background: radial-gradient(circle, #1a0505, #050000); padding: 30px; border-radius: 20px; border: 1px solid var(--accent-glow); text-align: center; box-shadow: 0 0 40px rgba(138,3,3,0.8); max-width: 85%; width: 320px;}
-        
         /* --- SETTINGS UI --- */
-        .settings-container { width: 100%; max-width: 350px; background: var(--glass-bg); border-radius: 15px; border: 1px solid #440000; padding: 15px;}
-        .acc-btn { background: #1a0000; color: #fff; cursor: pointer; padding: 15px; width: 100%; text-align: left; border: 1px solid #330000; outline: none; transition: 0.4s; font-family: 'Poppins'; font-weight: 600; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between;}
-        .acc-panel { padding: 0 10px; background: transparent; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .settings-container { width: 100%; max-width: 350px; background: var(--glass-bg); border-radius: 15px; border: 1px solid #440000; padding: 15px; overflow-y: auto; max-height: 60vh; scrollbar-width: none;}
         .set-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin: 10px 0;}
+        .set-label { font-size: 13px; color: #ccc;}
         .set-input { width: 140px; padding: 6px 10px; background: #050505; border: 1px solid var(--accent-red); color: #fff; border-radius: 6px; text-align: center; font-family: 'Poppins'; font-size: 13px;}
         .avatar-grid { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; margin-bottom: 15px;}
+        .avatar-grid::-webkit-scrollbar { display: none; }
         .avatar-option { min-width: 45px; height: 45px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; opacity: 0.5; background-size: cover; transition: 0.3s;}
         .avatar-option.selected { border-color: var(--accent-glow); opacity: 1; transform: scale(1.1); box-shadow: 0 0 15px var(--accent-red);}
 
@@ -164,12 +119,25 @@
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; border: 1px solid #555;}
         .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent-red); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider { background-color: var(--accent-red); border-color: var(--accent-glow); }
+        input:checked + .slider:before { transform: translateX(20px); box-shadow: 0 0 10px #fff;}
 
-        #msg-box { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); background: rgba(20,0,0,0.95); padding: 12px 30px; border-radius: 30px; font-weight: 700; font-size: 15px; color: #fff; z-index: 150; opacity: 0; transition: opacity 0.3s; pointer-events: none; border: 1px solid var(--accent-red); text-transform: uppercase; }
+        .modal-overlay { position: absolute; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.9); z-index: 200; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px);}
+        .game-modal { background: radial-gradient(circle, #1a0505, #050000); padding: 30px; border-radius: 20px; border: 1px solid var(--accent-glow); text-align: center; box-shadow: 0 0 40px rgba(138,3,3,0.8); max-width: 85%; width: 320px;}
+        .suits-container { display: flex; gap: 15px; justify-content: center; margin-top: 25px;}
+        .suit-btn { width: 60px; height: 60px; font-size: 32px; border-radius: 12px; border: 2px solid #444; background: #111; cursor: pointer; transition: 0.2s;}
+        .suit-btn:hover { border-color: var(--text-light); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(255,255,255,0.2);}
+        .suit-btn.red-suit { color: var(--accent-glow); } .suit-btn.black-suit { color: #aaa; }
         
+        #msg-box { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); background: rgba(20,0,0,0.95); padding: 12px 30px; border-radius: 30px; font-weight: 700; font-size: 15px; color: #fff; z-index: 150; opacity: 0; transition: opacity 0.3s; pointer-events: none; border: 1px solid var(--accent-red); box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-transform: uppercase; letter-spacing: 1px;}
+        .info-box { background: rgba(10,0,0,0.8); padding: 15px; border-left: 3px solid var(--accent-red); margin-bottom: 15px; text-align: left; font-size: 13px; max-width: 350px; line-height: 1.6; color: #bbb;}
+        .info-box span { color: var(--accent-glow); font-weight: bold; }
+
         #victory-anim { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 300; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        .vic-img { width: 220px; animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .vic-text { font-family: 'Creepster', cursive; color: #ffd700; font-size: 55px; text-shadow: 0 0 20px #ff0000; margin-top: 20px; animation: glow 1.5s infinite alternate; text-align: center; line-height: 1;}
+        @keyframes popIn { 0% { transform: scale(0) rotate(-20deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+        @keyframes glow { from { text-shadow: 0 0 10px #ff0000; } to { text-shadow: 0 0 40px #ffaa00, 0 0 20px #ff0000; } }
     </style>
 </head>
 <body>
@@ -178,77 +146,132 @@
     <div id="screen-main" class="screen" style="display: flex;">
         <h1 class="horror-title">OMI<br><span style="font-size: 22px; color:#ccc; text-shadow:none; font-family:'Poppins', sans-serif; letter-spacing: 6px;">PRO HORROR</span></h1>
         
-        <!-- PWA Install Button (Ludo Game එකෙන් ගත් Button එක) -->
-        <button id="btn-install-pwa" class="btn btn-install" style="display:none;" onclick="installPWA()">📥 Install App</button>
-
-        <button id="btn-resume" class="btn outline" onclick="resumeGame()" style="display:none;">Resume Match</button>
-        <button class="btn" onclick="startGame()">Start Game</button>
-        <button class="btn outline" onclick="showScreen('screen-settings')">Settings</button>
-        <button class="btn outline" onclick="showScreen('screen-info')" style="border-color:#555; color:#aaa;">About Game</button>
+        <!-- PWA Install Button -->
+        <button id="btn-install" class="btn" onclick="installPWA()">📥 Install App</button>
+        
+        <button id="btn-resume" class="btn outline" onclick="resumeGame()" style="display:none;">🔄 Resume Match</button>
+        <button class="btn" onclick="startGame()">▶ Start Game</button>
+        <button class="btn outline" onclick="showScreen('screen-settings')">⚙️ Settings</button>
+        <button class="btn outline" onclick="showScreen('screen-info')" style="border-color:#555; color:#aaa;">ℹ️ About Game</button>
     </div>
 
-    <!-- Info Screen -->
+    <!-- INFO SCREEN -->
     <div id="screen-info" class="screen">
-        <h2>About Game</h2>
-        <div style="background: rgba(10,0,0,0.8); padding: 15px; border-left: 3px solid var(--accent-red); margin-bottom: 15px; font-size: 13px; max-width: 350px; line-height: 1.6;">
-            <span style="color:var(--accent-glow); font-weight:bold;">Dark Omi Rules:</span> Standard Sri Lankan Omi rules apply. Reach 10 tokens to win the series.
+        <div id="info-view-main" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+            <h2>About Game</h2>
+            <button class="btn outline" onclick="switchInfo('info-view-app')">📱 App Details</button>
+            <button class="btn outline" onclick="switchInfo('info-view-rules')">📜 Game Rules</button>
+            <button class="btn outline" onclick="switchInfo('info-view-creator')">ℹ️ Created Info</button>
+            <button class="btn" style="margin-top: 25px;" onclick="showScreen('screen-main')">❌ Close</button>
         </div>
-        <div style="background: rgba(10,0,0,0.8); padding: 15px; border-left: 3px solid #00aa44; text-align: center; font-size: 13px;">
-            <span style="color:var(--accent-glow); font-weight:bold;">Created By:</span> Saman - Sri Lanka<br>
-            <span style="color:var(--accent-glow); font-weight:bold;">Facebook:</span> MOD APPs - Android Device
+
+        <div id="info-view-app" style="display:none; flex-direction:column; align-items:center; width:100%;">
+            <h2>App Details</h2>
+            <div class="info-box">
+                <span style="color:var(--accent-glow);">Omi - Dark Horror Edition Pro</span><br><br>
+                Version: 1.0.0<br><br>
+                Premium Dark Edition featuring smooth animations, smart UI, and horror aesthetics.
+            </div>
+            <button class="btn outline" style="margin-top: 20px;" onclick="switchInfo('info-view-main')">🔙 Back</button>
         </div>
-        <button class="btn outline" style="margin-top: 20px;" onclick="showScreen('screen-main')">Back</button>
+
+        <div id="info-view-rules" style="display:none; flex-direction:column; align-items:center; width:100%;">
+            <h2>Game Rules</h2>
+            <div class="info-box">
+                <span>Dark Omi Rules:</span><br> Standard Sri Lankan Omi rules apply. Win 8 tricks for a Kapothi (+2 Tokens). Reach 10 tokens to win the series.
+            </div>
+            <button class="btn outline" style="margin-top: 20px;" onclick="switchInfo('info-view-main')">🔙 Back</button>
+        </div>
+
+        <div id="info-view-creator" style="display:none; flex-direction:column; align-items:center; width:100%;">
+            <h2>Created Info</h2>
+            <div class="info-box" style="border-left-color: #00aa44; text-align: center;">
+                <span>Created By:</span> Saman - Sri Lanka<br><br>
+                <span>Facebook:</span> MOD APPs - Android Device
+            </div>
+            <button class="btn outline" style="margin-top: 20px;" onclick="switchInfo('info-view-main')">🔙 Back</button>
+        </div>
     </div>
 
-    <!-- Settings Screen -->
+    <!-- SETTINGS SCREEN -->
     <div id="screen-settings" class="screen">
-        <h2>Settings</h2>
-        <div class="settings-container">
-            <button class="acc-btn" onclick="toggleAcc(this)">Game Settings <span>▼</span></button>
-            <div class="acc-panel">
+        <div id="set-view-main" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+            <h2>Settings</h2>
+            <button class="btn outline" onclick="switchSettings('set-view-names')">👤 Player Names</button>
+            <button class="btn outline" onclick="switchSettings('set-view-avatars')">🎨 Player Avatars</button>
+            <button class="btn outline" onclick="switchSettings('set-view-sound')">🔊 Audio Settings</button>
+            <button class="btn outline" style="border-color:#ff3333; color:#ff3333;" onclick="switchSettings('set-view-reset')">🗑️ Data Reset</button>
+            <button class="btn" style="margin-top: 25px;" onclick="saveSettings()">💾 Save & Close</button>
+        </div>
+
+        <div id="set-view-names" style="display:none; flex-direction:column; align-items:center; width:100%;">
+            <h2>Player Names</h2>
+            <div class="settings-container" id="names-panel"></div>
+            <button class="btn outline" style="margin-top: 20px;" onclick="switchSettings('set-view-main')">🔙 Back</button>
+        </div>
+
+        <div id="set-view-avatars" style="display:none; flex-direction:column; align-items:center; width:100%;">
+            <h2>Player Avatars</h2>
+            <div class="settings-container" id="avatars-panel"></div>
+            <button class="btn outline" style="margin-top: 20px;" onclick="switchSettings('set-view-main')">🔙 Back</button>
+        </div>
+        
+        <div id="set-view-sound" style="display:none; flex-direction:column; align-items:center; width:100%;">
+            <h2>Audio Settings</h2>
+            <div class="settings-container">
                 <div class="set-row">
                     <span class="set-label">Sound Effects</span>
                     <label class="switch"><input type="checkbox" id="set-sound" checked><span class="slider"></span></label>
                 </div>
-                <div class="set-row"><button class="btn outline" style="width: auto; padding: 5px 15px; border-color:#ff3333; color:#ff3333;" onclick="clearData()">Reset Game Data</button></div>
             </div>
-            <button class="acc-btn" onclick="toggleAcc(this)">Player Names <span>▼</span></button>
-            <div class="acc-panel" id="names-panel"></div>
-            <button class="acc-btn" onclick="toggleAcc(this)">Player Avatars <span>▼</span></button>
-            <div class="acc-panel" id="avatars-panel"></div>
+            <button class="btn outline" style="margin-top: 20px;" onclick="switchSettings('set-view-main')">🔙 Back</button>
         </div>
-        <button class="btn" style="margin-top: 25px;" onclick="saveSettings()">Save & Back</button>
+
+        <div id="set-view-reset" style="display:none; flex-direction:column; align-items:center; width:100%;">
+            <h2 style="color:#ff3333; border-bottom-color:#ff3333;">Data Reset</h2>
+            <div class="info-box" style="text-align: center; border-left: none; max-width:300px;">
+                Are you sure you want to reset all data?<br><br>
+                <span style="color:#ff3333;">This will permanently delete your saved game and player profiles!</span>
+            </div>
+            <button class="btn" style="background:#ff3333; box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);" onclick="clearData()">Yes, Reset Everything</button>
+            <button class="btn outline" style="margin-top: 15px;" onclick="switchSettings('set-view-main')">Cancel</button>
+        </div>
     </div>
 
-    <!-- Exit Confirmation -->
+    <!-- GAME OVERLAYS & MODALS -->
     <div id="exit-modal" class="modal-overlay">
         <div class="game-modal">
-            <h2>Leave Match?</h2>
-            <div style="display:flex; justify-content: center; gap:15px; margin-top:20px;">
-                <button class="btn outline" style="width: 100px;" onclick="document.getElementById('exit-modal').style.display='none'">No</button>
-                <button class="btn" style="width: 100px;" onclick="confirmExit()">Yes</button>
+            <h2 style="font-size: 20px; color:#fff;">Leave Match?</h2>
+            <p style="color:#aaa; font-size: 14px; margin-bottom: 25px;">Are you sure you want to pause and exit to the main menu?</p>
+            <div style="display:flex; justify-content: center; gap:15px;">
+                <button class="btn outline" style="width: 100px; padding: 10px;" onclick="document.getElementById('exit-modal').style.display='none'">No</button>
+                <button class="btn" style="width: 100px; padding: 10px;" onclick="confirmExit()">Yes</button>
             </div>
         </div>
     </div>
 
-    <!-- Victory Screen -->
     <div id="victory-anim">
-        <div style="font-family: 'Creepster', cursive; color: #ffd700; font-size: 55px; text-shadow: 0 0 20px #ff0000; text-align: center;">SERIES VICTORY!</div>
-        <button class="btn" style="margin-top:30px;" onclick="location.reload()">Main Menu</button>
+        <img src="https://cdn.pixabay.com/photo/2017/07/11/15/51/trophy-2493994_1280.png" class="vic-img" alt="Victory">
+        <div class="vic-text" id="vic-message">SERIES VICTORY!</div>
     </div>
 
     <!-- GAME BOARD -->
     <div id="game-board">
         <div class="top-bar">
+            <!-- Left: Tokens -->
             <div class="resource-group">
-                <div class="resource-pill"><span class="label">අපි</span> <span id="top-t1-score" style="color:var(--accent-glow);">0</span></div>
-                <div class="resource-pill"><span class="label">උන්</span> <span id="top-t2-score">0</span></div>
+                <div class="resource-pill"><span class="label">We tokens</span> <span id="top-t1-score" style="color:var(--accent-glow);">0</span></div>
+                <div class="resource-pill"><span class="label">They tokens</span> <span id="top-t2-score">0</span></div>
             </div>
+
+            <!-- Center: Score Board -->
             <div class="score-board">
-                <div class="score-side"><div class="score-num" id="t2-tricks">0</div><div class="score-label">උන්</div></div>
-                <div class="score-center">❤️</div>
-                <div class="score-side"><div class="score-num" id="t1-tricks">0</div><div class="score-label">අපි</div></div>
+                <div class="score-side"><div class="score-num" id="t2-tricks">0</div><div class="score-label">They</div></div>
+                <div class="score-center">⚡</div>
+                <div class="score-side"><div class="score-num" id="t1-tricks">0</div><div class="score-label">We</div></div>
             </div>
+
+            <!-- Right: Settings/Back -->
             <div class="icon-group">
                 <button class="top-icon" onclick="showScreen('screen-settings')">⚙️</button>
                 <button class="top-icon" onclick="tryExitGame()">🔙</button>
@@ -260,11 +283,13 @@
         <div class="bottom-curve"></div>
         <div class="bottom-banner">Match Started - First to 10 Tokens wins!</div>
 
+        <!-- Avatars -->
         <div id="avatar-0" class="avatar"><div class="name" id="name-0">You</div><div class="pro-badge">PRO</div></div>
         <div id="avatar-1" class="avatar"><div class="name" id="name-1">Player 04</div></div>
         <div id="avatar-2" class="avatar"><div class="name" id="name-2">Player 03</div></div>
         <div id="avatar-3" class="avatar"><div class="name" id="name-3">Player 02</div></div>
 
+        <!-- Hands Area -->
         <div id="hand-0" class="hand"></div>
         <div id="hand-1" class="hand"></div>
         <div id="hand-2" class="hand"></div>
@@ -272,16 +297,14 @@
     </div>
 
     <div id="msg-box">Message</div>
-
-    <!-- Trump Selection -->
     <div id="trump-overlay" class="modal-overlay">
         <div class="game-modal">
             <h2>Select Trump</h2>
-            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 25px;">
-                <button style="width: 60px; height: 60px; font-size: 32px; border-radius: 12px; cursor: pointer;" onclick="setTrump('S')">♠</button>
-                <button style="width: 60px; height: 60px; font-size: 32px; border-radius: 12px; cursor: pointer; color:red;" onclick="setTrump('H')">♥</button>
-                <button style="width: 60px; height: 60px; font-size: 32px; border-radius: 12px; cursor: pointer; color:red;" onclick="setTrump('D')">♦</button>
-                <button style="width: 60px; height: 60px; font-size: 32px; border-radius: 12px; cursor: pointer;" onclick="setTrump('C')">♣</button>
+            <div class="suits-container">
+                <button class="suit-btn black-suit" onclick="setTrump('S')">♠</button>
+                <button class="suit-btn red-suit" onclick="setTrump('H')">♥</button>
+                <button class="suit-btn red-suit" onclick="setTrump('D')">♦</button>
+                <button class="suit-btn black-suit" onclick="setTrump('C')">♣</button>
             </div>
         </div>
     </div>
@@ -289,19 +312,26 @@
     <div id="round-overlay" class="modal-overlay">
         <div class="game-modal">
             <h2 id="round-result-title">Round Over</h2>
-            <p id="round-result-desc" style="color:#ddd; margin: 15px 0;"></p>
+            <p id="round-result-desc" style="color:#ddd; margin: 15px 0; font-size: 15px; line-height: 1.5;"></p>
             <button class="btn" style="width:100%;" onclick="continueGame()">Continue</button>
         </div>
     </div>
 
     <script>
-        // --- PWA Installation Logic (Ludo Game එකෙන් ගත් කොටස) ---
+        // --- SCREEN WAKE LOCK ---
+        let wakeLock = null;
+        async function requestWakeLock() {
+            try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
+        }
+        document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
+
+        // --- PWA INSTALLATION LOGIC (Fully Fixed for "Install App") ---
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Chrome හරහා Install කිරීමට සුදුසු නම් පමණක් "Install App" බටන් එක දර්ශනය වේ
-            document.getElementById('btn-install-pwa').style.display = 'block';
+            // Manifest නිවැරදි නම් සහ HTTPS හරහා ධාවනය වන්නේ නම් බොත්තම දර්ශනය වේ.
+            document.getElementById('btn-install').style.display = 'block';
         });
 
         function installPWA() {
@@ -310,21 +340,29 @@
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
                         console.log('User accepted the PWA install prompt');
+                        document.getElementById('btn-install').style.display = 'none';
                     }
                     deferredPrompt = null;
-                    document.getElementById('btn-install-pwa').style.display = 'none';
                 });
             }
         }
+        
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('btn-install').style.display = 'none';
+            deferredPrompt = null;
+        });
 
-        // --- Screen Wake Lock (Screen එක නිවී යාම වැළැක්වීමට) ---
-        let wakeLock = null;
-        async function requestWakeLock() {
-            try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
-        }
-        document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
+        // --- DEVICE BACK BUTTON HANDLING ---
+        window.history.pushState({screen: 'main'}, "");
+        window.onpopstate = function(event) {
+            if (currentScreen === 'game-board') {
+                tryExitGame();
+                window.history.pushState(null, "");
+            } else if (currentScreen !== 'screen-main') {
+                showScreen('screen-main');
+            }
+        };
 
-        // --- Core Omi Game Logic (වෙනස් කර නොමැත) ---
         const AVATARS =['https://i.pravatar.cc/150?img=11', 'https://i.pravatar.cc/150?img=33', 'https://i.pravatar.cc/150?img=47', 'https://i.pravatar.cc/150?img=68', 'https://i.pravatar.cc/150?img=12', 'https://i.pravatar.cc/150?img=13', 'https://i.pravatar.cc/150?img=14', 'https://i.pravatar.cc/150?img=53', 'https://i.pravatar.cc/150?img=59', 'https://i.pravatar.cc/150?img=60'];
         const P_LABELS =["You", "Player 4 (Left)", "Player 3 (Top)", "Player 2 (Right)"];
         let AppData = { players:[{name:"You", avatar:0}, {name:"Player 04", avatar:1}, {name:"Player 03", avatar:2}, {name:"Player 02", avatar:3}], soundOn: true, gameActive: false, tokens: {t1:0, t2:0} };
@@ -343,11 +381,34 @@
             slap: () => Sound.play(120, 'square', 0.1, 0.3), deal: () => Sound.play(300, 'triangle', 0.05, 0.1), error: () => Sound.play(100, 'sawtooth', 0.3, 0.4), win: () => { Sound.play(400, 'sine', 0.1, 0.2); setTimeout(()=>Sound.play(600, 'sine', 0.3, 0.2), 100); }
         };
 
-        function loadData() { const saved = localStorage.getItem('omiDarkPro_Final'); if(saved) AppData = JSON.parse(saved); buildSettingsUI(); applyPlayerVisuals(); updateTokensUI(); if(AppData.gameActive) document.getElementById('btn-resume').style.display = 'block'; }
-        function saveData() { localStorage.setItem('omiDarkPro_Final', JSON.stringify(AppData)); }
-        function clearData() { if(confirm("Wipe all data?")) { localStorage.removeItem('omiDarkPro_Final'); location.reload(); } }
-        function toggleAcc(element) { element.classList.toggle("active"); let panel = element.nextElementSibling; if (panel.style.maxHeight) panel.style.maxHeight = null; else panel.style.maxHeight = panel.scrollHeight + "px"; }
+        let currentScreen = 'screen-main';
         
+        function loadData() { 
+            const saved = localStorage.getItem('omiDarkPro_Final'); 
+            if(saved) AppData = JSON.parse(saved); 
+            buildSettingsUI(); 
+            applyPlayerVisuals(); 
+            updateTokensUI(); 
+            if(AppData.gameActive) document.getElementById('btn-resume').style.display = 'block'; 
+        }
+        
+        function saveData() { localStorage.setItem('omiDarkPro_Final', JSON.stringify(AppData)); }
+        
+        function clearData() { 
+            localStorage.removeItem('omiDarkPro_Final'); 
+            location.reload(); 
+        }
+
+        function switchInfo(viewId) {
+            document.querySelectorAll('#screen-info > div').forEach(div => div.style.display = 'none');
+            document.getElementById(viewId).style.display = 'flex';
+        }
+
+        function switchSettings(viewId) {
+            document.querySelectorAll('#screen-settings > div').forEach(div => div.style.display = 'none');
+            document.getElementById(viewId).style.display = 'flex';
+        }
+
         function buildSettingsUI() {
             document.getElementById('set-sound').checked = AppData.soundOn;
             let nH = '', aH = '';
@@ -356,19 +417,50 @@
                 let avL = AVATARS.map((u, ai) => `<div class="avatar-option ${p.avatar === ai ? 'selected' : ''}" style="background-image:url('${u}')" onclick="selectAvatar(this, ${i}, ${ai})"></div>`).join('');
                 aH += `<div style="margin-bottom: 10px;"><span class="set-label">${P_LABELS[i]}</span><div class="avatar-grid" id="grid-${i}">${avL}</div></div>`;
             });
-            document.getElementById('names-panel').innerHTML = nH; document.getElementById('avatars-panel').innerHTML = aH;
+            document.getElementById('names-panel').innerHTML = nH; 
+            document.getElementById('avatars-panel').innerHTML = aH;
         }
-        function selectAvatar(el, pi, ai) { document.querySelectorAll(`#grid-${pi} .avatar-option`).forEach(e => e.classList.remove('selected')); el.classList.add('selected'); AppData.players[pi].avatar = ai; }
-        function saveSettings() { AppData.soundOn = document.getElementById('set-sound').checked; for(let i=0; i<4; i++) AppData.players[i].name = document.getElementById(`set-name-${i}`).value || `Player ${i+1}`; saveData(); applyPlayerVisuals(); showScreen('screen-main'); }
-        function applyPlayerVisuals() { for(let i=0; i<4; i++) { document.getElementById(`name-${i}`).innerText = AppData.players[i].name; document.getElementById(`avatar-${i}`).style.backgroundImage = `url('${AVATARS[AppData.players[i].avatar]}')`; } }
-        function showScreen(sid) { document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); document.getElementById('game-board').style.display = 'none'; if(sid === 'game-board') document.getElementById('game-board').style.display = 'block'; else document.getElementById(sid).style.display = 'flex'; }
+
+        function selectAvatar(el, pi, ai) { 
+            document.querySelectorAll(`#grid-${pi} .avatar-option`).forEach(e => e.classList.remove('selected')); 
+            el.classList.add('selected'); AppData.players[pi].avatar = ai; 
+        }
+        
+        function saveSettings() { 
+            AppData.soundOn = document.getElementById('set-sound').checked; 
+            for(let i=0; i<4; i++) AppData.players[i].name = document.getElementById(`set-name-${i}`).value || `Player ${i+1}`; 
+            saveData(); applyPlayerVisuals(); showScreen('screen-main'); 
+        }
+        
+        function applyPlayerVisuals() { 
+            for(let i=0; i<4; i++) { 
+                document.getElementById(`name-${i}`).innerText = AppData.players[i].name; 
+                document.getElementById(`avatar-${i}`).style.backgroundImage = `url('${AVATARS[AppData.players[i].avatar]}')`; 
+            } 
+        }
+        
+        function showScreen(sid) { 
+            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); 
+            document.getElementById('game-board').style.display = 'none'; 
+            
+            if(sid === 'game-board') {
+                document.getElementById('game-board').style.display = 'block'; 
+            } else {
+                document.getElementById(sid).style.display = 'flex'; 
+                if (sid === 'screen-settings') switchSettings('set-view-main');
+                if (sid === 'screen-info') switchInfo('info-view-main');
+            }
+            
+            currentScreen = sid;
+            window.history.pushState({screen: sid}, "");
+        }
+
         function tryExitGame() { document.getElementById('exit-modal').style.display = 'flex'; }
         function confirmExit() { document.getElementById('exit-modal').style.display = 'none'; showScreen('screen-main'); }
 
         const SUITS =['S', 'H', 'D', 'C'], VALUES =['7', '8', '9', '0', 'J', 'Q', 'K', 'A'], RANKS = {'7':7, '8':8, '9':9, '0':10, 'J':11, 'Q':12, 'K':13, 'A':14};
         let deck =[], hands = {0:[], 1:[], 2:[], 3:[]}, tricksWon = {t1:0, t2:0}, currentTrump = null, leadSuit = null, currentTrick =[], currentTurn = 0, userCanPlay = false, resolveUserPlay = null;
         const sleep = ms => new Promise(r => setTimeout(r, ms));
-        
         function showMsg(t) { const mb = document.getElementById('msg-box'); mb.innerText = t; mb.style.opacity = '1'; setTimeout(() => mb.style.opacity = '0', 2000); }
         function startGame() { requestWakeLock(); AppData.gameActive = true; AppData.tokens = {t1:0, t2:0}; saveData(); updateTokensUI(); showScreen('game-board'); startRound(); }
         function resumeGame() { requestWakeLock(); showScreen('game-board'); updateTokensUI(); if(hands[0].length === 0) startRound(); }
@@ -383,9 +475,8 @@
         }
 
         async function setTrump(suit) {
-            currentTrump = suit; const sym = {'S':'♠', 'H':'♥', 'D':'♦', 'C':'♣'};
-            document.getElementById('current-trump').innerHTML = (suit === 'H' || suit === 'D') ? `<span style="color:red">${sym[suit]}</span>` : sym[suit];
-            document.getElementById('trump-overlay').style.display = 'none';
+            currentTrump = suit; const sym = {'S':'♠', 'H':'<span style="color:var(--accent-glow);">♥</span>', 'D':'<span style="color:var(--accent-glow);">♦</span>', 'C':'♣'};
+            document.getElementById('current-trump').innerHTML = sym[suit]; document.getElementById('trump-overlay').style.display = 'none';
             for(let i=0; i<4; i++) hands[i] = hands[i].concat(deck.splice(0, 4)); await renderHands(); startTrick();
         }
 
@@ -405,20 +496,19 @@
             } await sleep(400);
         }
 
+        function highlightAvatar(idx) { for(let i=0; i<4; i++) document.getElementById(`avatar-${i}`).classList.remove('active-turn'); if(idx !== null) document.getElementById(`avatar-${idx}`).classList.add('active-turn'); }
+        
         async function startTrick() {
             currentTrick =[]; leadSuit = null; document.getElementById('center-table').innerHTML = '';
             for(let step=0; step<4; step++) {
-                const pI = (currentTurn + step) % 4; 
-                document.querySelectorAll('.avatar').forEach(a => a.classList.remove('active-turn'));
-                document.getElementById(`avatar-${pI}`).classList.add('active-turn');
+                const pI = (currentTurn + step) % 4; highlightAvatar(pI);
                 if(pI === 0) { showMsg("Your Turn!"); userCanPlay = true; await new Promise(r => resolveUserPlay = r); userCanPlay = false; }
                 else { await sleep(1000); playAiTurn(pI); }
-            } setTimeout(evaluateTrick, 1000);
+            } highlightAvatar(null); await sleep(1000); evaluateTrick();
         }
 
         function handleUserPlay(card, idx) {
-            if(!userCanPlay) return; 
-            if(leadSuit && card.suit !== leadSuit && hands[0].some(c => c.suit === leadSuit)) { Sound.error(); showMsg("Must play " + leadSuit + "!"); return; }
+            if(!userCanPlay) return; if(leadSuit && card.suit !== leadSuit && hands[0].some(c => c.suit === leadSuit)) { Sound.error(); showMsg("Must play " + leadSuit + "!"); return; }
             hands[0].splice(idx, 1); renderHands(); playCardToTable(card, 0); if(!leadSuit) leadSuit = card.suit; currentTrick.push({player:0, card:card}); resolveUserPlay();
         }
 
@@ -432,19 +522,30 @@
             Sound.slap(); const center = document.getElementById('center-table'); const cD = document.createElement('div');
             cD.className = 'card'; cD.style.backgroundImage = `url(${card.img})`;
             let px = 0, py = 0; if(pI===0) py = 40; else if(pI===1) px = -40; else if(pI===2) py = -40; else if(pI===3) px = 40;
-            cD.style.transform = `translate(calc(-50% + ${px}px), calc(-50% + ${py}px)) scale(0.85)`; cD.style.left = '50%'; cD.style.top = '50%';
-            center.appendChild(cD);
+            cD.style.transform = `translate(calc(-50% + ${px*3}px), calc(-50% + ${py*3}px)) scale(0.4)`; cD.style.left = '50%'; cD.style.top = '50%'; cD.style.opacity = '0';
+            center.appendChild(cD); setTimeout(() => { cD.style.opacity = '1'; cD.style.transform = `translate(calc(-50% + ${px}px), calc(-50% + ${py}px)) scale(0.85) rotate(${Math.random()*20-10}deg)`; }, 50);
         }
 
-        function evaluateTrick() {
+        async function evaluateTrick() {
             let win = currentTrick[0];
             for(let i=1; i<4; i++) {
                 const p = currentTrick[i];
                 if(p.card.suit === currentTrump && win.card.suit !== currentTrump) win = p;
                 else if(p.card.suit === win.card.suit && p.card.rank > win.card.rank) win = p;
             }
+            
+            const cardsOnTable = document.querySelectorAll('#center-table .card');
+            const targetCoords = { 0: {x: "0", y: "100vh"}, 1: {x: "-100vw", y: "0"}, 2: {x: "0", y: "-100vh"}, 3: {x: "100vw", y: "0"} };
+            
+            cardsOnTable.forEach(c => {
+                c.style.transition = "all 0.6s cubic-bezier(0.5, -0.5, 0.5, 1.5)";
+                c.style.transform = `translate(${targetCoords[win.player].x}, ${targetCoords[win.player].y}) scale(0.1)`;
+                c.style.opacity = "0";
+            });
+
+            await sleep(600);
             currentTurn = win.player; if(currentTurn === 0 || currentTurn === 2) tricksWon.t1++; else tricksWon.t2++;
-            updateScoreUI(); if(hands[0].length === 0) endRound(); else startTrick();
+            updateScoreUI(); Sound.win(); setTimeout(() => { (hands[0].length === 0) ? endRound() : startTrick(); }, 200);
         }
 
         function updateScoreUI() { document.getElementById('t1-tricks').innerText = tricksWon.t1; document.getElementById('t2-tricks').innerText = tricksWon.t2; }
@@ -453,11 +554,14 @@
             let t1W = tricksWon.t1; let t1P = 0, t2P = 0;
             if(t1W === 8) t1P=2; else if(t1W >= 5) t1P=1; else if(t1W <= 3 && t1W > 0) t2P=1; else if(t1W === 0) t2P=2;
             AppData.tokens.t1 += t1P; AppData.tokens.t2 += t2P; saveData(); updateTokensUI();
-            if(AppData.tokens.t1 >= 10 || AppData.tokens.t2 >= 10) { document.getElementById('victory-anim').style.display='flex'; } else document.getElementById('round-overlay').style.display = 'flex';
+            if(AppData.tokens.t1 >= 10 || AppData.tokens.t2 >= 10) { 
+                AppData.gameActive = false; saveData(); document.getElementById('victory-anim').style.display='flex'; 
+            } else document.getElementById('round-overlay').style.display = 'flex';
         }
         
-        function continueGame() { document.getElementById('round-overlay').style.display = 'none'; startRound(); }
+        function continueGame() { document.getElementById('round-overlay').style.display = 'none'; if(!AppData.gameActive) location.reload(); else startRound(); }
+        
         window.onload = loadData;
     </script>
 </body>
-</html>
+    </h
