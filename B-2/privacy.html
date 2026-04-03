@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>B-2 STEALTH - Official Info</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === B-2 STEALTH THEME VARIABLES === */
+        :root {
+            --b2-red: #ff2a2a;
+            --b2-dark-red: #c90000;
+            --glass-bg: rgba(20, 20, 25, 0.4);
+            --glass-hover: rgba(35, 35, 45, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-light: #ffffff;
+            --text-muted: #b0b0c0;
+            --top-bar-height: 70px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(to bottom, rgba(5, 5, 10, 0.9), rgba(0, 0, 0, 1));
+            background-attachment: fixed;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* === TOP BAR (Header) === */
+        .top-bar {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: var(--top-bar-height);
+            background: rgba(10, 10, 15, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; z-index: 2000;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .brand-container { 
+            display: flex; align-items: center; gap: 12px; cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .brand-logo {
+            height: 38px;
+            width: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 42, 42, 0.3);
+        }
+
+        .brand-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.2rem; font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        .brand-name span { color: var(--b2-red); }
+
+        .back-btn {
+            color: var(--text-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            background: var(--glass-bg);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--b2-red);
+            border-color: var(--b2-red);
+            transform: translateY(-2px);
+        }
+
+        /* === PAGE CONTENT === */
+        .container {
+            max-width: 900px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero-title h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3rem;
+            letter-spacing: 1px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(255, 42, 42, 0.2);
+            color: var(--b2-red);
+            border: 1px solid var(--b2-red);
+            padding: 4px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* === GLASS SECTIONS === */
+        section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        section:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        h2 {
+            font-family: 'Rajdhani', sans-serif;
+            border-left: 4px solid var(--b2-red);
+            padding-left: 15px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            color: var(--text-light);
+            letter-spacing: 1px;
+        }
+
+        /* Details Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-item {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            background: rgba(255, 42, 42, 0.1);
+            border-color: var(--b2-red);
+        }
+
+        .detail-item i {
+            color: var(--b2-red);
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px rgba(255, 42, 42, 0.5);
+        }
+
+        .detail-item span {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .detail-item p {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(255, 42, 42, 0.1);
+            border: 1px solid var(--b2-red);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 0 20px rgba(255, 42, 42, 0.1) inset;
+        }
+
+        .warning-box i {
+            color: var(--b2-red);
+            font-size: 1.8rem;
+        }
+
+        /* Privacy Policy Styles */
+        .policy-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            text-align: justify;
+        }
+
+        .disclaimer-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 0.85rem;
+            color: #a0a0a0;
+        }
+
+        .disclaimer-box strong {
+            color: var(--b2-red);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        /* Developer Card */
+        .dev-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .dev-info h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(24, 119, 242, 0.2);
+            border: 1px solid #1877F2;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .social-btn:hover {
+            background: #1877F2;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(24, 119, 242, 0.4);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .brand-name { font-size: 1.8rem; }
+            .hero-title h1 { font-size: 2.2rem; }
+            .details-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- === TOP BAR === -->
+    <header class="top-bar">
+        <a href="index.html" class="brand-container">
+            <!-- App Logo Image -->
+            <img src="https://i.imgur.com/McqXQ3Y.png" alt="B2 Logo" class="brand-logo">
+            <div class="brand-name">B-2 <span>STEALTH</span></div>
+        </a>
+
+        <!-- Back to Home Button -->
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fas fa-arrow-left"></i> App
+        </a>
+    </header>
+
+    <!-- === MAIN CONTENT === -->
+    <div class="container">
+        
+        <div class="hero-title">
+            <h1>B-2 STEALTH TV</h1>
+            <div class="version-badge">Version 1.0 Pro</div>
+        </div>
+        
+        <!-- App Details Section -->
+        <section id="app-details">
+            <h2>App Details</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Platform</span>
+                    <p>Android Device</p>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Region</span>
+                    <p>Sri Lanka Only 🇱🇰</p>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Security</span>
+                    <p>Verified</p>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-tv"></i>
+                    <span>Type</span>
+                    <p>Premium Live TV</p>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>VPN Warning:</strong> මෙම App එක සඳහා VPN භාවිතා කළ නොහැක. කරුණාකර ශ්‍රී ලාංකීය ජාලයක් පමණක් භාවිතා කරන්න.
+                </div>
+            </div>
+        </section>
+
+        <!-- Privacy Policy Section -->
+        <section id="privacy">
+            <h2>Privacy Policy</h2>
+            <div class="policy-text">
+                <p>B-2 STEALTH TV හි ඔබගේ රහස්‍යතාව ආරක්ෂා කිරීම අපගේ මූලික ඉලක්කයයි. මෙම යෙදුම මගින් ඔබගේ පෞද්ගලික දත්ත අනවශ්‍ය ලෙස රැස් කිරීම, බෙදා හැරීම හෝ ගබඩා කිරීම කිසිසේත්ම සිදු නොකරන බව අපි සහතික කරමු.</p>
+                
+                <div class="disclaimer-box">
+                    <strong>DISCLAIMER:</strong><br><br>
+                    අපගේ වේදිකාව හුදෙක් අන්තර්ජාලයේ නොමිලේ පවතින සහ තෙවන පාර්ශවයන්ගේ සේවාදායකයන් (Third-party servers) මත පිහිටා ඇති ශ්‍රව්‍ය දෘශ්‍ය අන්තර්ගතයන්ට සබැඳි (IPTV Links) පහසුවෙන් නැරඹීමට පහසුකම් සැලසීම පමණක් සිදු කරයි. අපි කිසිදු වීඩියෝවක් හෝ නාලිකාවක් අපගේ සේවාදායකයන් තුළ ගබඩා නොකරමු. අන්තර්ගතයේ පූර්ණ අයිතිය එහි මුල් හිමිකරුවන් සතු වේ. මෙය හුදෙක් අධ්‍යාපනික සහ විනෝදාස්වාද ව්‍යාපෘතියක් පමණක් වන අතර කිසිදු වාණිජ අරමුණක් සඳහා භාවිතා නොවේ.
+                </div>
+            </div>
+        </section>
+
+        <!-- Created Info Section -->
+        <section id="created-info">
+            <h2>Created Info</h2>
+            <div class="dev-card">
+                <div class="dev-info">
+                    <h3>B-2 STEALTH Team</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Lead Developers & UI Designers</p>
+                    <p style="margin-top: 10px; font-size: 0.95rem;">ඔබට මෙම ඇප් එක සම්බන්ධයෙන් කිසියම් ගැටළුවක් ඇත්නම් හෝ වැඩිදුර තොරතුරු අවශ්‍ය නම් පහත අපගේ Facebook පිටුව හරහා අප හා සම්බන්ධ වන්න.</p>
+                    <a href="https://www.facebook.com/saman2200" class="social-btn" target="_blank">
+                        <i class="fab fa-facebook-f"></i> Contact Support Team
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        &copy; 2026 B-2 STEALTH TV<br>
+        Premium Entertainment Designed for Sri Lanka
+    </footer>
+
+</body>
+</html>
