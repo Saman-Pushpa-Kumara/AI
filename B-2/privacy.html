@@ -103,6 +103,7 @@
         .hero-title {
             text-align: center;
             margin-bottom: 40px;
+            position: relative;
         }
 
         .hero-title h1 {
@@ -125,6 +126,19 @@
             letter-spacing: 1px;
         }
 
+        /* === NEW HERO BACKGROUND LOGO === */
+        .hero-center-logo {
+            display: block;
+            margin: 35px auto 10px;
+            max-width: 260px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 25px rgba(255, 42, 42, 0.5));
+            animation: pulseGlow 3s infinite alternate;
+            user-select: none;
+            pointer-events: none; /* Prevents dragging the logo */
+        }
+
         /* === GLASS SECTIONS === */
         section {
             background: var(--glass-bg);
@@ -136,6 +150,8 @@
             margin-bottom: 25px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            z-index: 10;
         }
 
         section:hover {
@@ -287,9 +303,15 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes pulseGlow {
+            0% { filter: drop-shadow(0 0 10px rgba(255, 42, 42, 0.3)) scale(1); }
+            100% { filter: drop-shadow(0 0 35px rgba(255, 42, 42, 0.8)) scale(1.03); }
+        }
+
         @media (max-width: 600px) {
             .brand-name { font-size: 1.8rem; }
             .hero-title h1 { font-size: 2.2rem; }
+            .hero-center-logo { max-width: 200px; }
             .details-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
@@ -303,9 +325,6 @@
             <img src="https://i.imgur.com/McqXQ3Y.png" alt="B2 Logo" class="brand-logo">
             <div class="brand-name">B-2 <span>𝖲𝖯𝖨𝖱𝖨𝖳 STEALTH</span></div>
         </a>
-
-        <!-- Back to Home Button -->
-    
     </header>
 
     <!-- === MAIN CONTENT === -->
@@ -314,6 +333,9 @@
         <div class="hero-title">
             <h1>B2 TV</h1>
             <div class="version-badge">Version 1.0 Pro</div>
+            
+            <!-- Highlighted Center Background Logo -->
+            <img src="https://i.imgur.com/DVaThxP.png" alt="B2 Stealth Center Logo" class="hero-center-logo">
         </div>
         
         <!-- App Details Section -->
