@@ -14,8 +14,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://i.imgur.com/yaOex69.png">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/controls.css">
@@ -55,314 +56,231 @@
         100% { opacity: 1; transform: scale(1); }
     }
 
+    /* === SCI-FI SECURITY AUTHENTICATION POPUP === */
+    .auth-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: #000; /* Solid black to hide app until auth */
+        z-index: 9999;
+        display: flex; justify-content: center; align-items: center;
+        transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    .auth-overlay.hidden {
+        opacity: 0; visibility: hidden; pointer-events: none;
+    }
+
+    .auth-box {
+        background: rgba(10, 10, 15, 0.95);
+        border: 1px solid var(--b2-red);
+        padding: 40px; border-radius: 4px;
+        width: 90%; max-width: 400px;
+        text-align: center;
+        box-shadow: 0 0 40px rgba(255, 42, 42, 0.2), inset 0 0 20px rgba(255, 42, 42, 0.1);
+        position: relative; overflow: hidden;
+        /* To prevent flashing, hide initially until JS decides to show it */
+        opacity: 0; transform: scale(0.9);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .auth-box.show {
+        opacity: 1; transform: scale(1);
+    }
+
+    /* Scanline effect */
+    .auth-box::before {
+        content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        background-size: 100% 4px, 3px 100%;
+        pointer-events: none; z-index: 1; opacity: 0.5;
+    }
+
+    .auth-icon {
+        font-size: 3rem; color: var(--b2-red); margin-bottom: 15px;
+        filter: drop-shadow(0 0 10px var(--b2-red));
+        animation: pulseLive 2s infinite;
+    }
+
+    .auth-title {
+        font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700;
+        color: #fff; letter-spacing: 3px; margin-bottom: 5px; text-transform: uppercase;
+    }
+
+    .auth-subtitle {
+        font-size: 0.75rem; color: var(--text-muted); font-family: 'Courier New', Courier, monospace;
+        letter-spacing: 1px; margin-bottom: 30px;
+    }
+
+    .auth-input-group { position: relative; z-index: 2; margin-bottom: 25px; }
+
+    .auth-input {
+        width: 100%; background: rgba(0,0,0,0.5);
+        border: 1px solid rgba(255,255,255,0.2); border-bottom: 2px solid var(--b2-red);
+        color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 1.5rem;
+        padding: 10px 15px; text-align: center; outline: none; letter-spacing: 5px;
+        transition: all 0.3s ease;
+    }
+    .auth-input:focus { border-color: var(--b2-red); box-shadow: 0 5px 15px rgba(255,42,42,0.2); }
+
+    .auth-btn {
+        width: 100%; background: var(--b2-red); color: #fff;
+        border: none; padding: 12px; font-family: 'Rajdhani', sans-serif;
+        font-size: 1.2rem; font-weight: 700; letter-spacing: 2px;
+        cursor: pointer; text-transform: uppercase; transition: all 0.3s ease;
+        position: relative; z-index: 2;
+    }
+    .auth-btn:hover, .auth-btn:focus { background: var(--b2-dark-red); box-shadow: 0 0 20px rgba(255,42,42,0.6); outline: none; }
+
+    .auth-error {
+        color: var(--b2-red); font-size: 0.8rem; margin-top: 15px;
+        font-family: 'Courier New', Courier, monospace; height: 15px; text-shadow: 0 0 5px var(--b2-red);
+    }
+
+    .shake-anim { animation: shakeError 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shakeError {
+        10%, 90% { transform: translate3d(-1px, 0, 0); }
+        20%, 80% { transform: translate3d(2px, 0, 0); }
+        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+        40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+
     /* === TOP BAR === */
-    .top-bar {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: var(--top-bar-height);
-        background: rgba(10, 10, 15, 0.6);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 0 4%; z-index: 2000;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
-        border-bottom: 1px solid var(--glass-border);
-    }
-
-    .brand-container { 
-        display: flex; align-items: center; gap: 12px; cursor: pointer;
-        transition: transform 0.3s ease;
-    }
+    .top-bar { position: fixed; top: 0; left: 0; width: 100%; height: var(--top-bar-height); background: rgba(10, 10, 15, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: center; padding: 0 4%; z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8); border-bottom: 1px solid var(--glass-border); }
+    .brand-container { display: flex; align-items: center; gap: 12px; cursor: pointer; transition: transform 0.3s ease; }
     .brand-container:hover { transform: scale(1.05); }
-    
-    .brand-name {
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 2.2rem; font-weight: 700;
-        color: #fff;
-        letter-spacing: 2px;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    }
+    .brand-name { font-family: 'Rajdhani', sans-serif; font-size: 2.2rem; font-weight: 700; color: #fff; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
     .brand-name span { color: var(--b2-red); }
-
-    .live-badge {
-        display: flex; align-items: center; gap: 5px;
-        background: rgba(0, 0, 0, 0.4);
-        color: #ffffff;
-        font-size: 0.55rem; font-weight: 700;
-        padding: 3px 6px; border-radius: 4px;
-        border: 1px solid #ffffff;
-        letter-spacing: 1px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    }
-
-    .live-dot {
-        width: 6px; height: 6px;
-        background-color: var(--b2-red);
-        border-radius: 50%;
-        animation: pulseLive 1.5s infinite;
-    }
-
-    @keyframes pulseLive {
-        0% { box-shadow: 0 0 0 0 rgba(255, 42, 42, 0.8); transform: scale(0.95); }
-        70% { box-shadow: 0 0 0 5px rgba(255, 42, 42, 0); transform: scale(1.1); }
-        100% { box-shadow: 0 0 0 0 rgba(255, 42, 42, 0); transform: scale(0.95); }
-    }
-
+    .live-badge { display: flex; align-items: center; gap: 5px; background: rgba(0, 0, 0, 0.4); color: #ffffff; font-size: 0.55rem; font-weight: 700; padding: 3px 6px; border-radius: 4px; border: 1px solid #ffffff; letter-spacing: 1px; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+    .live-dot { width: 6px; height: 6px; background-color: var(--b2-red); border-radius: 50%; animation: pulseLive 1.5s infinite; }
+    @keyframes pulseLive { 0% { box-shadow: 0 0 0 0 rgba(255, 42, 42, 0.8); transform: scale(0.95); } 70% { box-shadow: 0 0 0 5px rgba(255, 42, 42, 0); transform: scale(1.1); } 100% { box-shadow: 0 0 0 0 rgba(255, 42, 42, 0); transform: scale(0.95); } }
     .top-actions { display: flex; align-items: center; gap: 12px; }
-
-    .search-trigger, .profile-icon {
-        cursor: pointer; display: flex; align-items: center; justify-content: center;
-        width: 36px; height: 36px; border-radius: 50%; 
-        background: var(--glass-bg); transition: all 0.3s ease;
-        color: white; border: 1px solid var(--glass-border); text-decoration: none;
-        backdrop-filter: blur(10px);
-    }
-    .search-trigger:hover, .profile-icon:hover { 
-        background: var(--b2-red); 
-        border-color: var(--b2-red);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(255, 42, 42, 0.4);
-    }
-    
-    .search-trigger svg, .profile-icon svg { 
-        width: 18px; height: 18px; fill: white; 
-    }
-
-    .search-box-wrapper {
-        display: none; align-items: center;
-        background: rgba(0, 0, 0, 0.8); border: 1px solid var(--b2-red);
-        border-radius: 50px; padding: 4px 12px; position: absolute; right: 100px;
-        backdrop-filter: blur(10px);
-    }
+    .search-trigger, .profile-icon { cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: var(--glass-bg); transition: all 0.3s ease; color: white; border: 1px solid var(--glass-border); text-decoration: none; backdrop-filter: blur(10px); }
+    .search-trigger:hover, .profile-icon:hover { background: var(--b2-red); border-color: var(--b2-red); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 42, 42, 0.4); }
+    .search-trigger svg, .profile-icon svg { width: 18px; height: 18px; fill: white; }
+    .search-box-wrapper { display: none; align-items: center; background: rgba(0, 0, 0, 0.8); border: 1px solid var(--b2-red); border-radius: 50px; padding: 4px 12px; position: absolute; right: 100px; backdrop-filter: blur(10px); }
     .search-box-wrapper.active { display: flex; animation: searchFade 0.4s ease; }
-    
-    @keyframes searchFade {
-        from { opacity: 0; transform: translateX(20px) scale(0.9); }
-        to { opacity: 1; transform: translateX(0) scale(1); }
-    }
-
-    #searchInput {
-        background: transparent; border: none; color: #fff;
-        padding: 4px 8px; outline: none; width: 160px;
-        font-family: 'Poppins', sans-serif; font-size: 0.85rem;
-    }
+    @keyframes searchFade { from { opacity: 0; transform: translateX(20px) scale(0.9); } to { opacity: 1; transform: translateX(0) scale(1); } }
+    #searchInput { background: transparent; border: none; color: #fff; padding: 4px 8px; outline: none; width: 160px; font-family: 'Poppins', sans-serif; font-size: 0.85rem; }
 
     /* === MAIN LAYOUT === */
-    .main-content {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        margin-top: var(--top-bar-height);
-        height: calc(100vh - var(--top-bar-height));
-    }
-
-    @media (min-width: 950px) {
-        .main-content { flex-direction: row; padding: 20px 4%; gap: 30px; }
-    }
+    .main-content { display: flex; flex-direction: column; flex: 1; margin-top: var(--top-bar-height); height: calc(100vh - var(--top-bar-height)); }
+    @media (min-width: 950px) { .main-content { flex-direction: row; padding: 20px 4%; gap: 30px; } }
 
     /* === PLAYER SECTION === */
-    .player-container {
-        width: 100%; z-index: 100;
-        padding: 10px 4% 0; flex-shrink: 0;
-    }
-
-    @media (min-width: 950px) {
-        .player-container {
-            width: 65%; padding: 0; position: sticky;
-            top: calc(var(--top-bar-height) + 20px); height: fit-content;
-        }
-    }
-
-    .video-wrapper {
-        width: 100%; aspect-ratio: 16/9; background: #000;
-        border-radius: 12px; overflow: hidden; position: relative;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+    .player-container { width: 100%; z-index: 100; padding: 10px 4% 0; flex-shrink: 0; }
+    @media (min-width: 950px) { .player-container { width: 65%; padding: 0; position: sticky; top: calc(var(--top-bar-height) + 20px); height: fit-content; } }
+    .video-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.9); border: 1px solid rgba(255, 255, 255, 0.1); }
     #video { width: 100%; height: 100%; outline: none; }
-
-    .ultraflix-watermark {
-        position: absolute; bottom: 50px; right: 15px; 
-        text-align: right; z-index: 10; opacity: 0; visibility: hidden;
-        transition: all 0.4s ease; pointer-events: none;
-        transform: translateY(10px);
-    }
+    .ultraflix-watermark { position: absolute; bottom: 50px; right: 15px; text-align: right; z-index: 10; opacity: 0; visibility: hidden; transition: all 0.4s ease; pointer-events: none; transform: translateY(10px); }
     .ultraflix-watermark.show-watermark { opacity: 1; visibility: visible; transform: translateY(0); }
     .uf-powered { color: #ffffff; font-size: 0.55rem; font-weight: 500; opacity: 0.7; font-family: 'Rajdhani', sans-serif;} 
-    .uf-brand {
-        color: var(--b2-red); font-size: 1.1rem; font-weight: 700; font-family: 'Rajdhani', sans-serif;
-        letter-spacing: 1px; text-shadow: 0 1px 5px rgba(0,0,0,0.9);
-    }
+    .uf-brand { color: var(--b2-red); font-size: 1.1rem; font-weight: 700; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-shadow: 0 1px 5px rgba(0,0,0,0.9); }
 
     /* === CHANNEL CATEGORIES === */
-    .channels-scroll-area {
-        flex: 1; overflow-y: auto; padding: 15px 4% 30px;
-        -ms-overflow-style: none; scrollbar-width: none;
-        scroll-behavior: smooth;
-    }
+    .channels-scroll-area { flex: 1; overflow-y: auto; padding: 15px 4% 30px; -ms-overflow-style: none; scrollbar-width: none; scroll-behavior: smooth; }
     .channels-scroll-area::-webkit-scrollbar { display: none; }
-
-    @media (min-width: 950px) {
-        .channels-scroll-area { width: 35%; padding: 0; padding-right: 10px; }
-    }
-
+    @media (min-width: 950px) { .channels-scroll-area { width: 35%; padding: 0; padding-right: 10px; } }
     .channels-container { display: flex; flex-direction: column; gap: 30px; }
-    
     .cat-section { transition: opacity 0.4s ease; }
     .cat-section.hidden-cat { display: none !important; }
     .channels-container .cat-title { display: none !important; }
 
-    .netflix-cat-header {
-        display: flex; justify-content: space-between; align-items: center;
-        margin-bottom: 12px; padding: 0 5px;
-    }
-    .netflix-cat-title { 
-        font-size: 1.1rem; font-weight: 600; color: #fff; 
-        letter-spacing: 1px; border-left: 3px solid var(--b2-red);
-        padding-left: 10px; font-family: 'Rajdhani', sans-serif;
-        text-transform: uppercase;
-    }
-    
-    .see-all-btn {
-        font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
-        cursor: pointer; transition: all 0.3s ease;
-        display: flex; align-items: center; gap: 4px;
-        background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 4px 12px;
-        border-radius: 20px; backdrop-filter: blur(5px);
-    }
+    .netflix-cat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 5px; }
+    .netflix-cat-title { font-size: 1.1rem; font-weight: 600; color: #fff; letter-spacing: 1px; border-left: 3px solid var(--b2-red); padding-left: 10px; font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+    .see-all-btn { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 4px; background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 4px 12px; border-radius: 20px; backdrop-filter: blur(5px); }
     .see-all-btn:hover { color: #fff; background: var(--glass-hover); border-color: var(--b2-red); }
 
-    .channels-container .app-grid {
-        display: flex !important; flex-direction: row; flex-wrap: nowrap;
-        overflow-x: auto; gap: 15px !important; padding: 5px 5px 15px 5px;
-        scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none;
-    }
+    .channels-container .app-grid { display: flex !important; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: 15px !important; padding: 10px 5px 15px 5px; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none; }
     .channels-container .app-grid::-webkit-scrollbar { display: none; }
+    .channels-container .app-grid.expanded-grid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 18px !important; overflow-x: visible; animation: gridExpand 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+    @keyframes gridExpand { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    .channels-container .app-grid.expanded-grid {
-        display: grid !important;
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 18px !important;
-        overflow-x: visible;
-        animation: gridExpand 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    
-    @keyframes gridExpand {
-        from { opacity: 0; transform: translateY(20px) scale(0.98); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-    }
+    .channels-container .channel-card { width: 140px !important; min-width: 140px !important; max-width: 140px !important; flex-shrink: 0 !important; position: relative !important; background: var(--glass-bg) !important; border-radius: 12px !important; padding: 8px !important; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-light) !important; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; cursor: pointer; border: 1px solid var(--glass-border); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .app-grid.expanded-grid .channel-card { width: 100% !important; min-width: unset !important; max-width: unset !important; }
+    .channels-container .channel-card:hover { transform: translateY(-5px) scale(1.05) !important; background: var(--glass-hover) !important; z-index: 2; box-shadow: 0 15px 30px rgba(0,0,0,0.8); border-color: rgba(255, 255, 255, 0.2); }
+    .channels-container .channel-card.active { border: 2px solid var(--b2-red) !important; padding: 7px !important; box-shadow: 0 0 20px rgba(255, 42, 42, 0.3) inset; }
 
-    .channels-container .channel-card {
-        width: 140px !important; min-width: 140px !important; max-width: 140px !important;
-        flex-shrink: 0 !important; position: relative !important;
-        background: var(--glass-bg) !important; border-radius: 12px !important;
-        padding: 8px !important; display: flex; flex-direction: column;
-        align-items: center; text-decoration: none; color: var(--text-light) !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        cursor: pointer;
-        border: 1px solid var(--glass-border);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-    }
-    
-    .app-grid.expanded-grid .channel-card {
-        width: 100% !important; min-width: unset !important; max-width: unset !important;
-    }
-
-    .channels-container .channel-card:hover {
-        transform: translateY(-5px) scale(1.05) !important; 
-        background: var(--glass-hover) !important; z-index: 2;
-        box-shadow: 0 15px 30px rgba(0,0,0,0.8);
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-    .channels-container .channel-card.active { 
-        border: 2px solid var(--b2-red) !important; padding: 7px !important; 
-        box-shadow: 0 0 20px rgba(255, 42, 42, 0.3) inset;
-    }
-
-    .channels-container .icon-box {
-        width: 100% !important; aspect-ratio: 16/9 !important; 
-        border-radius: 8px !important; background: rgba(0,0,0,0.6) !important; 
-        margin-bottom: 8px !important; display: flex !important; 
-        align-items: center !important; justify-content: center !important;
-        overflow: hidden; position: relative;
-    }
-
-    .channels-container .icon-box img {
-        width: 100% !important; height: 100% !important; 
-        object-fit: cover !important; z-index: 2; position: relative;
-        transition: transform 0.4s ease;
-    }
+    .channels-container .icon-box { width: 100% !important; aspect-ratio: 16/9 !important; border-radius: 8px !important; background: rgba(0,0,0,0.6) !important; margin-bottom: 8px !important; display: flex !important; align-items: center !important; justify-content: center !important; overflow: hidden; position: relative; }
+    .channels-container .icon-box img { width: 100% !important; height: 100% !important; object-fit: cover !important; z-index: 2; position: relative; transition: transform 0.4s ease; }
     .channels-container .channel-card:hover .icon-box img { transform: scale(1.08); }
+    .channels-container .channel-card span { font-size: 0.8rem; font-weight: 500; width: 100%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.9; }
 
-    .channels-container .channel-card span {
-        font-size: 0.8rem; font-weight: 500; width: 100%; 
-        text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        opacity: 0.9;
-    }
-
-    .loading-spinner {
-        position: absolute; top: 50%; left: 50%; width: 50px; height: 50px;
-        margin: -25px 0 0 -25px; border: 3px solid rgba(255, 255, 255, 0.05);
-        border-top: 3px solid var(--b2-red); border-radius: 50%;
-        animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; z-index: 20; display: none;
-    }
+    .loading-spinner { position: absolute; top: 50%; left: 50%; width: 50px; height: 50px; margin: -25px 0 0 -25px; border: 3px solid rgba(255, 255, 255, 0.05); border-top: 3px solid var(--b2-red); border-radius: 50%; animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; z-index: 20; display: none; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* === PWA INSTALL NOTIFICATION BANNER === */
-    .pwa-notification {
-        position: fixed;
-        bottom: -100px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(10, 10, 15, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--b2-red);
-        border-radius: 50px;
-        padding: 12px 25px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        z-index: 3000;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 42, 42, 0.2);
-        transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        width: 90%;
-        max-width: 450px;
-        justify-content: space-between;
-    }
-
-    .pwa-notification.show {
-        bottom: 80px;
-    }
-
-    .pwa-text { display: flex; flex-direction: column; }
-    .pwa-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.1rem; color: #fff; letter-spacing: 1px; }
-    .pwa-desc { font-family: 'Poppins', sans-serif; font-size: 0.7rem; color: var(--text-muted); }
-
+    .pwa-notification { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--b2-red); border-radius: 50px; padding: 12px 25px; display: flex; align-items: center; gap: 20px; z-index: 3000; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 42, 42, 0.2); transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 90%; max-width: 450px; justify-content: space-between; }
+    .pwa-notification.show { bottom: 80px; }
+    .pwa-text { display: flex; flex-direction: column; } .pwa-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.1rem; color: #fff; letter-spacing: 1px; } .pwa-desc { font-family: 'Poppins', sans-serif; font-size: 0.7rem; color: var(--text-muted); }
     .pwa-actions { display: flex; align-items: center; gap: 15px; }
-
-    .pwa-install-btn {
-        background: var(--b2-red); color: white; border: none; padding: 8px 18px;
-        border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: 'Poppins', sans-serif;
-        cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 42, 42, 0.4);
-    }
+    .pwa-install-btn { background: var(--b2-red); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 42, 42, 0.4); }
     .pwa-install-btn:hover { background: var(--b2-dark-red); transform: translateY(-2px); }
-
-    .pwa-close-btn {
-        background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem;
-        cursor: pointer; transition: color 0.3s ease; padding: 0; line-height: 1;
-    }
+    .pwa-close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; transition: color 0.3s ease; padding: 0; line-height: 1; }
     .pwa-close-btn:hover { color: white; }
+
+    *:focus { outline: none; }
+    .channels-container .channel-card:focus { transform: translateY(-5px) scale(1.05) !important; background: var(--glass-hover) !important; z-index: 2; box-shadow: 0 0 0 3px var(--b2-red), 0 15px 30px rgba(0,0,0,0.8) !important; border-color: var(--b2-red) !important; }
+    .see-all-btn:focus { color: #fff; background: var(--glass-hover); border-color: var(--b2-red); box-shadow: 0 0 0 2px var(--b2-red); }
+    .search-trigger:focus, .profile-icon:focus { background: var(--b2-red); border-color: var(--b2-red); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--b2-red); }
+
+    /* === INFO MODAL === */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(15px); z-index: 5000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.4s ease; padding: 20px; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .info-container { background: linear-gradient(to bottom, rgba(15, 15, 20, 0.95), rgba(5, 5, 8, 1)); border: 1px solid var(--b2-red); border-radius: 20px; width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; padding: 40px 30px; position: relative; transform: translateY(50px) scale(0.95); transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 20px 60px rgba(0,0,0,1), 0 0 30px rgba(255, 42, 42, 0.15); scrollbar-width: none; user-select: text; }
+    .info-container::-webkit-scrollbar { display: none; }
+    .modal-overlay.active .info-container { transform: translateY(0) scale(1); }
+    .close-modal-btn { position: absolute; top: 20px; right: 25px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; width: 35px; height: 35px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; z-index: 100; }
+    .close-modal-btn:hover, .close-modal-btn:focus { background: var(--b2-red); border-color: var(--b2-red); transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 42, 42, 0.5); }
+    .info-hero-title { text-align: center; margin-bottom: 30px; position: relative; }
+    .info-hero-title h1 { font-family: 'Rajdhani', sans-serif; font-size: 2.5rem; letter-spacing: 1px; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
+    .info-version-badge { display: inline-block; background: rgba(255, 42, 42, 0.2); color: var(--b2-red); border: 1px solid var(--b2-red); padding: 4px 15px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; margin-top: 5px; letter-spacing: 1px; }
+    .info-center-logo { display: block; margin: 25px auto 10px; max-width: 220px; width: 100%; height: auto; filter: drop-shadow(0 0 25px rgba(255, 42, 42, 0.5)); animation: pulseGlow 3s infinite alternate; pointer-events: none; }
+    .info-section { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 25px; border-radius: 16px; margin-bottom: 25px; transition: transform 0.3s ease, border-color 0.3s ease; }
+    .info-section:hover { border-color: rgba(255, 255, 255, 0.15); transform: translateY(-2px); }
+    .info-h2 { font-family: 'Rajdhani', sans-serif; border-left: 4px solid var(--b2-red); padding-left: 15px; margin-bottom: 20px; font-size: 1.6rem; color: var(--text-light); }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+    .info-item { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px; text-align: center; transition: all 0.3s ease; }
+    .info-item:hover { background: rgba(255, 42, 42, 0.1); border-color: var(--b2-red); }
+    .info-item i { color: var(--b2-red); font-size: 1.5rem; margin-bottom: 10px; }
+    .info-item span { display: block; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px; }
+    .info-item p { font-weight: 600; font-size: 1rem; color: #fff; }
+    .info-warning-box { background: rgba(255, 42, 42, 0.1); border: 1px solid var(--b2-red); padding: 15px; border-radius: 12px; margin-top: 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 0 20px rgba(255, 42, 42, 0.1) inset; }
+    .info-warning-box i { color: var(--b2-red); font-size: 1.6rem; }
+    .info-warning-text { font-size: 0.9rem; line-height: 1.4; }
+    .info-policy-text { color: var(--text-muted); font-size: 0.9rem; text-align: justify; line-height: 1.6; }
+    .info-disclaimer-box { background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); border-radius: 8px; margin-top: 15px; padding: 15px; font-size: 0.85rem; color: #a0a0a0; }
+    .info-disclaimer-box strong { color: var(--b2-red); font-family: 'Rajdhani', sans-serif; font-size: 1rem; }
+    .info-dev-card { display: flex; align-items: center; gap: 20px; }
+    .info-dev-info h3 { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; color: var(--text-light); margin-bottom: 5px; }
+    .info-social-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(24, 119, 242, 0.2); border: 1px solid #1877F2; color: white; padding: 8px 18px; border-radius: 25px; text-decoration: none; margin-top: 15px; font-weight: 600; font-size: 0.85rem; transition: 0.3s; }
+    .info-social-btn:hover, .info-social-btn:focus { background: #1877F2; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(24, 119, 242, 0.4); }
+    .info-footer { text-align: center; padding: 20px 0 0; color: var(--text-muted); font-size: 0.8rem; font-family: 'Rajdhani', sans-serif; }
+    @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr 1fr; } }
     </style>
 </head>
 
 <body>
 
+    <!-- === SCI-FI AUTHENTICATION OVERLAY === -->
+    <div id="authOverlay" class="auth-overlay">
+        <div id="authBox" class="auth-box">
+            <i class="fas fa-shield-alt auth-icon"></i>
+            <div class="auth-title">SYSTEM LOCKED</div>
+            <div class="auth-subtitle">SECURITY CLEARANCE REQUIRED</div>
+            
+            <div class="auth-input-group">
+                <input type="password" id="authInput" class="auth-input" placeholder="ENTER PIN" autocomplete="off" tabindex="0">
+            </div>
+            
+            <button id="authSubmitBtn" class="auth-btn" tabindex="0">AUTHENTICATE</button>
+            <div id="authErrorMsg" class="auth-error"></div>
+        </div>
+    </div>
+
     <!-- PWA Install Notification -->
     <div id="pwaNotification" class="pwa-notification">
         <div class="pwa-text">
             <div class="pwa-title">B-2 STEALTH App</div>
-            <div class="pwa-desc">Install app for better experience</div>
+            <div class="pwa-desc">Chrome හරහා App එක Install කර වඩා හොඳ අත්දැකීමක් ලබාගන්න</div>
         </div>
         <div class="pwa-actions">
             <button id="pwaInstallBtn" class="pwa-install-btn">Install</button>
@@ -378,16 +296,16 @@
         </div>
 
         <div class="top-actions">
-            <div id="searchToggle" class="search-trigger">
+            <div id="searchToggle" class="search-trigger" tabindex="0" role="button" aria-label="Search">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
             </div>
             <div class="search-box-wrapper" id="searchWrapper">
                 <input type="text" id="searchInput" placeholder="Search targets..." autocomplete="off">
             </div>
             
-            <a href="https://saman-pushpa-kumara.github.io/SMART_TV/privacy.html" target="_blank" class="profile-icon">
+            <div id="infoToggle" class="profile-icon" tabindex="0" role="button" aria-label="App Info">
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-            </a>
+            </div>
         </div>
     </header>
 
@@ -406,186 +324,318 @@
         </div>
 
         <!-- CHANNELS -->
-        <div class="channels-scroll-area">
+        <div class="channels-scroll-area" id="channelsScrollArea">
             <div class="channels-container" id="channelsContainer">
                 <!-- Channels will be injected here -->
             </div>
         </div>
     </div>
     
-<script src="https://cdn.jsdelivr.net/gh/Saman-Pushpa-Kumara/AI@main/B-2/script.js"></script>
+    <!-- === INFO / PRIVACY MODAL === -->
+    <div id="infoModalOverlay" class="modal-overlay">
+        <div class="info-container" role="dialog" aria-modal="true">
+            <button id="closeInfoModal" class="close-modal-btn" tabindex="0" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="info-hero-title">
+                <h1>B2 TV</h1>
+                <div class="info-version-badge">Version 1.0 Pro</div>
+                <img src="https://i.imgur.com/DVaThxP.png" alt="B2 Stealth Center Logo" class="info-center-logo">
+            </div>
+            
+            <div class="info-section">
+                <h2 class="info-h2">App Details</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Platform</span>
+                        <p>Android Device</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Region</span>
+                        <p>Sri Lanka Only 🇱🇰</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Security</span>
+                        <p>Verified</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-tv"></i>
+                        <span>Type</span>
+                        <p>Premium Live TV</p>
+                    </div>
+                </div>
+                <div class="info-warning-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="info-warning-text">
+                        <strong>VPN Warning:</strong> මෙම App එක සඳහා VPN භාවිතා කළ නොහැක. කරුණාකර ශ්‍රී ලාංකීය ජාලයක් පමණක් භාවිතා කරන්න.
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-h2">Privacy Policy</h2>
+                <div class="info-policy-text">
+                    <p>B-2 STEALTH TV හි ඔබගේ රහස්‍යතාව ආරක්ෂා කිරීම අපගේ මූලික ඉලක්කයයි. මෙම යෙදුම මගින් ඔබගේ පෞද්ගලික දත්ත අනවශ්‍ය ලෙස රැස් කිරීම, බෙදා හැරීම හෝ ගබඩා කිරීම කිසිසේත්ම සිදු නොකරන බව අපි සහතික කරමු.</p>
+                    <div class="info-disclaimer-box">
+                        <strong>DISCLAIMER:</strong><br><br>
+                        අපගේ වේදිකාව හුදෙක් අන්තර්ජාලයේ නොමිලේ පවතින සහ තෙවන පාර්ශවයන්ගේ සේවාදායකයන් (Third-party servers) මත පිහිටා ඇති ශ්‍රව්‍ය දෘශ්‍ය අන්තර්ගතයන්ට සබැඳි (IPTV Links) පහසුවෙන් නැරඹීමට පහසුකම් සැලසීම පමණක් සිදු කරයි. අපි කිසිදු වීඩියෝවක් හෝ නාලිකාවක් අපගේ සේවාදායකයන් තුළ ගබඩා නොකරමු. අන්තර්ගතයේ පූර්ණ අයිතිය එහි මුල් හිමිකරුවන් සතු වේ. මෙය හුදෙක් අධ්‍යාපනික සහ විනෝදාස්වාද ව්‍යාපෘතියක් පමණක් වන අතර කිසිදු වාණිජ අරමුණක් සඳහා භාවිතා නොවේ.
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-h2">Created Info</h2>
+                <div class="info-dev-card">
+                    <div class="info-dev-info">
+                        <h3>MOD APPs Team</h3>
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">Lead Developers & UI Designers</p>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">ඔබට මෙම ඇප් එක සම්බන්ධයෙන් කිසියම් ගැටළුවක් ඇත්නම් හෝ වැඩිදුර තොරතුරු අවශ්‍ය නම් පහත අපගේ Facebook පිටුව හරහා අප හා සම්බන්ධ වන්න.</p>
+                        <a href="https://www.facebook.com/saman2200" class="info-social-btn" target="_blank" tabindex="0">
+                            <i class="fab fa-facebook-f"></i> Contact Support Team
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-footer">
+                &copy; 2026 B-2 STEALTH TV<br>Premium Entertainment Designed for Sri Lanka
+            </div>
+        </div>
+    </div>
+
 
 <script>
-    // === 1. SINGLE FILE DYNAMIC PWA SYSTEM (For Blogger) ===
-    (function initDynamicPWA() {
-        // Create Dynamic Manifest URL
-        const manifestObj = {
-            "name": "B-2 STEALTH TV Premium",
-            "short_name": "B-2 TV",
-            "start_url": window.location.href.split('?')[0],
-            "display": "standalone",
-            "background_color": "#000000",
-            "theme_color": "#ff2a2a",
-            "icons": [
-                {
-                    "src": "https://i.imgur.com/jjXdw21.png",
-                    "sizes": "192x192",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": "https://i.imgur.com/jjXdw21.png",
-                    "sizes": "512x512",
-                    "type": "image/png",
-                    "purpose": "any"
+    // ==========================================
+    // === 0. SECURITY & AUTHENTICATION LOGIC ===
+    // ==========================================
+    
+    // මෙතනට ඔබගේ GitHub Raw Link එක Paste කරන්න 👇
+    const GITHUB_AUTH_URL = "https://gist.githubusercontent.com/saman-pushpa-kumara/61b7f9bd976e19c0b02868ff1df91ff9/raw/8267252033c945cd12e340a169b50b57134ed7f9/auth.json";
+
+    const authOverlay = document.getElementById('authOverlay');
+    const authBox = document.getElementById('authBox');
+    const authInput = document.getElementById('authInput');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const authErrorMsg = document.getElementById('authErrorMsg');
+    
+    let isAppLocked = true; 
+    let currentLivePassword = ""; 
+
+    async function checkAuthentication() {
+        const savedPin = localStorage.getItem('b2_stealth_auth_pin');
+
+        try {
+            // Fetch configuration from GitHub
+            const response = await fetch(GITHUB_AUTH_URL + '?t=' + new Date().getTime());
+            const data = await response.json();
+
+            // Check if login is disabled OR saved pin is correct
+            if (data.status === "disabled" || data.password === savedPin) {
+                currentLivePassword = data.password;
+                unlockApp();
+            } else {
+                // Pin is wrong or empty -> Show Auth Box smoothly
+                currentLivePassword = data.password;
+                showAuthUI();
+                if(savedPin) {
+                    showAuthError("SECURITY KEY UPDATED. RE-ENTER PIN.");
                 }
-            ]
-        };
-
-        const manifestString = JSON.stringify(manifestObj);
-        const encodedManifest = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString);
-        
-        // Inject Manifest
-        let manifestLink = document.createElement('link');
-        manifestLink.rel = 'manifest';
-        manifestLink.href = encodedManifest;
-        document.head.appendChild(manifestLink);
-
-        // Try to inject virtual Service Worker (To trick browser into showing prompt)
-        if ('serviceWorker' in navigator) {
-            const swCode = `self.addEventListener('fetch', (event) => {});`;
-            const blob = new Blob([swCode], { type: 'application/javascript' });
-            const swUrl = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(swUrl).catch(() => {
-                console.log("Virtual SW Blocked (Expected in strict browsers), Fallback enabled.");
-            });
+            }
+        } catch (error) {
+            console.error("Authentication check failed:", error);
+            showAuthUI();
+            showAuthError("CONNECTION ERROR. SYSTEM LOCKED.");
         }
+    }
+
+    function showAuthUI() {
+        authBox.classList.add('show');
+        authInput.focus();
+    }
+
+    function unlockApp() {
+        isAppLocked = false;
+        authOverlay.classList.add('hidden');
+        // Small delay to focus a channel card safely
+        setTimeout(() => document.querySelector('.channel-card')?.focus(), 600);
+    }
+
+    function verifyPin() {
+        const enteredPin = authInput.value.trim();
+        if (enteredPin === currentLivePassword) {
+            localStorage.setItem('b2_stealth_auth_pin', enteredPin);
+            authErrorMsg.innerText = "ACCESS GRANTED.";
+            authErrorMsg.style.color = "#00ff00";
+            setTimeout(() => {
+                unlockApp();
+            }, 500);
+        } else {
+            showAuthError("ACCESS DENIED. INVALID PIN.");
+            authInput.value = "";
+        }
+    }
+
+    function showAuthError(msg) {
+        authErrorMsg.innerText = msg;
+        authErrorMsg.style.color = "var(--b2-red)";
+        authBox.classList.remove('shake-anim');
+        void authBox.offsetWidth; // trigger reflow
+        authBox.classList.add('shake-anim');
+    }
+
+    authSubmitBtn.addEventListener('click', verifyPin);
+    window.addEventListener('load', checkAuthentication);
+
+
+    // ==========================================
+    // === 1. PWA INSTALL FIX (Proper Prompt) ===
+    // ==========================================
+    (function initDynamicPWA() {
+        const manifestObj = { "name": "B-2 STEALTH TV Premium", "short_name": "B-2 TV", "start_url": window.location.href.split('?')[0], "display": "standalone", "background_color": "#000000", "theme_color": "#ff2a2a", "icons": [ { "src": "https://i.imgur.com/McqXQ3Y.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" }, { "src": "https://i.imgur.com/McqXQ3Y.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" } ] };
+        const encodedManifest = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifestObj));
+        let manifestLink = document.createElement('link'); manifestLink.rel = 'manifest'; manifestLink.href = encodedManifest; document.head.appendChild(manifestLink);
+        if ('serviceWorker' in navigator) { const swCode = `self.addEventListener('fetch', (event) => {});`; const blob = new Blob([swCode], { type: 'application/javascript' }); navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => { }); }
     })();
 
-    // === 2. PWA NOTIFICATION LOGIC ===
-    let deferredPrompt = null;
+    let deferredPrompt = null; 
     let isAppInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    
-    const pwaNotification = document.getElementById('pwaNotification');
-    const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+    const pwaNotification = document.getElementById('pwaNotification'); 
+    const pwaInstallBtn = document.getElementById('pwaInstallBtn'); 
     const pwaCloseBtn = document.getElementById('pwaCloseBtn');
 
-    // Listen for native install prompt
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        if (!isAppInstalled) {
-            setTimeout(() => pwaNotification.classList.add('show'), 2000); 
-        }
+    window.addEventListener('beforeinstallprompt', (e) => { 
+        e.preventDefault(); 
+        deferredPrompt = e; 
+        if (!isAppInstalled) setTimeout(() => pwaNotification.classList.add('show'), 2000); 
     });
-
-    // Fallback if browser blocks automatic prompt (Very common on Blogger)
-    setTimeout(() => {
-        if (!deferredPrompt && !isAppInstalled) {
-            pwaNotification.classList.add('show');
-        }
-    }, 4000);
-
-    // Install Button Action
-    pwaInstallBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            // Native Prompt
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            deferredPrompt = null;
-            pwaNotification.classList.remove('show');
-        } else {
-            // Smart Fallback Instructions
-            alert("To Install App:\n\n1. Tap the Browser Menu ( ⋮ or ⇪ )\n2. Select 'Add to Home screen' or 'Install App'");
-            pwaNotification.classList.remove('show');
-        }
+    
+    setTimeout(() => { if (!deferredPrompt && !isAppInstalled) pwaNotification.classList.add('show'); }, 4000);
+    
+    pwaInstallBtn.addEventListener('click', async () => { 
+        if (deferredPrompt) { 
+            try {
+                await deferredPrompt.prompt(); 
+                const { outcome } = await deferredPrompt.userChoice; 
+                if(outcome === 'accepted') { console.log('PWA Installed'); }
+                deferredPrompt = null; 
+                pwaNotification.classList.remove('show'); 
+            } catch(err) {
+                console.error("Install Prompt failed:", err);
+            }
+        } else { 
+            alert("To Install App:\n\n1. Tap the Browser Menu ( ⋮ or ⇪ )\n2. Select 'Add to Home screen' or 'Install App'"); 
+            pwaNotification.classList.remove('show'); 
+        } 
     });
-
+    
     pwaCloseBtn.addEventListener('click', () => pwaNotification.classList.remove('show'));
+    window.addEventListener('appinstalled', () => { deferredPrompt = null; isAppInstalled = true; pwaNotification.classList.remove('show'); });
 
-    window.addEventListener('appinstalled', () => {
-        deferredPrompt = null;
-        isAppInstalled = true;
-        pwaNotification.classList.remove('show');
-    });
 
-    // === 3. SEARCH & UI LOGIC (Original Code) ===
-    const searchToggle = document.getElementById('searchToggle');
-    const searchWrapper = document.getElementById('searchWrapper');
-    const searchInput = document.getElementById('searchInput');
+    // ==========================================
+    // === 2. UI LOGIC & BACK BUTTON FIXES ===
+    // ==========================================
+    const searchToggle = document.getElementById('searchToggle'); const searchWrapper = document.getElementById('searchWrapper'); const searchInput = document.getElementById('searchInput');
+    function activateSearch() { searchWrapper.classList.toggle('active'); if (searchWrapper.classList.contains('active')) searchInput.focus(); }
+    searchToggle.addEventListener('click', activateSearch); searchToggle.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateSearch(); } });
 
-    searchToggle.addEventListener('click', () => {
-        searchWrapper.classList.toggle('active');
-        if(searchWrapper.classList.contains('active')) searchInput.focus();
-    });
+    setInterval(() => { const controls = document.querySelector('.shaka-controls-container'); const watermark = document.getElementById('ultraflixWatermark'); if (controls && watermark) { const opacity = window.getComputedStyle(controls).opacity; const isHidden = controls.classList.contains('shaka-hidden') || opacity === '0'; if (!isHidden) watermark.classList.add('show-watermark'); else watermark.classList.remove('show-watermark'); } }, 250);
 
-    setInterval(() => {
-        const controls = document.querySelector('.shaka-controls-container');
-        const watermark = document.getElementById('ultraflixWatermark');
-        if (controls && watermark) {
-            const opacity = window.getComputedStyle(controls).opacity;
-            const isHidden = controls.classList.contains('shaka-hidden') || opacity === '0';
-            if (!isHidden) watermark.classList.add('show-watermark');
-            else watermark.classList.remove('show-watermark');
+    const observer = new MutationObserver((mutations) => { mutations.forEach((mutation) => { mutation.addedNodes.forEach((node) => { if (node.nodeType === 1 && node.classList.contains('cat-section')) { const oldTitle = node.querySelector('.cat-title'); const grid = node.querySelector('.app-grid'); if (oldTitle && !oldTitle.hasAttribute('data-modified')) { oldTitle.setAttribute('data-modified', 'true'); const titleText = oldTitle.innerText || oldTitle.textContent; const headerWrapper = document.createElement('div'); headerWrapper.className = 'netflix-cat-header'; const newTitle = document.createElement('div'); newTitle.className = 'netflix-cat-title'; newTitle.innerText = titleText; const seeAllBtn = document.createElement('button'); seeAllBtn.className = 'see-all-btn'; seeAllBtn.innerHTML = 'VIEW ALL <svg viewBox="0 0 24 24" style="width:12px;fill:currentColor;margin-left:2px;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>'; seeAllBtn.onclick = () => { const allCategories = document.querySelectorAll('.cat-section'); if (grid.classList.contains('expanded-grid')) { history.back(); } else { grid.classList.add('expanded-grid'); allCategories.forEach(cat => { if (cat !== node) cat.classList.add('hidden-cat'); }); seeAllBtn.innerHTML = '<svg viewBox="0 0 24 24" style="width:12px;fill:currentColor;transform:rotate(180deg);margin-right:2px;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg> RETURN'; document.querySelector('.channels-scroll-area').scrollTo({ top: 0, behavior: 'smooth' }); history.pushState({ isCategoryExpanded: true }, "", "#category"); } }; headerWrapper.appendChild(newTitle); headerWrapper.appendChild(seeAllBtn); node.insertBefore(headerWrapper, grid); } if (grid) { const cards = grid.querySelectorAll('.channel-card'); cards.forEach(card => { if (!card.getAttribute('tabindex')) { card.setAttribute('tabindex', '0'); } }); } } }); }); });
+    const channelsContainer = document.getElementById('channelsContainer'); if (channelsContainer) observer.observe(channelsContainer, { childList: true, subtree: true });
+
+    // Centralized Back Button (popstate) Handler for Mobile Devices & Browsers
+    window.addEventListener('popstate', (event) => { 
+        // Close Info Modal if open
+        if (infoModalOverlay.classList.contains('active')) {
+            infoModalOverlay.classList.remove('active');
+            infoToggle.focus();
         }
-    }, 250);
-
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            mutation.addedNodes.forEach((node) => {
-                if (node.nodeType === 1 && node.classList.contains('cat-section')) {
-                    const oldTitle = node.querySelector('.cat-title');
-                    const grid = node.querySelector('.app-grid');
-
-                    if (oldTitle && !oldTitle.hasAttribute('data-modified')) {
-                        oldTitle.setAttribute('data-modified', 'true');
-                        const titleText = oldTitle.innerText || oldTitle.textContent;
-
-                        const headerWrapper = document.createElement('div');
-                        headerWrapper.className = 'netflix-cat-header';
-
-                        const newTitle = document.createElement('div');
-                        newTitle.className = 'netflix-cat-title';
-                        newTitle.innerText = titleText;
-
-                        const seeAllBtn = document.createElement('button');
-                        seeAllBtn.className = 'see-all-btn';
-                        seeAllBtn.innerHTML = 'VIEW ALL <svg viewBox="0 0 24 24" style="width:12px;fill:currentColor;margin-left:2px;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>';
-
-                        seeAllBtn.onclick = () => {
-                            const allCategories = document.querySelectorAll('.cat-section');
-                            if (grid.classList.contains('expanded-grid')) {
-                                history.back();
-                            } else {
-                                grid.classList.add('expanded-grid');
-                                allCategories.forEach(cat => {
-                                    if(cat !== node) cat.classList.add('hidden-cat');
-                                });
-                                seeAllBtn.innerHTML = '<svg viewBox="0 0 24 24" style="width:12px;fill:currentColor;transform:rotate(180deg);margin-right:2px;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg> RETURN';
-                                document.querySelector('.channels-scroll-area').scrollTo({ top: 0, behavior: 'smooth' });
-                                history.pushState({ isCategoryExpanded: true }, "", "#category");
-                            }
-                        };
-
-                        headerWrapper.appendChild(newTitle);
-                        headerWrapper.appendChild(seeAllBtn);
-                        node.insertBefore(headerWrapper, grid);
-                    }
-                }
-            });
-        });
+        
+        // Return expanded category to normal
+        document.querySelectorAll('.app-grid.expanded-grid').forEach(grid => grid.classList.remove('expanded-grid')); 
+        document.querySelectorAll('.cat-section.hidden-cat').forEach(cat => cat.classList.remove('hidden-cat')); 
+        document.querySelectorAll('.see-all-btn').forEach(btn => { 
+            btn.innerHTML = 'VIEW ALL <svg viewBox="0 0 24 24" style="width:12px;fill:currentColor;margin-left:2px;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>'; 
+        }); 
     });
 
-    const channelsContainer = document.getElementById('channelsContainer');
-    if(channelsContainer) observer.observe(channelsContainer, { childList: true, subtree: true });
+    // Info Modal Logic
+    const infoToggle = document.getElementById('infoToggle'); const infoModalOverlay = document.getElementById('infoModalOverlay'); const closeInfoModal = document.getElementById('closeInfoModal');
+    function openInfoModal() { infoModalOverlay.classList.add('active'); closeInfoModal.focus(); history.pushState({ isModalOpen: true }, "", "#info"); }
+    function closeInfoModalFunc() { if(window.location.hash === "#info") { history.back(); } else { infoModalOverlay.classList.remove('active'); infoToggle.focus(); } }
+    infoToggle.addEventListener('click', openInfoModal); infoToggle.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openInfoModal(); } });
+    closeInfoModal.addEventListener('click', closeInfoModalFunc);
+    infoModalOverlay.addEventListener('click', (e) => { if (e.target === infoModalOverlay) closeInfoModalFunc(); });
 
-    window.addEventListener('popstate', (event) => {
-        document.querySelectorAll('.app-grid.expanded-grid').forEach(grid => grid.classList.remove('expanded-grid'));
-        document.querySelectorAll('.cat-section.hidden-cat').forEach(cat => cat.classList.remove('hidden-cat'));
-        document.querySelectorAll('.see-all-btn').forEach(btn => {
-            btn.innerHTML = 'VIEW ALL <svg viewBox="0 0 24 24" style="width:12px;fill:currentColor;margin-left:2px;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>';
-        });
+    // ==========================================
+    // === TV REMOTE SUPPORT – KEYBOARD SETUP ===
+    // ==========================================
+    document.addEventListener('keydown', function(e) {
+        const focused = document.activeElement;
+        const key = e.key;
+
+        if (isAppLocked) {
+            if (key === 'Enter') {
+                e.preventDefault();
+                if(focused === authSubmitBtn || focused === authInput) { verifyPin(); }
+            }
+            return; 
+        }
+
+        if (key === 'Backspace' || key === 'Escape') {
+            if (infoModalOverlay.classList.contains('active') || document.querySelector('.expanded-grid')) { 
+                e.preventDefault(); history.back(); return; 
+            }
+        }
+
+        if (key === 'Enter') { if (focused && focused !== document.body) { e.preventDefault(); focused.click(); return; } }
+        if (infoModalOverlay.classList.contains('active')) return;
+        if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(key)) return;
+        
+        e.preventDefault();
+        const isCard = focused && focused.classList.contains('channel-card');
+        
+        if (isCard) {
+            const grid = focused.closest('.app-grid');
+            const allCards = Array.from(grid ? grid.querySelectorAll('.channel-card') : []);
+            const idx = allCards.indexOf(focused);
+
+            if (key === 'ArrowRight') { const next = allCards[idx + 1]; if (next) { next.focus(); scrollCardIntoView(next); return; } focusNextCategory(grid, 'next'); return; }
+            if (key === 'ArrowLeft') { const prev = allCards[idx - 1]; if (prev) { prev.focus(); scrollCardIntoView(prev); return; } focusNextCategory(grid, 'prev'); return; }
+            if (key === 'ArrowDown') { focusNextCategory(grid, 'next'); return; }
+            if (key === 'ArrowUp') { focusNextCategory(grid, 'prev'); return; }
+        } else {
+            const firstCard = document.querySelector('.channel-card:not(.hidden-cat .channel-card)');
+            if (firstCard) { firstCard.focus(); scrollCardIntoView(firstCard); }
+        }
     });
+
+    function scrollCardIntoView(card) { card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' }); }
+    function focusNextCategory(currentGrid, direction) {
+        const allGrids = Array.from(document.querySelectorAll('.cat-section:not(.hidden-cat) .app-grid'));
+        const gridIdx = allGrids.indexOf(currentGrid);
+        let targetGrid = null;
+        if (direction === 'next' && gridIdx < allGrids.length - 1) { targetGrid = allGrids[gridIdx + 1]; } 
+        else if (direction === 'prev' && gridIdx > 0) { targetGrid = allGrids[gridIdx - 1]; }
+
+        if (targetGrid) {
+            const cards = targetGrid.querySelectorAll('.channel-card');
+            const target = direction === 'next' ? cards[0] : cards[cards.length - 1];
+            if (target) { target.focus(); scrollCardIntoView(target); target.closest('.cat-section')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+        }
+    }
+
+    const cardObserver = new MutationObserver(() => { document.querySelectorAll('.channel-card').forEach(card => { if (!card.getAttribute('tabindex')) card.setAttribute('tabindex', '0'); }); });
+    if (channelsContainer) { cardObserver.observe(channelsContainer, { childList: true, subtree: true }); }
+</script>
+
+<script>
+/* main channel script here */
 </script>
 
 </body>
