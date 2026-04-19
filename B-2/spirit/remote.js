@@ -73,3 +73,38 @@ function focusNextCategory(currentGrid, direction) {
 const cardObserver = new MutationObserver(() => { document.querySelectorAll('.channel-card').forEach(card => { if (!card.getAttribute('tabindex')) card.setAttribute('tabindex', '0'); }); });
 const chContainer = document.getElementById('channelsContainer');
 if (chContainer) { cardObserver.observe(chContainer, { childList: true, subtree: true }); }
+
+
+// === DevTools Detection + Right Click Block ===
+
+(function() {
+    // DevTools ඇරලා තියෙනවද කියලා එක තත්පරයකට වතාවක් පරීක්ෂා කරනවා
+    setInterval(function () {
+        const outerWidth  = window.outerWidth;
+        const innerWidth  = window.innerWidth;
+        const outerHeight = window.outerHeight;
+        const innerHeight = window.innerHeight;
+
+        // DevTools open උනොත් outer සහ inner අතර වෙනස වැඩි වෙනවා
+        if (outerWidth - innerWidth > 160 || outerHeight - innerHeight > 160) {
+            // Dark background එකේ පේන්න text එකට style එකක් දීලා තියෙනවා
+            document.body.innerHTML = '<div style="color: red; text-align: center; padding-top: 20%; font-family: Poppins, sans-serif; font-size: 24px; font-weight: bold;">DevTools is not allowed.</div>';
+        }
+    }, 1000);   // 1000ms = 1 second
+})();
+
+// Right Click (context menu) Disable
+document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});
+
+// Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+U) Disable
+document.addEventListener('keydown', function(e) {
+    if (
+        e.key === 'F12' || 
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
+        (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+    ) {
+        e.preventDefault();
+    }
+});
