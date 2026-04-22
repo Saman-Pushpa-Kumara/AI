@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
     `;
 
-    // නව URL එක
+    // නව URL එක (jsDelivr)
     const GITHUB_AUTH_URL = "https://raw.githubusercontent.com/Saman-Pushpa-Kumara/AI/refs/heads/main/B-2/spirit/password.js";
 
     const authOverlay = document.getElementById('authOverlay');
@@ -41,57 +41,36 @@ document.addEventListener("DOMContentLoaded", () => {
         const savedPin = localStorage.getItem('b2_stealth_auth_pin');
 
         try {
-            // Browser Cache එක සම්පූර්ණයෙන්ම නැවැත්වීම
-            const fetchUrl = GITHUB_AUTH_URL + '?nocache=' + Math.random();
-            const response = await fetch(fetchUrl, {
-                cache: 'no-store',
-                headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
-            });
-            
+            // Cache එක මගහැරීමට ?t= සමග request කිරීම
+            const response = await fetch(GITHUB_AUTH_URL + '?t=' + new Date().getTime());
             const textData = await response.text(); 
+            
             let data = { status: "enabled", password: "" };
 
             try {
+                // පළමුව JSON දැයි පරීක්ෂා කරයි
                 const parsed = JSON.parse(textData);
-                data.password = parsed.password || textData;
+                data.password = parsed.password || textData.trim();
                 if(parsed.status) data.status = parsed.status;
             } catch (e) {
+                // JSON නොවේ නම්, JS file එක ඇතුලේ Quotes (" ") අස්සේ ඇති මුරපදය සොයයි
                 const match = textData.match(/['"]([^'"]+)['"]/);
                 if (match && match[1]) {
                     data.password = match[1];
                 } else {
-                    data.password = textData;
+                    // Quotes නැත්නම් අනවශ්‍ය අකුරු මකා මුරපදය පමණක් ගනී
+                    data.password = textData.replace(/[^a-zA-Z0-9@#*&]/g, '').trim();
                 }
             }
 
-            // සැඟවුණු හිස්තැන් (Spaces/Enters) සම්පූර්ණයෙන්ම මකා දැමීම 
-            data.password = String(data.password).replace(/\s+/g, '').trim();
-            const cleanSavedPin = savedPin ? String(savedPin).replace(/\s+/g, '').trim() : null;
-
-            // Password එක හිස්ව (Empty) පැමිණියහොත් Unlock වීම වැලැක්වීම
-            if (data.password === "") {
-                showAuthUI();
-                showAuthError("SYSTEM ERROR: KEY NOT FOUND.");
-                return;
-            }
-
-            // Status එක disabled නම් කෙලින්ම ඇතුලට යැවීම
-            if (data.status === "disabled") {
+            if (data.status === "disabled" || data.password === savedPin) {
                 currentLivePassword = data.password;
                 unlockApp();
-                return;
-            }
-
-            // අලුත් Password එක සහ පරණ Password එක සමානදැයි බැලීම
-            if (data.password === cleanSavedPin) {
-                currentLivePassword = data.password;
-                unlockApp(); // සමාන නම් UI එක නොපෙන්වා ඇතුලට යවයි
             } else {
                 currentLivePassword = data.password;
-                showAuthUI(); // අසමාන නම් (වෙනස් කර ඇත්නම්) UI එක පෙන්වයි
-                if(cleanSavedPin) showAuthError("SECURITY KEY UPDATED. RE-ENTER PIN.");
+                showAuthUI();
+                if(savedPin) showAuthError("SECURITY KEY UPDATED. RE-ENTER PIN.");
             }
-            
         } catch (error) {
             console.error("Authentication check failed:", error);
             showAuthUI();
@@ -116,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function verifyPin() {
-        const enteredPin = authInput.value.replace(/\s+/g, '').trim();
+        const enteredPin = authInput.value.trim();
         if (enteredPin === currentLivePassword) {
             localStorage.setItem('b2_stealth_auth_pin', enteredPin);
             authErrorMsg.innerText = "ACCESS GRANTED.";
