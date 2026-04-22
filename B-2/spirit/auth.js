@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div id="authErrorMsg" class="auth-error"></div>
                 <div class="auth-get-pass">
                     <div class="pass-text">DON'T HAVE THE SECURITY PIN?</div>
-                    <a href="https://www.fb.com/saman2200" target="_blank" tabindex="0">
-                        <i class="fab fa-facebook-messenger"></i> REQUEST ACCESS KEY
+                    <a href="https://chat.whatsapp.com/KpArraGRfO4Ily0euEsLHA?mode=gi_t" target="_blank" tabindex="0">
+                        <i class="fab fa-brands fa-whatsapp"></i> REQUEST ACCESS KEY
                     </a>
                 </div>
             </div>
