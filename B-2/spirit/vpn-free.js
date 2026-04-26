@@ -1,7 +1,5 @@
-// සරල VPN FREE Channel Injector Script එක
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. මෙතනට ඔබගේ VPN Free Channels වල නම්, ලෝගෝ සහ m3u8 ලින්ක් ලබා දෙන්න
     const vpnFreeChannels = [
         { name: "Rupavahini", logo: "https://api3.viu.lk/api/client/v1/global/images/25661?accessKey=WkVjNWNscFhORDBLCg==", url: "https://cdn.livestreaminfo.com/live/OpgmxjyZGoUQXJgO/576p.m3u8" },
         { name: "ITN", logo: "https://api3.viu.lk/api/client/v1/global/images/25663?accessKey=WkVjNWNscFhORDBLCg==", url: "https://cdn.livestreaminfo.com/live/fgJBeMeotXpvORaE/576p.m3u8" },
@@ -26,18 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Shakthi", logo: "https://api3.viu.lk/api/client/v1/global/images/25668?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11612" }
     ];
 
-    // Host කරාම ඉන්ටර්නෙට් එක slow නම් තත්පර 1.5 මදි වෙන්න පුළුවන්, 
-    // ඒ නිසා Container එක හැදෙනකන් බලන් ඉන්න function එකක් දාමු.
     function injectChannels() {
         const channelsContainer = document.getElementById('channelsContainer');
         
-        // Container එක තාම ලෝඩ් වෙලා නැත්නම් තව 500ms ඉඳල ආයෙ බලනවා
         if (!channelsContainer) {
             setTimeout(injectChannels, 500);
             return;
         }
 
-        // 2. Category එකේ HTML එක හැදීම
         let htmlContent = `
             <div class="cat-section">
                 <div class="cat-title">VPN FREE</div>
@@ -56,11 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         htmlContent += `</div></div>`;
-
-        // 3. Main container එකේ අගටම (Bottom) මේක Add කිරීම
         channelsContainer.insertAdjacentHTML('beforeend', htmlContent);
 
-        // 4. Shaka Player එකේ Play වීමේ ලොජික් එක
         const videoElement = document.getElementById('video');
         const spinner = document.getElementById('loadingSpinner');
 
@@ -68,40 +59,47 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
 
-                // Click කරපු එක රතු පාටින් (Active) පෙන්නන්න
                 document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
                 btn.classList.add('active');
-
-                // Play වෙද්දි උඩට (Player එක ගාවට) යන්න
                 window.scrollTo({ top: 0, behavior: 'smooth' });
 
                 const streamUrl = btn.getAttribute('data-url');
                 if (spinner) spinner.style.display = 'block';
 
                 try {
-                    // Shaka player එක අල්ලගැනීම 
                     let player = window.player || (videoElement.ui ? videoElement.ui.getControls().getPlayer() : null);
                     
-                    // Player එකක් නැත්නම් අලුතින් හදන්න
                     if (!player) {
                         player = new shaka.Player(videoElement);
                         window.player = player; 
                     }
 
-                    // පරණ ප්ලේ වෙන stream එකක් තියෙනම් ඒක clear කරන්න (Host කරාම මේක ගොඩක් වැදගත්)
+                    // Shaka Player එකේ HLS වලට අදාළ Errors මගහැරීමට Configuration එකක් දමමු
+                    player.configure({
+                        manifest: {
+                            hls: { ignoreTextStreamFailures: true }
+                        },
+                        streaming: {
+                            jumpLargeGaps: true,
+                            ignoreTextStreamFailures: true
+                        }
+                    });
+
                     await player.unload();
 
-                    // වීඩියෝ ලින්ක් එක ලෝඩ් කිරීම
-                    await player.load(streamUrl);
+                    // .php වගේ ලින්ක් Shaka Player එකට තේරුම් ගැනීමට HLS Format එක Force කරමු
+                    await player.load(streamUrl, null, 'application/x-mpegurl');
                     videoElement.play();
 
                 } catch (error) {
                     console.error('Error playing VPN Free Channel:', error);
                     
-                    // iOS වගේ (Shaka නැති) Apple Devices වලට Auto Play වෙන්න (Fallback)
+                    // Fallback එක (iOS සහ Safari සඳහා)
                     if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
                         videoElement.src = streamUrl;
                         videoElement.play();
+                    } else {
+                        alert("මෙම නාලිකාව දැනට වාදනය කළ නොහැක (Error 3016). කරුණාකර වෙනත් නාලිකාවක් තෝරන්න.");
                     }
                 } finally {
                     if (spinner) spinner.style.display = 'none';
@@ -110,6 +108,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function එක call කිරීම
     injectChannels();
 });
