@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Ridee", logo: "https://api3.viu.lk/api/client/v1/global/images/25677?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11602" },
         { name: "TV Didula", logo: "https://api3.viu.lk/api/client/v1/global/images/25676?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11608" },
         { name: "Vasantham", logo: "https://api3.viu.lk/api/client/v1/global/images/25664?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11610" },
-        { name: "Shakthi", logo: "https://api3.viu.lk/api/client/v1/global/images/25668?accessKey=WkVjNWNscFhORDBLCg==", url: "http://45.159.95.55:49893/ghLs2zdZSnFvSS0000ab2d21333e876c2f3a8db9e6677e5d8b60c80d7ee7e28dabb90e50e405037099beb05a795142d9501dbe471f48/tracks-v1a1/mono.ts.m3u8?token=f3bb8d6e575849b18852fdd674d246cb" }
+        { name: "Shakthi", logo: "https://api3.viu.lk/api/client/v1/global/images/25668?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11612#.m3u8" }
     ];
 
     let hlsInstance = null; // HLS.js අල්ලගැනීමට
