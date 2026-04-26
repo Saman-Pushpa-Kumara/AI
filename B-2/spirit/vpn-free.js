@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const vpnFreeChannels = [
         { name: "Rupavahini", logo: "https://api3.viu.lk/api/client/v1/global/images/25661?accessKey=WkVjNWNscFhORDBLCg==", url: "https://cdn.livestreaminfo.com/live/OpgmxjyZGoUQXJgO/576p.m3u8" },
         { name: "ITN", logo: "https://api3.viu.lk/api/client/v1/global/images/25663?accessKey=WkVjNWNscFhORDBLCg==", url: "https://cdn.livestreaminfo.com/live/fgJBeMeotXpvORaE/576p.m3u8" },
-        { name: "Hiru TV", logo: "https://api3.viu.lk/api/client/v1/global/images/25670?accessKey=WkVjNWNscFhORDBLCg==", url: "https://tv.hiruhost.com:1936/8012/8012/chunklist_w78295073.m3u8" },
+        { name: "Hiru TV", logo: "https://tv.hiruhost.com:1936/8012/8012/chunklist_w78295073.m3u8" },
         { name: "Derana", logo: "https://api3.viu.lk/api/client/v1/global/images/25665?accessKey=WkVjNWNscFhORDBLCg==", url: "https://cdn.livestreaminfo.com/live/csdmTtJnkCwvXgod/576p.m3u8" },
         { name: "Sirasa", logo: "https://api3.viu.lk/api/client/v1/global/images/25667?accessKey=WkVjNWNscFhORDBLCg==", url: "https://cdn.livestreaminfo.com/live/JlKbHLMYvvEFYvlu/576p.m3u8" },
         { name: "Swarnawahini", logo: "https://api3.viu.lk/api/client/v1/global/images/25666?accessKey=WkVjNWNscFhORDBLCg==", url: "https://cdn.livestreaminfo.com/live/OplTHNHgJtgwGPen/576p.m3u8" },
@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Vasantham", logo: "https://api3.viu.lk/api/client/v1/global/images/25664?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11610" },
         { name: "Shakthi", logo: "https://api3.viu.lk/api/client/v1/global/images/25668?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11612" }
     ];
+
+    let hlsInstance = null; // HLS.js අල්ලගැනීමට
 
     function injectChannels() {
         const channelsContainer = document.getElementById('channelsContainer');
@@ -56,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const spinner = document.getElementById('loadingSpinner');
 
         document.querySelectorAll('.vpn-free-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
+            btn.addEventListener('click', (e) => {
                 e.preventDefault();
 
                 document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
@@ -66,42 +68,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 const streamUrl = btn.getAttribute('data-url');
                 if (spinner) spinner.style.display = 'block';
 
-                try {
-                    let player = window.player || (videoElement.ui ? videoElement.ui.getControls().getPlayer() : null);
-                    
-                    if (!player) {
-                        player = new shaka.Player(videoElement);
-                        window.player = player; 
-                    }
+                // කලින් ප්ලේ වුන Stream එකක් තියෙනම් ඒක නවත්තන්න
+                if (hlsInstance) {
+                    hlsInstance.destroy();
+                }
 
-                    // Shaka Player එකේ HLS වලට අදාළ Errors මගහැරීමට Configuration එකක් දමමු
-                    player.configure({
-                        manifest: {
-                            hls: { ignoreTextStreamFailures: true }
-                        },
-                        streaming: {
-                            jumpLargeGaps: true,
-                            ignoreTextStreamFailures: true
+                // HLS.js වලට සහය දක්වයිදැයි බැලීම (Chrome, Firefox, Android)
+                if (Hls.isSupported()) {
+                    hlsInstance = new Hls({
+                        debug: false,
+                        enableWorker: true,
+                        lowLatencyMode: true
+                    });
+                    
+                    hlsInstance.loadSource(streamUrl);
+                    hlsInstance.attachMedia(videoElement);
+                    
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                        videoElement.play();
+                        if (spinner) spinner.style.display = 'none';
+                    });
+
+                    hlsInstance.on(Hls.Events.ERROR, function (event, data) {
+                        if (data.fatal) {
+                            switch (data.type) {
+                                case Hls.ErrorTypes.NETWORK_ERROR:
+                                    console.error("Network error / CORS issue");
+                                    hlsInstance.startLoad();
+                                    break;
+                                case Hls.ErrorTypes.MEDIA_ERROR:
+                                    console.error("Media error");
+                                    hlsInstance.recoverMediaError();
+                                    break;
+                                default:
+                                    hlsInstance.destroy();
+                                    break;
+                            }
                         }
                     });
 
-                    await player.unload();
-
-                    // .php වගේ ලින්ක් Shaka Player එකට තේරුම් ගැනීමට HLS Format එක Force කරමු
-                    await player.load(streamUrl, null, 'application/x-mpegurl');
-                    videoElement.play();
-
-                } catch (error) {
-                    console.error('Error playing VPN Free Channel:', error);
-                    
-                    // Fallback එක (iOS සහ Safari සඳහා)
-                    if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                        videoElement.src = streamUrl;
+                } 
+                // Apple/iOS Devices සඳහා (Native Support)
+                else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    videoElement.src = streamUrl;
+                    videoElement.addEventListener('loadedmetadata', function() {
                         videoElement.play();
-                    } else {
-                        alert("මෙම නාලිකාව දැනට වාදනය කළ නොහැක (Error 3016). කරුණාකර වෙනත් නාලිකාවක් තෝරන්න.");
-                    }
-                } finally {
+                        if (spinner) spinner.style.display = 'none';
+                    });
+                } else {
+                    alert("ඔබගේ බ්‍රව්සරය මෙම වීඩියෝවට සහය නොදක්වයි.");
                     if (spinner) spinner.style.display = 'none';
                 }
             });
