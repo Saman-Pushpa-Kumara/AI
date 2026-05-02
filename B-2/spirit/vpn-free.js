@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const vpnFreeChannels = [
         { name: "Rupavahini", logo: "https://api3.viu.lk/api/client/v1/global/images/25661?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11611" },
         { name: "ITN", logo: "https://api3.viu.lk/api/client/v1/global/images/25663?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11597" },
-        { name: "Hiru TV", logo: "https://tv.hiruhost.com:1936/8012/8012/chunklist_w78295073.m3u8" },
+        { name: "Hiru TV", logo: "https://tv.hiruhost.com:1936/8012/8012/chunklist_w78295073.m3u8", url: "https://tv.hiruhost.com:1936/8012/8012/chunklist_w78295073.m3u8" },
         { name: "Derana", logo: "https://api3.viu.lk/api/client/v1/global/images/25665?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11607" },
         { name: "Sirasa", logo: "https://api3.viu.lk/api/client/v1/global/images/25667?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11614" },
         { name: "Swarnawahini", logo: "https://api3.viu.lk/api/client/v1/global/images/25666?accessKey=WkVjNWNscFhORDBLCg==", url: "https://jk3lz8xklw79-hls-live.5centscdn.com/live/6226f7cbe59e99a90b5cef6f94f966fd.sdp/playlist.m3u8" },
@@ -20,8 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Vasantham", logo: "https://api3.viu.lk/api/client/v1/global/images/25664?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11610" },
         { name: "Shakthi", logo: "https://api3.viu.lk/api/client/v1/global/images/25668?accessKey=WkVjNWNscFhORDBLCg==", url: "https://mini.allinonereborn.fun/tata.php?id=11612#.m3u8" }
     ];
-
-    let hlsInstance = null; // HLS.js අල්ලගැනීමට
 
     function injectChannels() {
         const channelsContainer = document.getElementById('channelsContainer');
@@ -65,48 +63,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 const streamUrl = btn.getAttribute('data-url');
                 if (spinner) spinner.style.display = 'block';
 
-                // කලින් ප්ලේ වුන Stream එකක් තියෙනම් ඒක නවත්තන්න
-                if (hlsInstance) {
-                    hlsInstance.destroy();
-                }
-
-                // HLS.js වලට සහය දක්වයිදැයි බැලීම (Chrome, Firefox, Android)
-                if (Hls.isSupported()) {
-                    hlsInstance = new Hls({
-                        debug: false,
-                        enableWorker: true,
-                        lowLatencyMode: true
-                    });
+                // පද්ධතියේ දැනටමත් ඇති Shaka Player එක මගින් Play කිරීම (Conflict වළක්වා ගැනීම සඳහා)
+                if (videoElement && videoElement.ui) {
+                    const player = videoElement.ui.getControls().getPlayer();
                     
-                    hlsInstance.loadSource(streamUrl);
-                    hlsInstance.attachMedia(videoElement);
-                    
-                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                    player.load(streamUrl).then(() => {
                         videoElement.play();
                         if (spinner) spinner.style.display = 'none';
-                    });
-
-                    hlsInstance.on(Hls.Events.ERROR, function (event, data) {
-                        if (data.fatal) {
-                            switch (data.type) {
-                                case Hls.ErrorTypes.NETWORK_ERROR:
-                                    console.error("Network error / CORS issue");
-                                    hlsInstance.startLoad();
-                                    break;
-                                case Hls.ErrorTypes.MEDIA_ERROR:
-                                    console.error("Media error");
-                                    hlsInstance.recoverMediaError();
-                                    break;
-                                default:
-                                    hlsInstance.destroy();
-                                    break;
-                            }
+                    }).catch((error) => {
+                        console.error('Shaka Player Error:', error);
+                        
+                        // Apple/iOS Devices සඳහා (Native Support Fallback)
+                        if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                            videoElement.src = streamUrl;
+                            videoElement.play();
+                            if (spinner) spinner.style.display = 'none';
+                        } else {
+                            if (spinner) spinner.style.display = 'none';
+                            alert("මෙම වීඩියෝව වාදනය කිරීමට නොහැක. (CORS හෝ Network ගැටළුවක් විය හැක)");
                         }
                     });
-
-                } 
-                // Apple/iOS Devices සඳහා (Native Support)
-                else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    // Shaka UI එක load වී නොමැති නම් iOS/Safari Native ක්‍රමය
                     videoElement.src = streamUrl;
                     videoElement.addEventListener('loadedmetadata', function() {
                         videoElement.play();
