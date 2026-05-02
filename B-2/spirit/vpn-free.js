@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     function injectChannels() {
-        // channelsContainer නැතිනම් category-root වෙතින් හෝ සොයයි
         let container = document.getElementById('channelsContainer') || document.getElementById('category-root');
         
         if (!container) {
@@ -53,15 +52,61 @@ document.addEventListener('DOMContentLoaded', () => {
         attachClickEvents();
     }
 
+    // Shaka Player ගෙන් පරිබාහිරව අලුත් Video Element එකක් සෑදීම
+    function getOrCreateHlsVideo() {
+        let hlsVideo = document.getElementById('hls-video-player');
+        if (!hlsVideo) {
+            hlsVideo = document.createElement('video');
+            hlsVideo.id = 'hls-video-player';
+            hlsVideo.autoplay = true;
+            hlsVideo.playsInline = true;
+            hlsVideo.controls = true; 
+            
+            // Shaka Video එක මතින් දිස්වීමට CSS යෙදීම
+            hlsVideo.style.position = 'absolute';
+            hlsVideo.style.top = '0';
+            hlsVideo.style.left = '0';
+            hlsVideo.style.width = '100%';
+            hlsVideo.style.height = '100%';
+            hlsVideo.style.backgroundColor = '#000';
+            hlsVideo.style.zIndex = '5'; // Watermark එකට යටින් සහ Shaka එකට උඩින්
+            
+            const wrapper = document.querySelector('.video-wrapper');
+            const spinner = document.getElementById('loadingSpinner');
+            
+            if (wrapper && spinner) {
+                wrapper.insertBefore(hlsVideo, spinner);
+            } else if (wrapper) {
+                wrapper.appendChild(hlsVideo);
+            }
+        }
+        hlsVideo.style.display = 'block';
+        return hlsVideo;
+    }
+
+    // වෙනත් Channel එකක් Play කරද්දී අලුත් Video Element එක Hide කිරීම
+    function hideHlsVideo() {
+        const hlsVideo = document.getElementById('hls-video-player');
+        if (hlsVideo) {
+            hlsVideo.pause();
+            hlsVideo.style.display = 'none';
+        }
+        if (window.hls) {
+            window.hls.destroy();
+            window.hls = null;
+        }
+        // Shaka UI එක නැවත පෙන්වීම
+        const shakaControls = document.querySelector('.shaka-controls-container');
+        if (shakaControls) shakaControls.style.display = '';
+    }
+
     function attachClickEvents() {
-        const videoElement = document.getElementById('video');
         const spinner = document.getElementById('loadingSpinner');
 
         document.querySelectorAll('.vpn-free-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
 
-                // UI Active තත්ත්වය වෙනස් කිරීම
                 document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
                 btn.classList.add('active');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -69,27 +114,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 const streamUrl = btn.getAttribute('data-url');
                 if (spinner) spinner.style.display = 'block';
 
-                try {
-                    // Shaka Player ක්‍රියාත්මක නම්, එය සම්පූර්ණයෙන්ම Unload වනතෙක් සිටීම
-                    if (videoElement && videoElement.ui) {
-                        const player = videoElement.ui.getControls().getPlayer();
+                // 1. Shaka Player Playback එක නවතාලීම
+                const mainVideo = document.getElementById('video');
+                if (mainVideo && mainVideo.ui) {
+                    try {
+                        const player = mainVideo.ui.getControls().getPlayer();
                         await player.unload();
+                    } catch(err) {
+                        console.log("Shaka unload clear:", err);
                     }
-                } catch (error) {
-                    console.log("Shaka Player unload error: ", error);
                 }
 
-                // Shaka Player ඉවත් කළ පසු HLS.js මගින් Play කිරීම
-                playWithHlsJs(streamUrl, videoElement, spinner);
+                // 2. Shaka Player UI එක තාවකාලිකව මකා දැමීම (Error 3016 නොපෙන්වීම සඳහා)
+                const shakaControls = document.querySelector('.shaka-controls-container');
+                if (shakaControls) shakaControls.style.display = 'none';
+
+                // 3. Shaka Player එකට සම්බන්ධ නැති අලුත් Video Element එක ගැනීම
+                const hlsVideo = getOrCreateHlsVideo();
+
+                // 4. එම අලුත් Video Element එක හරහා Play කිරීම
+                playWithHlsJs(streamUrl, hlsVideo, spinner);
             });
+        });
+
+        // Main Channel එකක් Click කළ විට නැවත Shaka Player එක Active කිරීම
+        document.addEventListener('click', (e) => {
+            const card = e.target.closest('.channel-card');
+            if (card && !card.classList.contains('vpn-free-btn')) {
+                hideHlsVideo();
+            }
         });
     }
 
     function playWithHlsJs(streamUrl, videoElement, spinner) {
-        // Hls.js සහය දක්වන Browsers සඳහා (Android/Windows/Mac)
         if (typeof Hls !== 'undefined' && Hls.isSupported()) {
             if (window.hls) {
-                window.hls.destroy(); // පරණ Stream එක නවතා දැමීම
+                window.hls.destroy(); 
             }
             
             window.hls = new Hls({
@@ -109,11 +169,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.fatal) {
                     switch(data.type) {
                         case Hls.ErrorTypes.NETWORK_ERROR:
-                            console.warn("HLS Network Error, Retrying...");
                             window.hls.startLoad();
                             break;
                         case Hls.ErrorTypes.MEDIA_ERROR:
-                            console.warn("HLS Media Error, Recovering...");
+                            // දැන් මෙම Recovery එක සිදුවන්නේ අලුත් Video Element එකේ නිසා 3016 Error එක එන්නේ නැත.
                             window.hls.recoverMediaError(); 
                             break;
                         default:
@@ -126,13 +185,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
         } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-            // Apple/iOS Devices සඳහා (Native Support)
             videoElement.src = streamUrl;
             videoElement.addEventListener('loadedmetadata', function() {
                 videoElement.play().catch(e => console.warn("Autoplay blocked", e));
                 if (spinner) spinner.style.display = 'none';
             });
-            
         } else {
             if (spinner) spinner.style.display = 'none';
             alert("ඔබගේ Browser එක සහය නොදක්වයි.");
