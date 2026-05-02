@@ -1,4 +1,4 @@
 {
   "status": "enabled",
-  "password": "0000"
+  "password": "7788"
 }
