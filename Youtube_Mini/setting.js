@@ -11,7 +11,7 @@ if(null==window.eruda&&"true"==localStorage.getItem("devMode")){
     }
 }
 if(!YTProVer){
-    var YTProVer="3.98",ytoldV="",isF=!1,isAp=!1;
+    var YTProVer="7.00",ytoldV="",isF=!1,isAp=!1;
     const e=HTMLMediaElement.prototype.pause;
     window.PIPause=!1,window.isPIP=!1,window.pauseAllowed=!0;
     var sTime=[],webUrls=["m.youtube.com","youtube.com","yout.be","accounts.google.com"],GeminiAT="",GeminiModels={"3.0 Pro":'[1,null,null,null,"9d8ca3786ebdfbea",null,null,0,[4],null,null,1]',"3.0 Flash":'[1,null,null,null,"fbb127bbb056c959",null,null,0,[4],null,null,1]',"3.0 Flash Thinking":'[1,null,null,null,"5bf011840784117a",null,null,0,[4],null,null,1]',"3.0 Pro Plus":'[1,null,null,null,"e6fa609c3fa255c0",null,null,0,[4],null,null,4]',"3.0 Flash Plus":'[1,null,null,null,"56fdd199312815e2",null,null,0,[4],null,null,4]',"3.0 Flash Thinking Plus":'[1,null,null,null,"e051ce1aa80aa576",null,null,0,[4],null,null,4]',"3.0 Pro Advanced":'[1,null,null,null,"e6fa609c3fa255c0",null,null,0,[4],null,null,2]',"3.0 Flash Advanced":'[1,null,null,null,"56fdd199312815e2",null,null,0,[4],null,null,2]',"3.0 Flash Thinking Advanced":'[1,null,null,null,"e051ce1aa80aa576",null,null,0,[4],null,null,2]'},YTPROCodecs={video:["AV1","VP8","VP9","H264"],audio:["Opus","Mp4a"]};
