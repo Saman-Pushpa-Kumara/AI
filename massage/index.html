@@ -17,6 +17,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
+    <!-- ================= OneSignal SDK (අලුතින් එකතු කළ කොටස) ================= -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "f00c6ee6-edd9-4feb-b03e-366eacf90620",
+          safari_web_id: "web.onesignal.auto.5460a967-902f-480f-be25-7a4d963d753c",
+          notifyButton: {
+            enable: true,
+          },
+        });
+      });
+    </script>
+    <!-- ========================================================================= -->
+
     <style>
         :root {
             --bg-base: #04070d;
@@ -142,9 +158,7 @@
 
     <!-- Advanced Tech Menu -->
     <div class="tech-menu" id="tech-menu">
-        <!-- New PWA Install Button -->
         <button class="tech-menu-item" id="menu-install" style="display: none; color: var(--neon-yellow);">📱 Install App (PWA)</button>
-        
         <button class="tech-menu-item" id="menu-enc-toggle">🔏 Toggle Encryption: <span id="enc-state-txt" style="color:var(--neon-green); margin-left: 5px;">ON</span></button>
         <button class="tech-menu-item" id="menu-clear-screen">🧹 Clear Local Screen</button>
         <button class="tech-menu-item" id="menu-sound">🔊 Toggle Sounds</button>
@@ -189,9 +203,8 @@
     </div>
 </div>
 
-<!-- ================= PWA Setup (Single File) ================= -->
+<!-- ================= PWA Setup ================= -->
 <script>
-    // 1. Generate Manifest Dynamically
     const manifest = {
         "name": "CYBER-CORE",
         "short_name": "CYBER-CORE",
@@ -207,11 +220,9 @@
         }]
     };
     
-    // Inject Manifest into Head
     const manifestString = encodeURIComponent(JSON.stringify(manifest));
     document.getElementById('manifest-link').setAttribute('href', 'data:application/json;charset=utf-8,' + manifestString);
 
-    // 2. Generate and Register Service Worker Dynamically
     const swCode = `
         self.addEventListener('install', (e) => self.skipWaiting());
         self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
@@ -228,14 +239,13 @@
         }).catch(err => console.log("PWA SW Error:", err));
     }
 
-    // 3. PWA Install Logic
     let deferredPrompt;
     const installBtn = document.getElementById('menu-install');
 
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installBtn.style.display = 'flex'; // Show Install Button in Menu
+        installBtn.style.display = 'flex'; 
     });
 
     installBtn.addEventListener('click', async () => {
@@ -248,13 +258,7 @@
             deferredPrompt = null;
         }
     });
-
-    window.addEventListener('appinstalled', () => {
-        installBtn.style.display = 'none';
-        console.log('PWA successfully installed.');
-    });
 </script>
-<!-- ========================================================== -->
 
 
 <script type="module">
@@ -276,7 +280,6 @@
     const messagesRef = ref(db, 'messages');
     const typingRef = ref(db, 'typing');
 
-    // App State Variables
     let audioCtx = null;
     let isSoundEnabled = true;
     let currentUser = "";
@@ -284,7 +287,6 @@
     let isGlobalDecrypted = false;  
     let localMessages = [];         
 
-    // UI Elements
     const securityScreen = document.getElementById('security-screen');
     const secUsername = document.getElementById('sec-username');
     const secPassword = document.getElementById('sec-password');
@@ -293,7 +295,6 @@
     const messagesContainer = document.getElementById('messages-container');
     const globalDecryptBtn = document.getElementById('global-decrypt-btn');
 
-    // --- Audio System ---
     function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
     function playTone(freq, type, duration) {
         if (!isSoundEnabled) return;
@@ -314,7 +315,6 @@
         decrypt: () => { playTone(1200, 'sine', 0.05); setTimeout(() => playTone(1800, 'sine', 0.1), 50); }
     };
 
-    // --- Auth Check ---
     function checkDeviceAuth() {
         const storedPass = localStorage.getItem("cyber_pass");
         if (!storedPass) {
@@ -354,7 +354,6 @@
         messageInput.focus();
     }
 
-    // --- Menu Actions ---
     document.getElementById('menu-toggle-btn').addEventListener('click', (e) => { 
         e.stopPropagation(); document.getElementById('tech-menu').classList.toggle('show'); 
     });
@@ -366,7 +365,6 @@
         if(confirm("Credentials මකා දැමීමට අවශ්‍යද?")) { localStorage.clear(); location.reload(); }
     });
 
-    // Toggle Send Encryption State
     document.getElementById('menu-enc-toggle').addEventListener('click', () => {
         isEncryptionEnabled = !isEncryptionEnabled;
         const txt = document.getElementById('enc-state-txt');
@@ -377,13 +375,11 @@
         document.getElementById('active-user-tag').style.color = isEncryptionEnabled ? "var(--neon-green)" : "var(--neon-yellow)";
     });
 
-    // Clear Local Screen
     document.getElementById('menu-clear-screen').addEventListener('click', () => {
         localMessages = []; 
         renderAllMessages(); 
     });
 
-    // --- Global Decrypt Toggle ---
     globalDecryptBtn.addEventListener('click', () => {
         isGlobalDecrypted = !isGlobalDecrypted;
         
@@ -401,7 +397,7 @@
         renderAllMessages(); 
     });
 
-    // --- Sending Messages ---
+    // --- Message යවන විට Notification එක යැවීම ---
     function sendMessage() {
         const rawText = messageInput.value.trim();
         if (!rawText || !currentUser) return;
@@ -423,6 +419,22 @@
         }).then(() => {
             soundEffects.send();
             set(ref(db, 'typing/' + currentUser), false); 
+
+            // ===== අලුත් කොටස: OneSignal Notification එක යැවීම =====
+            fetch("https://onesignal.com/api/v1/notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Authorization": "Basic os_v2_app_6agg5zxn3fh6xmb6gzxkz6igeajqvfhk4nfevsuzkvxrlqr7mq76sqpoumkffm36rybaxb4xatsnpzbfgoaiwo7ytsw33oomnpynwbi"
+                },
+                body: JSON.stringify({
+                    app_id: "f00c6ee6-edd9-4feb-b03e-366eacf90620",
+                    included_segments: ["Subscribed Users"],
+                    headings: { en: "CYBER-CORE" },
+                    contents: { en: `New E2E Encrypted message from ${currentUser}` }
+                })
+            }).catch(err => console.log("Notification Error:", err));
+            // ========================================================
         });
         
         messageInput.value = "";
@@ -430,7 +442,6 @@
 
     document.getElementById('send-btn').addEventListener('click', () => sendMessage());
     
-    // --- Typing Indicator Logic ---
     let typingTimeout;
     messageInput.addEventListener('input', () => {
         set(ref(db, 'typing/' + currentUser), true);
@@ -450,7 +461,6 @@
         document.getElementById('typing-indicator').style.display = isSomeoneTyping ? 'block' : 'none';
     });
 
-    // --- Firebase Syncing ---
     onChildAdded(messagesRef, (snapshot) => {
         const data = snapshot.val();
         localMessages.push({ id: snapshot.key, ...data });
@@ -463,7 +473,6 @@
         renderAllMessages();
     });
 
-    // --- Rendering Logic ---
     function renderAllMessages() {
         messagesContainer.innerHTML = ''; 
         
@@ -474,7 +483,6 @@
             let displayText = escapeHTML(msg.text);
             let cssClass = 'plain-text';
             
-            // Decryption Logic
             if (msg.isEncrypted !== false) { 
                 if (isGlobalDecrypted) {
                     const secretKey = localStorage.getItem("cyber_pass");
@@ -486,7 +494,6 @@
                             displayText = escapeHTML(originalText);
                             cssClass = 'plain-text';
                         } else {
-                            // WRONG PASSWORD / KEY MISMATCH
                             displayText = "⚠️ [WRONG KEY - DECRYPTION FAILED]";
                             cssClass = 'error-text';
                         }
@@ -495,7 +502,6 @@
                         cssClass = 'error-text';
                     }
                 } else {
-                    // Show Cipher Text
                     displayText = escapeHTML(msg.text);
                     cssClass = 'enc-text';
                 }
@@ -518,19 +524,15 @@
             `;
             messagesContainer.appendChild(row);
         });
-        
-        // Auto scroll to bottom
         messagesContainer.scrollTo(0, messagesContainer.scrollHeight);
     }
 
-    // --- Helper Functions ---
     window.deleteMsg = function(msgId) { 
         if (confirm("මෙම Message එක Server එකෙන් සදහටම Delete කරන්නද?")) remove(ref(db, `messages/${msgId}`)); 
     };
     
     function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
 
-    // Init App
     checkDeviceAuth();
 </script>
 
