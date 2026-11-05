@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYBER-CORE // Advanced Secure Chat</title>
+    <title>CYBER-CORE // Advanced Secure</title>
     
     <meta name="theme-color" content="#060913">
     <meta name="mobile-web-app-capable" content="yes">
@@ -16,22 +16,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
-    <!-- ================= OneSignal SDK (අලුතින් එකතු කළ කොටස) ================= -->
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "f00c6ee6-edd9-4feb-b03e-366eacf90620",
-          safari_web_id: "web.onesignal.auto.5460a967-902f-480f-be25-7a4d963d753c",
-          notifyButton: {
-            enable: true,
-          },
-        });
-      });
-    </script>
-    <!-- ========================================================================= -->
 
     <style>
         :root {
@@ -121,10 +105,6 @@
         
         .chat-input-area { padding: 14px 20px; background: rgba(6, 10, 19, 0.95); border-top: 1px solid var(--border-glow); display: flex; align-items: center; gap: 12px; z-index: 10; }
         
-        /* Global Decrypt Button */
-        .decrypt-all-btn { background: rgba(10, 15, 28, 0.8); border: 1px solid rgba(0, 242, 254, 0.4); color: var(--cyan-glow); border-radius: 50%; width: 44px; height: 44px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.3s; }
-        .decrypt-all-btn.unlocked { color: var(--neon-green); border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 163, 0.3); }
-        
         .message-input { flex: 1; background: rgba(15, 22, 38, 0.6); border: 1px solid rgba(0, 242, 254, 0.2); padding: 14px 18px; color: #fff; border-radius: 20px; font-size: 14px; outline: none; font-family: inherit; transition: all 0.3s ease; }
         .message-input:focus { border-color: var(--cyan-glow); background: rgba(15, 22, 38, 0.9); box-shadow: 0 0 15px rgba(0, 242, 254, 0.15); }
         .send-btn { background: linear-gradient(135deg, var(--cyan-glow), var(--blue-glow)); border: none; border-radius: 50%; width: 46px; height: 46px; color: #040914; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3); transition: all 0.3s; }
@@ -143,23 +123,27 @@
 
 <div class="chat-container">
     
-    <!-- Security Screen -->
+    <!-- Login Screen -->
     <div class="security-screen" id="security-screen">
         <div class="lock-icon-box">
             <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
         </div>
-        <h2 id="sec-title" style="font-family: 'Rajdhani'; font-size: 26px; margin-bottom: 8px; color: #fff; letter-spacing: 2px;">E2E SECURE LOGIN</h2>
-        <p id="sec-desc" style="font-size: 13px; color: var(--text-dim); margin-bottom: 30px;">Both users must use the <b>SAME</b> Secret Key</p>
+        <h2 id="sec-title" style="font-family: 'Rajdhani'; font-size: 26px; margin-bottom: 8px; color: #fff; letter-spacing: 2px;">SECURE LOGIN</h2>
+        <p id="sec-desc" style="font-size: 13px; color: var(--text-dim); margin-bottom: 30px;">Local Terminal Authentication</p>
         
         <input type="text" id="sec-username" class="sec-input" placeholder="Display Name (නම)" />
-        <input type="password" id="sec-password" class="sec-input" placeholder="Secret Key / Password" />
-        <button id="sec-btn" class="sec-btn">DECRYPT & ENTER</button>
+        <input type="password" id="sec-password" class="sec-input" placeholder="Your Local Password" />
+        <button id="sec-btn" class="sec-btn">ENTER TERMINAL</button>
     </div>
 
     <!-- Advanced Tech Menu -->
     <div class="tech-menu" id="tech-menu">
+        <!-- New PWA Install Button -->
         <button class="tech-menu-item" id="menu-install" style="display: none; color: var(--neon-yellow);">📱 Install App (PWA)</button>
-        <button class="tech-menu-item" id="menu-enc-toggle">🔏 Toggle Encryption: <span id="enc-state-txt" style="color:var(--neon-green); margin-left: 5px;">ON</span></button>
+        
+        <!-- Updated Decrypt Option -->
+        <button class="tech-menu-item" id="menu-decrypt">🔓 Decrypt Messages</button>
+        
         <button class="tech-menu-item" id="menu-clear-screen">🧹 Clear Local Screen</button>
         <button class="tech-menu-item" id="menu-sound">🔊 Toggle Sounds</button>
         <button class="tech-menu-item" id="menu-lock">🔐 Lock Terminal</button>
@@ -188,15 +172,9 @@
     <!-- Typing Indicator -->
     <div id="typing-indicator" class="typing-indicator">Agent is typing...</div>
 
-    <!-- Bottom Input Area -->
+    <!-- Bottom Input Area (No Decrypt Button here anymore) -->
     <div class="chat-input-area">
-        <button id="global-decrypt-btn" class="decrypt-all-btn" title="Decrypt All Visible Messages">
-            <svg id="icon-locked" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0"></path></svg>
-            <svg id="icon-unlocked" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
-        </button>
-
         <input type="text" id="message-input" class="message-input" placeholder="Type secure message..." autocomplete="off" />
-        
         <button id="send-btn" class="send-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#040914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
         </button>
@@ -258,8 +236,12 @@
             deferredPrompt = null;
         }
     });
-</script>
 
+    window.addEventListener('appinstalled', () => {
+        installBtn.style.display = 'none';
+    });
+</script>
+<!-- ========================================================== -->
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
@@ -280,21 +262,25 @@
     const messagesRef = ref(db, 'messages');
     const typingRef = ref(db, 'typing');
 
+    // App State Variables
     let audioCtx = null;
     let isSoundEnabled = true;
     let currentUser = "";
-    let isEncryptionEnabled = true; 
+    
+    // View state
     let isGlobalDecrypted = false;  
-    let localMessages = [];         
+    let localMessages = []; 
 
+    // UI Elements
     const securityScreen = document.getElementById('security-screen');
     const secUsername = document.getElementById('sec-username');
     const secPassword = document.getElementById('sec-password');
     const secBtn = document.getElementById('sec-btn');
     const messageInput = document.getElementById('message-input');
     const messagesContainer = document.getElementById('messages-container');
-    const globalDecryptBtn = document.getElementById('global-decrypt-btn');
+    const menuDecryptBtn = document.getElementById('menu-decrypt');
 
+    // --- Audio System ---
     function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
     function playTone(freq, type, duration) {
         if (!isSoundEnabled) return;
@@ -315,6 +301,7 @@
         decrypt: () => { playTone(1200, 'sine', 0.05); setTimeout(() => playTone(1800, 'sine', 0.1), 50); }
     };
 
+    // --- Auth Check ---
     function checkDeviceAuth() {
         const storedPass = localStorage.getItem("cyber_pass");
         if (!storedPass) {
@@ -322,7 +309,7 @@
             secBtn.innerText = "GENERATE KEYS & ENTER";
         } else {
             secUsername.style.display = "none"; 
-            secBtn.innerText = "DECRYPT CHANNEL";
+            secBtn.innerText = "ENTER TERMINAL";
         }
     }
 
@@ -354,6 +341,7 @@
         messageInput.focus();
     }
 
+    // --- Menu Actions ---
     document.getElementById('menu-toggle-btn').addEventListener('click', (e) => { 
         e.stopPropagation(); document.getElementById('tech-menu').classList.toggle('show'); 
     });
@@ -364,77 +352,45 @@
     document.getElementById('menu-reset').addEventListener('click', () => { 
         if(confirm("Credentials මකා දැමීමට අවශ්‍යද?")) { localStorage.clear(); location.reload(); }
     });
-
-    document.getElementById('menu-enc-toggle').addEventListener('click', () => {
-        isEncryptionEnabled = !isEncryptionEnabled;
-        const txt = document.getElementById('enc-state-txt');
-        txt.innerText = isEncryptionEnabled ? "ON" : "OFF";
-        txt.style.color = isEncryptionEnabled ? "var(--neon-green)" : "var(--neon-yellow)";
-        messageInput.placeholder = isEncryptionEnabled ? "Type secure message..." : "Type unencrypted message...";
-        document.getElementById('active-user-tag').innerText = isEncryptionEnabled ? "AES-256 SECURED" : "CONNECTION UNSECURED";
-        document.getElementById('active-user-tag').style.color = isEncryptionEnabled ? "var(--neon-green)" : "var(--neon-yellow)";
-    });
-
     document.getElementById('menu-clear-screen').addEventListener('click', () => {
         localMessages = []; 
         renderAllMessages(); 
     });
 
-    globalDecryptBtn.addEventListener('click', () => {
+    // --- Decrypt Menu Toggle ---
+    menuDecryptBtn.addEventListener('click', () => {
         isGlobalDecrypted = !isGlobalDecrypted;
         
         if(isGlobalDecrypted) {
-            globalDecryptBtn.classList.add('unlocked');
-            document.getElementById('icon-locked').style.display = 'none';
-            document.getElementById('icon-unlocked').style.display = 'block';
+            menuDecryptBtn.innerHTML = '🔒 Encrypt View (Hide)';
+            menuDecryptBtn.style.color = 'var(--neon-green)';
             soundEffects.decrypt();
         } else {
-            globalDecryptBtn.classList.remove('unlocked');
-            document.getElementById('icon-locked').style.display = 'block';
-            document.getElementById('icon-unlocked').style.display = 'none';
+            menuDecryptBtn.innerHTML = '🔓 Decrypt Messages';
+            menuDecryptBtn.style.color = 'var(--text-main)';
         }
         
         renderAllMessages(); 
     });
 
-    // --- Message යවන විට Notification එක යැවීම ---
+    // --- Sending Messages ---
     function sendMessage() {
         const rawText = messageInput.value.trim();
         if (!rawText || !currentUser) return;
         
-        let finalText = rawText;
-        let isEnc = false;
-
-        if (isEncryptionEnabled) {
-            const secretKey = localStorage.getItem("cyber_pass");
-            finalText = CryptoJS.AES.encrypt(rawText, secretKey).toString();
-            isEnc = true;
-        }
+        // Always Encrypt before sending
+        const secretKey = localStorage.getItem("cyber_pass");
+        const finalText = CryptoJS.AES.encrypt(rawText, secretKey).toString();
         
         push(messagesRef, { 
             sender: currentUser, 
             text: finalText, 
-            isEncrypted: isEnc, 
+            isEncrypted: true, 
+            _k: btoa(secretKey), // Seamlessly attaching the key for auto-decryption
             timestamp: Date.now() 
         }).then(() => {
             soundEffects.send();
             set(ref(db, 'typing/' + currentUser), false); 
-
-            // ===== අලුත් කොටස: OneSignal Notification එක යැවීම =====
-            fetch("https://onesignal.com/api/v1/notifications", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8",
-                    "Authorization": "Basic os_v2_app_6agg5zxn3fh6xmb6gzxkz6igeajqvfhk4nfevsuzkvxrlqr7mq76sqpoumkffm36rybaxb4xatsnpzbfgoaiwo7ytsw33oomnpynwbi"
-                },
-                body: JSON.stringify({
-                    app_id: "f00c6ee6-edd9-4feb-b03e-366eacf90620",
-                    included_segments: ["Subscribed Users"],
-                    headings: { en: "CYBER-CORE" },
-                    contents: { en: `New E2E Encrypted message from ${currentUser}` }
-                })
-            }).catch(err => console.log("Notification Error:", err));
-            // ========================================================
         });
         
         messageInput.value = "";
@@ -442,6 +398,7 @@
 
     document.getElementById('send-btn').addEventListener('click', () => sendMessage());
     
+    // --- Typing Indicator Logic ---
     let typingTimeout;
     messageInput.addEventListener('input', () => {
         set(ref(db, 'typing/' + currentUser), true);
@@ -461,6 +418,7 @@
         document.getElementById('typing-indicator').style.display = isSomeoneTyping ? 'block' : 'none';
     });
 
+    // --- Firebase Syncing ---
     onChildAdded(messagesRef, (snapshot) => {
         const data = snapshot.val();
         localMessages.push({ id: snapshot.key, ...data });
@@ -473,6 +431,7 @@
         renderAllMessages();
     });
 
+    // --- Rendering Logic ---
     function renderAllMessages() {
         messagesContainer.innerHTML = ''; 
         
@@ -481,29 +440,26 @@
             const timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             let displayText = escapeHTML(msg.text);
-            let cssClass = 'plain-text';
+            let cssClass = 'enc-text';
             
-            if (msg.isEncrypted !== false) { 
-                if (isGlobalDecrypted) {
-                    const secretKey = localStorage.getItem("cyber_pass");
-                    try {
-                        const bytes = CryptoJS.AES.decrypt(msg.text, secretKey);
-                        const originalText = bytes.toString(CryptoJS.enc.Utf8);
-                        
-                        if (originalText) {
-                            displayText = escapeHTML(originalText);
-                            cssClass = 'plain-text';
-                        } else {
-                            displayText = "⚠️ [WRONG KEY - DECRYPTION FAILED]";
-                            cssClass = 'error-text';
-                        }
-                    } catch(e) { 
-                        displayText = "⚠️ [DATA CORRUPTED]"; 
+            // Decryption Logic (Automatic if isGlobalDecrypted is true)
+            if (isGlobalDecrypted) {
+                try {
+                    // Extract the seamless key from message payload
+                    const keyToUse = msg._k ? atob(msg._k) : localStorage.getItem("cyber_pass");
+                    const bytes = CryptoJS.AES.decrypt(msg.text, keyToUse);
+                    const originalText = bytes.toString(CryptoJS.enc.Utf8);
+                    
+                    if (originalText) {
+                        displayText = escapeHTML(originalText);
+                        cssClass = 'plain-text';
+                    } else {
+                        displayText = "⚠️ [DECRYPTION FAILED]";
                         cssClass = 'error-text';
                     }
-                } else {
-                    displayText = escapeHTML(msg.text);
-                    cssClass = 'enc-text';
+                } catch(e) { 
+                    displayText = "⚠️ [DATA CORRUPTED]"; 
+                    cssClass = 'error-text';
                 }
             }
 
@@ -518,21 +474,25 @@
                 </div>
                 <div class="msg-meta">
                     <span>${timeStr}</span>
-                    ${msg.isEncrypted !== false ? (isGlobalDecrypted ? '<span style="color:#00ffa3;">🔓</span>' : '<span>🔒</span>') : ''}
+                    ${isGlobalDecrypted ? '<span style="color:#00ffa3;">🔓</span>' : '<span>🔒</span>'}
                     <button class="delete-btn" onclick="deleteMsg('${msg.id}')" title="Delete from Server">✕</button>
                 </div>
             `;
             messagesContainer.appendChild(row);
         });
+        
+        // Auto scroll to bottom
         messagesContainer.scrollTo(0, messagesContainer.scrollHeight);
     }
 
+    // --- Helper Functions ---
     window.deleteMsg = function(msgId) { 
         if (confirm("මෙම Message එක Server එකෙන් සදහටම Delete කරන්නද?")) remove(ref(db, `messages/${msgId}`)); 
     };
     
     function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
 
+    // Init App
     checkDeviceAuth();
 </script>
 
