@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER-CORE // Advanced Secure Chat</title>
+    
+    <meta name="theme-color" content="#060913">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3256/3256783.png">
+    
+    <!-- Dynamic Manifest Link for PWA -->
+    <link id="manifest-link" rel="manifest" href="">
+
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #04070d;
+            --bg-card: rgba(10, 15, 28, 0.85);
+            --cyan-glow: #00f2fe;
+            --blue-glow: #4facfe;
+            --neon-green: #00ffa3;
+            --neon-red: #ff3366;
+            --neon-yellow: #ffd000;
+            --border-glow: rgba(0, 242, 254, 0.25);
+            --text-main: #f0f4fc;
+            --text-dim: #798ba7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'JetBrains Mono', monospace; 
+            background: #04070d;
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 242, 254, 0.05) 0%, transparent 60%);
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; color: var(--text-main); overflow: hidden;
+        }
+
+        .chat-container { 
+            width: 100%; max-width: 480px; height: 96vh;
+            background: var(--bg-card); 
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px; 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 242, 254, 0.05); 
+            display: flex; flex-direction: column; position: relative; overflow: hidden;
+        }
+
+        /* Header */
+        .chat-header { 
+            padding: 16px 22px; background: rgba(6, 10, 19, 0.95);
+            border-bottom: 1px solid var(--border-glow);
+            display: flex; align-items: center; justify-content: space-between; z-index: 10;
+        }
+        .app-brand { display: flex; align-items: center; gap: 12px; }
+        .shield-icon { color: var(--neon-green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.7; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.1); text-shadow: 0 0 10px var(--neon-green); } }
+        .app-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: 1.5px; background: linear-gradient(90deg, #00f2fe, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .enc-status { font-size: 10px; color: var(--neon-green); font-weight: 600; letter-spacing: 1px; transition: color 0.3s;}
+        
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        .icon-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 242, 254, 0.3); color: var(--cyan-glow); border-radius: 10px; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .icon-btn:hover { background: rgba(0, 242, 254, 0.15); box-shadow: 0 0 12px var(--cyan-glow); transform: translateY(-2px); }
+
+        /* Advanced Menu */
+        .tech-menu { position: absolute; top: 70px; right: 22px; background: rgba(10, 16, 30, 0.98); backdrop-filter: blur(15px); border: 1px solid var(--border-glow); border-radius: 14px; width: 230px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.9); z-index: 99; }
+        .tech-menu.show { display: flex; animation: slideDown 0.2s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .tech-menu-item { padding: 14px 18px; font-size: 13px; color: var(--text-main); background: none; border: none; border-bottom: 1px solid rgba(255,255,255,0.03); text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+        .tech-menu-item:last-child { border-bottom: none; }
+        .tech-menu-item:hover { background: rgba(0, 242, 254, 0.1); color: var(--cyan-glow); padding-left: 22px; }
+
+        /* Messages Area */
+        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 18px; scroll-behavior: smooth; }
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: rgba(0, 242, 254, 0.3); border-radius: 5px; }
+        
+        .message-row { display: flex; flex-direction: column; max-width: 85%; position: relative; animation: fadeIn 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .message-row.sent { align-self: flex-end; align-items: flex-end; }
+        .message-row.received { align-self: flex-start; align-items: flex-start; }
+        
+        /* Bubble */
+        .bubble { padding: 12px 16px; border-radius: 16px; word-break: break-word; font-size: 14px; line-height: 1.5; min-width: 140px; }
+        .message-row.sent .bubble { background: linear-gradient(145deg, rgba(0, 114, 255, 0.15) 0%, rgba(0, 242, 254, 0.08) 100%); border: 1px solid rgba(0, 242, 254, 0.3); border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.05); }
+        .message-row.received .bubble { background: rgba(20, 26, 40, 0.7); border: 1px solid rgba(255, 255, 255, 0.06); border-bottom-left-radius: 4px; }
+        
+        /* Text Types */
+        .enc-text { font-family: monospace; font-size: 11px; color: #4a5c77; opacity: 0.8; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .plain-text { color: #fff; }
+        .error-text { color: var(--neon-red); font-size: 12px; font-weight: bold; }
+        
+        .msg-meta { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--text-dim); margin-top: 6px; font-weight: 500; }
+        .msg-sender { font-weight: 600; color: var(--cyan-glow); font-size: 11.5px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .delete-btn { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 2px 4px; font-size: 12px; transition: 0.2s; }
+        .delete-btn:hover { color: var(--neon-red); }
+
+        /* Status & Input Controls */
+        .typing-indicator { position: absolute; bottom: 85px; left: 25px; font-size: 11px; color: var(--neon-green); font-style: italic; display: none; z-index: 5; }
+        
+        .chat-input-area { padding: 14px 20px; background: rgba(6, 10, 19, 0.95); border-top: 1px solid var(--border-glow); display: flex; align-items: center; gap: 12px; z-index: 10; }
+        
+        /* Global Decrypt Button */
+        .decrypt-all-btn { background: rgba(10, 15, 28, 0.8); border: 1px solid rgba(0, 242, 254, 0.4); color: var(--cyan-glow); border-radius: 50%; width: 44px; height: 44px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.3s; }
+        .decrypt-all-btn.unlocked { color: var(--neon-green); border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 163, 0.3); }
+        
+        .message-input { flex: 1; background: rgba(15, 22, 38, 0.6); border: 1px solid rgba(0, 242, 254, 0.2); padding: 14px 18px; color: #fff; border-radius: 20px; font-size: 14px; outline: none; font-family: inherit; transition: all 0.3s ease; }
+        .message-input:focus { border-color: var(--cyan-glow); background: rgba(15, 22, 38, 0.9); box-shadow: 0 0 15px rgba(0, 242, 254, 0.15); }
+        .send-btn { background: linear-gradient(135deg, var(--cyan-glow), var(--blue-glow)); border: none; border-radius: 50%; width: 46px; height: 46px; color: #040914; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3); transition: all 0.3s; }
+        .send-btn:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 242, 254, 0.4); }
+
+        /* Security Lock Screen */
+        .security-screen { position: absolute; inset: 0; background: rgba(4, 7, 13, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 35px; text-align: center; }
+        .lock-icon-box { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--cyan-glow); box-shadow: 0 0 30px rgba(0, 242, 254, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 25px; color: var(--cyan-glow); }
+        .sec-input { width: 100%; max-width: 280px; padding: 14px 18px; margin-bottom: 15px; background: rgba(10, 16, 30, 0.8); border: 1px solid rgba(0, 242, 254, 0.3); border-radius: 12px; color: #fff; outline: none; font-family: inherit; text-align: center; font-size: 15px; letter-spacing: 1px; }
+        .sec-input:focus { border-color: var(--cyan-glow); box-shadow: 0 0 15px rgba(0, 242, 254, 0.2); }
+        .sec-btn { width: 100%; max-width: 280px; padding: 14px; background: linear-gradient(90deg, #00f2fe, #4facfe); border: none; border-radius: 12px; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 18px; color: #040914; letter-spacing: 1.5px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .sec-btn:hover { box-shadow: 0 0 25px rgba(0, 242, 254, 0.4); transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    
+    <!-- Security Screen -->
+    <div class="security-screen" id="security-screen">
+        <div class="lock-icon-box">
+            <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        </div>
+        <h2 id="sec-title" style="font-family: 'Rajdhani'; font-size: 26px; margin-bottom: 8px; color: #fff; letter-spacing: 2px;">E2E SECURE LOGIN</h2>
+        <p id="sec-desc" style="font-size: 13px; color: var(--text-dim); margin-bottom: 30px;">Both users must use the <b>SAME</b> Secret Key</p>
+        
+        <input type="text" id="sec-username" class="sec-input" placeholder="Display Name (නම)" />
+        <input type="password" id="sec-password" class="sec-input" placeholder="Secret Key / Password" />
+        <button id="sec-btn" class="sec-btn">DECRYPT & ENTER</button>
+    </div>
+
+    <!-- Advanced Tech Menu -->
+    <div class="tech-menu" id="tech-menu">
+        <!-- New PWA Install Button -->
+        <button class="tech-menu-item" id="menu-install" style="display: none; color: var(--neon-yellow);">📱 Install App (PWA)</button>
+        
+        <button class="tech-menu-item" id="menu-enc-toggle">🔏 Toggle Encryption: <span id="enc-state-txt" style="color:var(--neon-green); margin-left: 5px;">ON</span></button>
+        <button class="tech-menu-item" id="menu-clear-screen">🧹 Clear Local Screen</button>
+        <button class="tech-menu-item" id="menu-sound">🔊 Toggle Sounds</button>
+        <button class="tech-menu-item" id="menu-lock">🔐 Lock Terminal</button>
+        <button class="tech-menu-item" id="menu-reset" style="color: var(--neon-red);">⚠️ Wipe Credentials</button>
+    </div>
+
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <div class="app-brand">
+            <div class="shield-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div>
+                <div class="app-title">CYBER-CORE</div>
+                <div class="enc-status" id="active-user-tag">AES-256 SECURED</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" id="menu-toggle-btn" title="Menu"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
+        </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="chat-messages" id="messages-container"></div>
+
+    <!-- Typing Indicator -->
+    <div id="typing-indicator" class="typing-indicator">Agent is typing...</div>
+
+    <!-- Bottom Input Area -->
+    <div class="chat-input-area">
+        <button id="global-decrypt-btn" class="decrypt-all-btn" title="Decrypt All Visible Messages">
+            <svg id="icon-locked" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0"></path></svg>
+            <svg id="icon-unlocked" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+        </button>
+
+        <input type="text" id="message-input" class="message-input" placeholder="Type secure message..." autocomplete="off" />
+        
+        <button id="send-btn" class="send-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#040914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+    </div>
+</div>
+
+<!-- ================= PWA Setup (Single File) ================= -->
+<script>
+    // 1. Generate Manifest Dynamically
+    const manifest = {
+        "name": "CYBER-CORE",
+        "short_name": "CYBER-CORE",
+        "start_url": window.location.href,
+        "display": "standalone",
+        "background_color": "#04070d",
+        "theme_color": "#060913",
+        "icons": [{
+            "src": "https://cdn-icons-png.flaticon.com/512/3256/3256783.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }]
+    };
+    
+    // Inject Manifest into Head
+    const manifestString = encodeURIComponent(JSON.stringify(manifest));
+    document.getElementById('manifest-link').setAttribute('href', 'data:application/json;charset=utf-8,' + manifestString);
+
+    // 2. Generate and Register Service Worker Dynamically
+    const swCode = `
+        self.addEventListener('install', (e) => self.skipWaiting());
+        self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
+        self.addEventListener('fetch', (e) => {
+            e.respondWith(fetch(e.request).catch(() => new Response("CYBER-CORE: Network Required.")));
+        });
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(swBlob);
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register(swUrl).then(() => {
+            console.log("PWA Service Worker Registered!");
+        }).catch(err => console.log("PWA SW Error:", err));
+    }
+
+    // 3. PWA Install Logic
+    let deferredPrompt;
+    const installBtn = document.getElementById('menu-install');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'flex'; // Show Install Button in Menu
+    });
+
+    installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                installBtn.style.display = 'none';
+            }
+            deferredPrompt = null;
+        }
+    });
+
+    window.addEventListener('appinstalled', () => {
+        installBtn.style.display = 'none';
+        console.log('PWA successfully installed.');
+    });
+</script>
+<!-- ========================================================== -->
+
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded, onChildRemoved, remove, set, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD89l5DvOCYFIhjyRNVWq5upcbHqvh367U",
+        authDomain: "massage-c0f44.firebaseapp.com",
+        databaseURL: "https://massage-c0f44-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "massage-c0f44",
+        storageBucket: "massage-c0f44.firebasestorage.app",
+        messagingSenderId: "423050491790",
+        appId: "1:423050491790:web:1b1549abbd3fa48450d6df"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const messagesRef = ref(db, 'messages');
+    const typingRef = ref(db, 'typing');
+
+    // App State Variables
+    let audioCtx = null;
+    let isSoundEnabled = true;
+    let currentUser = "";
+    let isEncryptionEnabled = true; 
+    let isGlobalDecrypted = false;  
+    let localMessages = [];         
+
+    // UI Elements
+    const securityScreen = document.getElementById('security-screen');
+    const secUsername = document.getElementById('sec-username');
+    const secPassword = document.getElementById('sec-password');
+    const secBtn = document.getElementById('sec-btn');
+    const messageInput = document.getElementById('message-input');
+    const messagesContainer = document.getElementById('messages-container');
+    const globalDecryptBtn = document.getElementById('global-decrypt-btn');
+
+    // --- Audio System ---
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    function playTone(freq, type, duration) {
+        if (!isSoundEnabled) return;
+        try {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+    }
+    const soundEffects = {
+        send: () => { playTone(600, 'sine', 0.1); setTimeout(() => playTone(880, 'sine', 0.15), 60); },
+        receive: () => { playTone(450, 'triangle', 0.12); setTimeout(() => playTone(650, 'sine', 0.18), 80); },
+        decrypt: () => { playTone(1200, 'sine', 0.05); setTimeout(() => playTone(1800, 'sine', 0.1), 50); }
+    };
+
+    // --- Auth Check ---
+    function checkDeviceAuth() {
+        const storedPass = localStorage.getItem("cyber_pass");
+        if (!storedPass) {
+            secUsername.style.display = "block"; 
+            secBtn.innerText = "GENERATE KEYS & ENTER";
+        } else {
+            secUsername.style.display = "none"; 
+            secBtn.innerText = "DECRYPT CHANNEL";
+        }
+    }
+
+    secBtn.addEventListener('click', () => {
+        initAudio();
+        const storedPass = localStorage.getItem("cyber_pass");
+        const pass = secPassword.value.trim();
+
+        if (!storedPass) {
+            const user = secUsername.value.trim();
+            if (!user || !pass) return alert("කරුණාකර නම සහ Password එක ඇතුලත් කරන්න!");
+            localStorage.setItem("cyber_user", user); 
+            localStorage.setItem("cyber_pass", pass);
+            currentUser = user; unlockUI();
+        } else {
+            if (pass === storedPass) { 
+                currentUser = localStorage.getItem("cyber_user"); unlockUI(); 
+            } else { 
+                alert("Security Key වැරදියි! Access Denied."); 
+                secPassword.value = ""; 
+            }
+        }
+    });
+
+    function unlockUI() {
+        securityScreen.style.display = "none";
+        document.getElementById('active-user-tag').innerText = `AGENT: ${currentUser.toUpperCase()}`;
+        secPassword.value = ""; 
+        messageInput.focus();
+    }
+
+    // --- Menu Actions ---
+    document.getElementById('menu-toggle-btn').addEventListener('click', (e) => { 
+        e.stopPropagation(); document.getElementById('tech-menu').classList.toggle('show'); 
+    });
+    document.addEventListener('click', () => document.getElementById('tech-menu').classList.remove('show'));
+    
+    document.getElementById('menu-sound').addEventListener('click', () => { isSoundEnabled = !isSoundEnabled; });
+    document.getElementById('menu-lock').addEventListener('click', () => { securityScreen.style.display = "flex"; checkDeviceAuth(); });
+    document.getElementById('menu-reset').addEventListener('click', () => { 
+        if(confirm("Credentials මකා දැමීමට අවශ්‍යද?")) { localStorage.clear(); location.reload(); }
+    });
+
+    // Toggle Send Encryption State
+    document.getElementById('menu-enc-toggle').addEventListener('click', () => {
+        isEncryptionEnabled = !isEncryptionEnabled;
+        const txt = document.getElementById('enc-state-txt');
+        txt.innerText = isEncryptionEnabled ? "ON" : "OFF";
+        txt.style.color = isEncryptionEnabled ? "var(--neon-green)" : "var(--neon-yellow)";
+        messageInput.placeholder = isEncryptionEnabled ? "Type secure message..." : "Type unencrypted message...";
+        document.getElementById('active-user-tag').innerText = isEncryptionEnabled ? "AES-256 SECURED" : "CONNECTION UNSECURED";
+        document.getElementById('active-user-tag').style.color = isEncryptionEnabled ? "var(--neon-green)" : "var(--neon-yellow)";
+    });
+
+    // Clear Local Screen
+    document.getElementById('menu-clear-screen').addEventListener('click', () => {
+        localMessages = []; 
+        renderAllMessages(); 
+    });
+
+    // --- Global Decrypt Toggle ---
+    globalDecryptBtn.addEventListener('click', () => {
+        isGlobalDecrypted = !isGlobalDecrypted;
+        
+        if(isGlobalDecrypted) {
+            globalDecryptBtn.classList.add('unlocked');
+            document.getElementById('icon-locked').style.display = 'none';
+            document.getElementById('icon-unlocked').style.display = 'block';
+            soundEffects.decrypt();
+        } else {
+            globalDecryptBtn.classList.remove('unlocked');
+            document.getElementById('icon-locked').style.display = 'block';
+            document.getElementById('icon-unlocked').style.display = 'none';
+        }
+        
+        renderAllMessages(); 
+    });
+
+    // --- Sending Messages ---
+    function sendMessage() {
+        const rawText = messageInput.value.trim();
+        if (!rawText || !currentUser) return;
+        
+        let finalText = rawText;
+        let isEnc = false;
+
+        if (isEncryptionEnabled) {
+            const secretKey = localStorage.getItem("cyber_pass");
+            finalText = CryptoJS.AES.encrypt(rawText, secretKey).toString();
+            isEnc = true;
+        }
+        
+        push(messagesRef, { 
+            sender: currentUser, 
+            text: finalText, 
+            isEncrypted: isEnc, 
+            timestamp: Date.now() 
+        }).then(() => {
+            soundEffects.send();
+            set(ref(db, 'typing/' + currentUser), false); 
+        });
+        
+        messageInput.value = "";
+    }
+
+    document.getElementById('send-btn').addEventListener('click', () => sendMessage());
+    
+    // --- Typing Indicator Logic ---
+    let typingTimeout;
+    messageInput.addEventListener('input', () => {
+        set(ref(db, 'typing/' + currentUser), true);
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => { set(ref(db, 'typing/' + currentUser), false); }, 1500);
+    });
+    messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+    onValue(typingRef, (snapshot) => {
+        const typingData = snapshot.val();
+        let isSomeoneTyping = false;
+        if(typingData) {
+            for (let user in typingData) {
+                if (user !== currentUser && typingData[user] === true) { isSomeoneTyping = true; break; }
+            }
+        }
+        document.getElementById('typing-indicator').style.display = isSomeoneTyping ? 'block' : 'none';
+    });
+
+    // --- Firebase Syncing ---
+    onChildAdded(messagesRef, (snapshot) => {
+        const data = snapshot.val();
+        localMessages.push({ id: snapshot.key, ...data });
+        renderAllMessages();
+        if (data.sender !== currentUser) soundEffects.receive();
+    });
+
+    onChildRemoved(messagesRef, (snapshot) => {
+        localMessages = localMessages.filter(msg => msg.id !== snapshot.key);
+        renderAllMessages();
+    });
+
+    // --- Rendering Logic ---
+    function renderAllMessages() {
+        messagesContainer.innerHTML = ''; 
+        
+        localMessages.forEach(msg => {
+            const isSelf = (msg.sender === currentUser);
+            const timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            let displayText = escapeHTML(msg.text);
+            let cssClass = 'plain-text';
+            
+            // Decryption Logic
+            if (msg.isEncrypted !== false) { 
+                if (isGlobalDecrypted) {
+                    const secretKey = localStorage.getItem("cyber_pass");
+                    try {
+                        const bytes = CryptoJS.AES.decrypt(msg.text, secretKey);
+                        const originalText = bytes.toString(CryptoJS.enc.Utf8);
+                        
+                        if (originalText) {
+                            displayText = escapeHTML(originalText);
+                            cssClass = 'plain-text';
+                        } else {
+                            // WRONG PASSWORD / KEY MISMATCH
+                            displayText = "⚠️ [WRONG KEY - DECRYPTION FAILED]";
+                            cssClass = 'error-text';
+                        }
+                    } catch(e) { 
+                        displayText = "⚠️ [DATA CORRUPTED]"; 
+                        cssClass = 'error-text';
+                    }
+                } else {
+                    // Show Cipher Text
+                    displayText = escapeHTML(msg.text);
+                    cssClass = 'enc-text';
+                }
+            }
+
+            const row = document.createElement('div');
+            row.id = `msg-${msg.id}`; 
+            row.className = `message-row ${isSelf ? 'sent' : 'received'}`;
+
+            row.innerHTML = `
+                ${!isSelf ? `<div class="msg-sender">${escapeHTML(msg.sender)}</div>` : ''}
+                <div class="bubble">
+                    <div class="${cssClass}">${displayText}</div>
+                </div>
+                <div class="msg-meta">
+                    <span>${timeStr}</span>
+                    ${msg.isEncrypted !== false ? (isGlobalDecrypted ? '<span style="color:#00ffa3;">🔓</span>' : '<span>🔒</span>') : ''}
+                    <button class="delete-btn" onclick="deleteMsg('${msg.id}')" title="Delete from Server">✕</button>
+                </div>
+            `;
+            messagesContainer.appendChild(row);
+        });
+        
+        // Auto scroll to bottom
+        messagesContainer.scrollTo(0, messagesContainer.scrollHeight);
+    }
+
+    // --- Helper Functions ---
+    window.deleteMsg = function(msgId) { 
+        if (confirm("මෙම Message එක Server එකෙන් සදහටම Delete කරන්නද?")) remove(ref(db, `messages/${msgId}`)); 
+    };
+    
+    function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
+
+    // Init App
+    checkDeviceAuth();
+</script>
+
+</body>
+</html>
