@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Google Meet</title>
+
+    <meta name="theme-color" content="#ffffff">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link id="apple-icon-link" rel="apple-touch-icon" href="">
+    <link id="favicon-link" rel="icon" type="image/png" href="">
+
+    <!-- Dynamic Manifest Link for PWA -->
+    <link id="manifest-link" rel="manifest" href="">
+
+    <!-- Synchronous PWA Icon & Manifest Generator (Removes Black Splash Screen Border) -->
+    <script>
+        (function () {
+            function generateMeetIcon(size, paddingRatio) {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, size, size);
+
+                const iconSize = size * paddingRatio;
+                const offset = (size - iconSize) / 2;
+                const scale = iconSize / 192;
+
+                ctx.save();
+                ctx.translate(offset, offset);
+                ctx.scale(scale, scale);
+
+                const paths = [
+                    { color: '#00832D', d: 'M108 96l17.06 19.5L148 130.16l4-34.03-4-33.28-23.38 12.88z' },
+                    { color: '#0066DA', d: 'M9 127v29c0 6.63 5.37 12 12 12h29l6-21.92L50 127l-19.9-6L9 127z' },
+                    { color: '#E94235', d: 'M50 24L9 65l21.1 6L50 65l5.9-18.83z' },
+                    { color: '#2684FC', d: 'M9 65h41v62H9z' },
+                    { color: '#00AC47', d: 'M174.19 41.36L148 62.85v67.31l26.3 21.57c3.94 3.08 9.7.27 9.7-4.73V46c0-5.07-5.89-7.85-9.81-4.64zM108 96v31H50v41h86c6.63 0 12-5.37 12-12v-25.84L108 96z' },
+                    { color: '#FFBA00', d: 'M136 24H50v41h58v31l40-33.15V36c0-6.63-5.37-12-12-12z' }
+                ];
+
+                paths.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.fill(new Path2D(p.d));
+                });
+
+                ctx.restore();
+                return canvas.toDataURL('image/png');
+            }
+
+            const maskableIcon512 = generateMeetIcon(512, 0.62);
+            const anyIcon512 = generateMeetIcon(512, 0.78);
+            const appleIcon180 = generateMeetIcon(180, 0.75);
+
+            document.getElementById('apple-icon-link').setAttribute('href', appleIcon180);
+            document.getElementById('favicon-link').setAttribute('href', anyIcon512);
+
+            const manifest = {
+                "name": "Google Meet",
+                "short_name": "Meet Chat",
+                "start_url": window.location.href,
+                "display": "standalone",
+                "background_color": "#ffffff",
+                "theme_color": "#ffffff",
+                "icons": [
+                    {
+                        "src": anyIcon512,
+                        "sizes": "512x512",
+                        "type": "image/png",
+                        "purpose": "any"
+                    },
+                    {
+                        "src": maskableIcon512,
+                        "sizes": "512x512",
+                        "type": "image/png",
+                        "purpose": "maskable"
+                    }
+                ]
+            };
+
+            const manifestString = encodeURIComponent(JSON.stringify(manifest));
+            document.getElementById('manifest-link').setAttribute('href', 'data:application/json;charset=utf-8,' + manifestString);
+        })();
+    </script>
+
+    <!-- Google Fonts: Plus Jakarta Sans, Roboto, Noto Sans Sinhala & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <style>
+        :root {
+            --meet-dark-bg: #202124;
+            --meet-tile-bg: #3c4043;
+            --meet-control-bg: #3c4043;
+            --meet-control-hover: #4a4e51;
+            --meet-red: #ea4335;
+            --meet-red-hover: #d93025;
+            --meet-blue: #0b57d0;
+            --meet-blue-hover: #0842a0;
+            --meet-blue-tint: #d3e3fd;
+            --meet-blue-tint-text: #041e49;
+            --meet-light-blue: #8ab4f8;
+            --meet-green: #1e8e3e;
+            --meet-green-bg: #e6f4ea;
+            --meet-surface: #ffffff;
+            --meet-surface-container: #f0f4f9;
+            --meet-surface-variant: #f1f3f4;
+            --meet-surface-hover: #e8eaed;
+            --meet-text-primary: #1f1f1f;
+            --meet-text-secondary: #444746;
+            --meet-text-muted: #5f6368;
+            --meet-border: #e1e3e1;
+            --meet-shadow: 0 2px 6px 2px rgba(60, 64, 67, 0.15), 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+            --font-sans: 'Plus Jakarta Sans', 'Roboto', 'Noto Sans Sinhala', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: #ffffff;
+            color: var(--meet-text-primary);
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-splash {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .app-splash.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-logo-wrap {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: splashPop 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes splashPop {
+            from { opacity: 0; transform: scale(0.88); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .splash-wordmark {
+            font-size: 20px;
+            font-weight: 500;
+            color: #5f6368;
+            letter-spacing: -0.2px;
+        }
+
+        .splash-wordmark strong { color: #202124; font-weight: 600; }
+
+        .security-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .meet-login-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 28px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .meet-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .meet-logo-svg { width: 32px; height: 32px; min-width: 32px; min-height: 32px; flex-shrink: 0; display: block; }
+        .meet-logo-svg-sm { width: 26px; height: 26px; min-width: 26px; min-height: 26px; flex-shrink: 0; display: block; }
+
+        .meet-wordmark {
+            font-size: 22px;
+            font-weight: 500;
+            color: #5f6368;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .meet-wordmark strong { color: #202124; font-weight: 600; }
+
+        .meet-login-time {
+            font-size: 15px;
+            color: #5f6368;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        .login-main-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 24px 40px;
+        }
+
+        .login-grid {
+            width: 100%;
+            max-width: 980px;
+            display: grid;
+            grid-template-columns: 1.18fr 0.82fr;
+            gap: 52px;
+            align-items: center;
+        }
+
+        .meet-preview-box {
+            background: radial-gradient(circle at 50% 35%, #2b303a 0%, #202124 75%);
+            border-radius: 20px;
+            aspect-ratio: 16 / 10;
+            width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            padding: 24px;
+        }
+
+        .preview-top-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(32, 33, 36, 0.72);
+            backdrop-filter: blur(10px);
+            color: #e8eaed;
+            padding: 6px 13px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .preview-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a73e8, #0b57d0);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            box-shadow: 0 0 0 8px rgba(26, 115, 232, 0.18), 0 8px 24px rgba(11, 87, 208, 0.45);
+        }
+
+        .preview-status-text { color: #f8f9fa; font-size: 17px; font-weight: 500; text-align: center; letter-spacing: -0.1px; }
+        .preview-sub-text { color: #9aa0a6; font-size: 13px; margin-top: 5px; text-align: center; }
+
+        .preview-bottom-controls { position: absolute; bottom: 18px; display: flex; gap: 14px; }
+
+        .preview-circle-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(32, 33, 36, 0.65);
+            backdrop-filter: blur(6px);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-circle-btn.active-shield { background: rgba(30, 142, 62, 0.22); border-color: #34a853; color: #81c995; }
+
+        .login-form-panel { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px 8px; }
+        .login-title { font-size: 30px; font-weight: 400; color: var(--meet-text-primary); margin-bottom: 8px; letter-spacing: -0.4px; }
+        .login-subtitle { font-size: 14px; color: var(--meet-text-muted); margin-bottom: 26px; line-height: 1.55; max-width: 340px; }
+
+        .input-group { width: 100%; max-width: 340px; position: relative; margin-bottom: 14px; }
+
+        .sec-input {
+            width: 100%;
+            padding: 15px 16px;
+            font-size: 15px;
+            font-family: var(--font-sans);
+            color: var(--meet-text-primary);
+            background: #ffffff;
+            border: 1px solid #747775;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .sec-input::placeholder { color: #5f6368; }
+        .sec-input:hover { border-color: #1f1f1f; }
+        .sec-input:focus { border-color: var(--meet-blue); box-shadow: 0 0 0 1.5px var(--meet-blue); }
+        .sec-input.input-error { border-color: var(--meet-red-hover); box-shadow: 0 0 0 1.5px var(--meet-red-hover); }
+
+        .sec-error-msg {
+            width: 100%;
+            max-width: 340px;
+            display: none;
+            align-items: flex-start;
+            gap: 8px;
+            color: var(--meet-red-hover);
+            font-size: 12.5px;
+            line-height: 1.45;
+            text-align: left;
+            margin-top: -4px;
+            margin-bottom: 14px;
+            padding: 0 2px;
+        }
+
+        .sec-error-msg.show { display: flex; animation: errShake 0.28s ease-in-out; }
+        .sec-error-msg svg { flex-shrink: 0; margin-top: 1px; }
+
+        @keyframes errShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .toggle-pass-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #5f6368;
+            cursor: pointer;
+            padding: 7px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.15s;
+        }
+
+        .toggle-pass-btn:hover { background: var(--meet-surface-variant); color: var(--meet-text-primary); }
+
+        .sec-btn {
+            width: 100%;
+            max-width: 340px;
+            padding: 14px 24px;
+            margin-top: 8px;
+            background: var(--meet-blue);
+            color: #ffffff;
+            border: none;
+            border-radius: 9999px;
+            font-family: var(--font-sans);
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
+            box-shadow: 0 1px 3px rgba(11, 87, 208, 0.28);
+        }
+
+        .sec-btn:hover { background: var(--meet-blue-hover); box-shadow: 0 3px 10px rgba(11, 87, 208, 0.35); }
+        .sec-btn:active { transform: scale(0.99); }
+
+        .switch-account-btn {
+            margin-top: 14px;
+            background: none;
+            border: none;
+            color: var(--meet-blue);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 7px 14px;
+            border-radius: 20px;
+            display: none;
+            transition: background-color 0.15s;
+        }
+
+        .switch-account-btn:hover { background: rgba(11, 87, 208, 0.08); }
+
+        .login-footer-note {
+            margin-top: 22px;
+            font-size: 12px;
+            color: #5f6368;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--meet-surface-container);
+            padding: 7px 14px;
+            border-radius: 99px;
+        }
+
+        .meet-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.48);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .meet-modal-backdrop.show { display: flex; animation: menuFade 0.16s ease-out; }
+
+        .meet-modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 360px;
+            padding: 24px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+        }
+
+        .meet-modal-title { font-size: 18px; font-weight: 600; color: var(--meet-text-primary); margin-bottom: 10px; }
+        .meet-modal-text { font-size: 14px; color: var(--meet-text-secondary); line-height: 1.55; margin-bottom: 22px; }
+        .meet-modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+        .meet-modal-btn {
+            border: none;
+            background: transparent;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 9px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+
+        .meet-modal-btn.cancel { color: var(--meet-blue); }
+        .meet-modal-btn.cancel:hover { background: rgba(11, 87, 208, 0.08); }
+        .meet-modal-btn.confirm-danger { background: var(--meet-red-hover); color: #ffffff; }
+        .meet-modal-btn.confirm-danger:hover { background: #b3261e; }
+
+        .meet-workspace { display: flex; width: 100%; height: 100%; background: var(--meet-dark-bg); overflow: hidden; }
+
+        .meet-stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 18px 14px 18px 24px;
+            position: relative;
+            min-width: 0;
+        }
+
+        .stage-top-bar { display: flex; align-items: center; justify-content: space-between; color: #e8eaed; }
+
+        .stage-enc-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(60, 64, 67, 0.72);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: #e8eaed;
+            transition: all 0.2s ease;
+        }
+
+        .stage-enc-pill.decrypted { background: rgba(52, 168, 83, 0.18); border-color: rgba(129, 201, 149, 0.3); color: #81c995; }
+
+        .stage-video-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px 0; }
+
+        .participant-tile {
+            width: 100%;
+            max-width: 680px;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(145deg, #3c4043 0%, #2d3033 100%);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .tile-avatar {
+            width: 112px;
+            height: 112px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a73e8, #0b57d0);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 44px;
+            font-weight: 600;
+            box-shadow: 0 0 0 8px rgba(138, 180, 248, 0.14), 0 8px 24px rgba(0, 0, 0, 0.28);
+        }
+
+        .tile-name-tag {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(32, 33, 36, 0.72);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            padding: 6px 13px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tile-typing-pill {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(138, 180, 248, 0.18);
+            border: 1px solid rgba(138, 180, 248, 0.3);
+            color: #8ab4f8;
+            padding: 6px 13px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .meet-bottom-bar { display: flex; align-items: center; justify-content: space-between; padding-top: 8px; color: #ffffff; }
+        .meet-info-left { display: flex; align-items: center; gap: 10px; font-size: 14.5px; font-weight: 500; color: #e8eaed; }
+        .meet-info-divider { color: #5f6368; }
+        .meet-center-controls { display: flex; align-items: center; gap: 12px; }
+
+        .meet-ctrl-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: var(--meet-control-bg);
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .meet-ctrl-btn:hover { background: var(--meet-control-hover); }
+        .meet-ctrl-btn:active { transform: scale(0.95); }
+        .meet-ctrl-btn.active-blue { background: var(--meet-light-blue); color: #202124; }
+        .meet-ctrl-btn.muted-red { background: var(--meet-red); color: #ffffff; }
+
+        .meet-leave-btn {
+            height: 44px;
+            padding: 0 22px;
+            border-radius: 9999px;
+            border: none;
+            background: var(--meet-red);
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .meet-leave-btn:hover { background: var(--meet-red-hover); }
+        .meet-leave-btn:active { transform: scale(0.97); }
+
+        .meet-right-dummy { display: flex; align-items: center; gap: 8px; color: #8ab4f8; font-size: 13px; font-weight: 500; }
+
+        .chat-container {
+            width: 405px;
+            flex-shrink: 0;
+            margin: 16px 16px 16px 8px;
+            background: var(--meet-surface);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.32);
+        }
+
+        .chat-header {
+            padding: 16px 14px 14px 20px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--meet-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .app-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .mobile-meet-badge { display: none; align-items: center; justify-content: center; flex-shrink: 0; }
+        .app-title { font-size: 18px; font-weight: 500; color: var(--meet-text-primary); line-height: 1.25; letter-spacing: -0.2px; }
+
+        .enc-status {
+            font-size: 11.5px;
+            color: var(--meet-text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+        .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--meet-green); box-shadow: 0 0 0 2px rgba(30, 142, 62, 0.18); display: inline-block; }
+        .header-actions { display: flex; align-items: center; gap: 4px; }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--meet-text-secondary);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.18s;
+        }
+
+        .icon-btn:hover { background: var(--meet-surface-variant); color: var(--meet-text-primary); }
+
+        .mobile-end-btn {
+            display: none;
+            background: var(--meet-red);
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            height: 34px;
+            padding: 0 13px;
+            font-size: 12.5px;
+            font-weight: 500;
+            cursor: pointer;
+            align-items: center;
+            gap: 5px;
+            margin-right: 4px;
+            transition: background-color 0.18s;
+        }
+
+        .mobile-end-btn:hover { background: var(--meet-red-hover); }
+
+        .tech-menu {
+            position: absolute;
+            top: 62px;
+            right: 14px;
+            background: #ffffff;
+            border-radius: 12px;
+            width: 262px;
+            padding: 6px 0;
+            display: none;
+            flex-direction: column;
+            box-shadow: var(--meet-shadow);
+            z-index: 99;
+            border: 1px solid var(--meet-border);
+        }
+
+        .tech-menu.show { display: flex; animation: menuFade 0.15s ease-out; }
+
+        @keyframes menuFade {
+            from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .tech-menu-item {
+            padding: 12px 16px;
+            font-size: 13.5px;
+            font-family: var(--font-sans);
+            font-weight: 400;
+            color: var(--meet-text-primary);
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background-color 0.15s;
+        }
+
+        .tech-menu-item:hover { background: var(--meet-surface-container); }
+        .tech-menu-divider { height: 1px; background: var(--meet-border); margin: 4px 0; }
+
+        .meet-chat-banner {
+            margin: 12px 16px 4px;
+            padding: 11px 14px;
+            background: var(--meet-surface-container);
+            border-radius: 12px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--meet-text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .meet-chat-banner svg { flex-shrink: 0; color: var(--meet-text-muted); margin-top: 2px; }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 6px; }
+        .chat-messages::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
+
+        .date-divider { display: flex; align-items: center; justify-content: center; margin: 6px 0 2px; }
+
+        .date-divider span {
+            background: var(--meet-surface-container);
+            color: var(--meet-text-secondary);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 99px;
+            letter-spacing: 0.2px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .message-row { display: flex; flex-direction: column; max-width: 88%; position: relative; animation: msgSlide 0.2s ease-out; }
+
+        @keyframes msgSlide {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-row.sent { align-self: flex-end; align-items: flex-end; }
+        .message-row.received { align-self: flex-start; align-items: flex-start; }
+
+        .msg-header-meta { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px; margin-bottom: 4px; padding: 0 4px; }
+        .msg-sender { font-weight: 600; color: var(--meet-text-primary); font-size: 12.5px; }
+        .msg-time { font-size: 11px; color: var(--meet-text-muted); font-weight: 400; }
+
+        .bubble-wrapper { display: flex; align-items: center; gap: 6px; }
+        .message-row.sent .bubble-wrapper { flex-direction: row-reverse; }
+
+        .bubble {
+            padding: 10px 14px;
+            border-radius: 18px;
+            word-break: break-word;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
+        }
+
+        .message-row.received .bubble { background: var(--meet-surface-container); color: var(--meet-text-primary); border-top-left-radius: 4px; }
+        .message-row.sent .bubble { background: var(--meet-blue-tint); color: var(--meet-blue-tint-text); border-top-right-radius: 4px; }
+
+        .enc-text {
+            font-family: var(--font-mono);
+            font-size: 11.5px;
+            color: #5f6368;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .plain-text { font-family: var(--font-sans); color: inherit; }
+        .error-text { color: var(--meet-red-hover); font-size: 12.5px; font-weight: 500; }
+
+        .msg-status-footer { display: flex; align-items: center; gap: 5px; margin-top: 3px; padding: 0 4px; font-size: 10.5px; font-weight: 500; color: var(--meet-text-muted); }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: #9aa0a6;
+            cursor: pointer;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.15s, background-color 0.15s, color 0.15s;
+        }
+
+        .message-row:hover .delete-btn { opacity: 1; }
+        .delete-btn:hover { background: #fce8e6; color: var(--meet-red-hover); }
+
+        .typing-indicator {
+            padding: 4px 20px 8px;
+            font-size: 12px;
+            color: var(--meet-blue);
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .typing-dots { display: inline-flex; gap: 3px; align-items: center; }
+
+        .typing-dots span {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--meet-blue);
+            animation: typingBounce 1.2s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0.7); opacity: 0.45; }
+            40% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .chat-input-area {
+            padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+            background: #ffffff;
+            border-top: 1px solid #f1f3f4;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .input-pill-box {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            background: var(--meet-surface-container);
+            border-radius: 28px;
+            padding: 4px 6px 4px 18px;
+            border: 1.5px solid transparent;
+            transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-pill-box:focus-within { background: #ffffff; border-color: var(--meet-blue); box-shadow: 0 2px 8px rgba(11, 87, 208, 0.12); }
+
+        .message-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 10px 8px 10px 0;
+            color: var(--meet-text-primary);
+            font-size: 14px;
+            font-family: var(--font-sans);
+            outline: none;
+        }
+
+        .message-input::placeholder { color: #5f6368; }
+
+        .send-btn {
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            color: var(--meet-blue);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s, transform 0.1s;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover { background: rgba(11, 87, 208, 0.1); }
+        .send-btn:active { transform: scale(0.93); }
+
+        @media (max-width: 899px) {
+            .login-grid { grid-template-columns: 1fr; gap: 28px; max-width: 440px; }
+            .meet-preview-box { aspect-ratio: 16 / 9; }
+            .meet-stage { display: none; }
+            .chat-container { width: 100%; margin: 0; border-radius: 0; height: 100%; box-shadow: none; }
+            .mobile-meet-badge { display: flex; }
+            .mobile-end-btn { display: flex; }
+            .delete-btn { opacity: 0.72; }
+        }
+
+        @media (max-width: 520px) {
+            .meet-login-header { padding: 14px 16px; }
+            .meet-login-time { display: none; }
+            .login-title { font-size: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-splash" id="app-splash">
+    <div class="splash-logo-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 192 192">
+            <path fill="none" d="M0 0h192v192H0z"/>
+            <path fill="#00832D" d="M108 96l17.06 19.5L148 130.16l4-34.03-4-33.28-23.38 12.88z"/>
+            <path fill="#0066DA" d="M9 127v29c0 6.63 5.37 12 12 12h29l6-21.92L50 127l-19.9-6L9 127z"/>
+            <path fill="#E94235" d="M50 24L9 65l21.1 6L50 65l5.9-18.83z"/>
+            <path fill="#2684FC" d="M9 65h41v62H9z"/>
+            <path fill="#00AC47" d="M174.19 41.36L148 62.85v67.31l26.3 21.57c3.94 3.08 9.7.27 9.7-4.73V46c0-5.07-5.89-7.85-9.81-4.64zM108 96v31H50v41h86c6.63 0 12-5.37 12-12v-25.84L108 96z"/>
+            <path fill="#FFBA00" d="M136 24H50v41h58v31l40-33.15V36c0-6.63-5.37-12-12-12z"/>
+        </svg>
+    </div>
+    <div class="splash-wordmark"><strong>Google</strong> Meet</div>
+</div>
+
+<div class="security-screen" id="security-screen">
+    <div class="meet-login-header">
+        <div class="meet-brand">
+            <svg class="meet-logo-svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 192 192">
+                <path fill="none" d="M0 0h192v192H0z"/>
+                <path fill="#00832D" d="M108 96l17.06 19.5L148 130.16l4-34.03-4-33.28-23.38 12.88z"/>
+                <path fill="#0066DA" d="M9 127v29c0 6.63 5.37 12 12 12h29l6-21.92L50 127l-19.9-6L9 127z"/>
+                <path fill="#E94235" d="M50 24L9 65l21.1 6L50 65l5.9-18.83z"/>
+                <path fill="#2684FC" d="M9 65h41v62H9z"/>
+                <path fill="#00AC47" d="M174.19 41.36L148 62.85v67.31l26.3 21.57c3.94 3.08 9.7.27 9.7-4.73V46c0-5.07-5.89-7.85-9.81-4.64zM108 96v31H50v41h86c6.63 0 12-5.37 12-12v-25.84L108 96z"/>
+                <path fill="#FFBA00" d="M136 24H50v41h58v31l40-33.15V36c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            <span class="meet-wordmark"><strong>Google</strong> Meet</span>
+        </div>
+        <div class="meet-login-time" id="login-clock"></div>
+    </div>
+
+    <div class="login-main-wrapper">
+        <div class="login-grid">
+            <div class="meet-preview-box">
+                <div class="preview-top-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#81c995"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                    AES-256 Encrypted Room
+                </div>
+                <div class="preview-avatar" id="login-avatar-preview">
+                    <svg width="42" height="42" fill="currentColor" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                </div>
+                <div class="preview-status-text" id="preview-agent-name">Google Meet Secure Session</div>
+                <div class="preview-sub-text">Authorized members only • End-to-end encrypted</div>
+
+                <div class="preview-bottom-controls">
+                    <div class="preview-circle-btn active-shield" title="AES-256 Encryption Active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                    </div>
+                    <div class="preview-circle-btn" title="Secure Chat Ready">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-form-panel">
+                <h2 id="sec-title" class="login-title">Ready to join?</h2>
+                <p id="sec-desc" class="login-subtitle">Enter your authorized name and meeting password to enter.</p>
+
+                <div class="input-group" id="username-group">
+                    <input type="text" id="sec-username" class="sec-input" placeholder="Authorized name" autocomplete="off" />
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="sec-password" class="sec-input" placeholder="Meeting password" style="padding-right: 44px;" />
+                    <button type="button" class="toggle-pass-btn" id="toggle-pass-btn" title="Show/Hide Password">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                    </button>
+                </div>
+
+                <div class="sec-error-msg" id="sec-error-msg" role="alert">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    <span id="sec-error-text">Wrong password. Try again.</span>
+                </div>
+
+                <button id="sec-btn" class="sec-btn">Join now</button>
+
+                <button type="button" id="switch-account-btn" class="switch-account-btn">
+                    Sign in with another account (Switch account)
+                </button>
+
+                <div class="login-footer-note">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#1e8e3e"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+                    End-to-end AES-256 local encryption
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="meet-modal-backdrop" id="meet-confirm-modal">
+    <div class="meet-modal-card">
+        <div class="meet-modal-title" id="modal-title">Confirm action</div>
+        <div class="meet-modal-text" id="modal-text">Are you sure?</div>
+        <div class="meet-modal-actions">
+            <button type="button" class="meet-modal-btn cancel" id="modal-cancel-btn">Cancel</button>
+            <button type="button" class="meet-modal-btn confirm-danger" id="modal-confirm-btn">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<div class="meet-workspace">
+
+    <div class="meet-stage">
+        <div class="stage-top-bar">
+            <div class="meet-brand" style="gap: 8px;">
+                <svg class="meet-logo-svg-sm" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 192 192">
+                    <path fill="none" d="M0 0h192v192H0z"/>
+                    <path fill="#00832D" d="M108 96l17.06 19.5L148 130.16l4-34.03-4-33.28-23.38 12.88z"/>
+                    <path fill="#0066DA" d="M9 127v29c0 6.63 5.37 12 12 12h29l6-21.92L50 127l-19.9-6L9 127z"/>
+                    <path fill="#E94235" d="M50 24L9 65l21.1 6L50 65l5.9-18.83z"/>
+                    <path fill="#2684FC" d="M9 65h41v62H9z"/>
+                    <path fill="#00AC47" d="M174.19 41.36L148 62.85v67.31l26.3 21.57c3.94 3.08 9.7.27 9.7-4.73V46c0-5.07-5.89-7.85-9.81-4.64zM108 96v31H50v41h86c6.63 0 12-5.37 12-12v-25.84L108 96z"/>
+                    <path fill="#FFBA00" d="M136 24H50v41h58v31l40-33.15V36c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                <span style="color: #e8eaed; font-size: 16px; font-weight: 500;">CYBER-CORE Meet</span>
+            </div>
+
+            <div class="stage-enc-pill" id="stage-enc-pill">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
+                <span id="stage-enc-text">Encrypted View</span>
+            </div>
+        </div>
+
+        <div class="stage-video-area">
+            <div class="participant-tile">
+                <div class="tile-typing-pill" id="stage-typing-pill">Someone is typing...</div>
+                <div class="tile-avatar" id="stage-user-initial">A</div>
+                <div class="tile-name-tag">
+                    <span id="stage-user-name">You</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="meet-bottom-bar">
+            <div class="meet-info-left">
+                <span id="meet-live-clock">12:00 PM</span>
+                <span class="meet-info-divider">|</span>
+                <span style="color: #9aa0a6; font-size: 14px;">cyber-core-aes256</span>
+            </div>
+
+            <div class="meet-center-controls">
+                <button class="meet-ctrl-btn" id="stage-sound-btn" title="Toggle Notification Sounds">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                </button>
+                <button class="meet-ctrl-btn" id="stage-decrypt-btn" title="Decrypt / Encrypt Messages">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/></svg>
+                </button>
+                <button class="meet-ctrl-btn" id="stage-clear-btn" title="Clear Local Screen">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.36 2.72l1.42 1.42-5.72 5.71c1.07 1.54 1.22 3.39.32 4.59L9.06 8.12c1.2-.9 3.05-.75 4.59.32l5.71-5.72zM5.93 17.57c-2.01-2.01-3.24-4.41-3.58-6.65l4.88-2.09 7.44 7.44-2.09 4.88c-2.24-.34-4.64-1.57-6.65-3.58z"/></svg>
+                </button>
+                <button class="meet-leave-btn" id="stage-lock-btn" title="Lock Terminal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+                    <span>Lock</span>
+                </button>
+            </div>
+
+            <div class="meet-right-dummy">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                <span>In-call chat open</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-container">
+
+        <div class="tech-menu" id="tech-menu">
+            <button class="tech-menu-item" id="menu-install" style="display: none; color: var(--meet-blue); font-weight: 500;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-4-6h3l-4 4-4-4h3V9h2v4z"/></svg>
+                Install Meet App (PWA)
+            </button>
+
+            <button class="tech-menu-item" id="menu-notify">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                <span id="menu-notify-label">Enable Push Notifications</span>
+            </button>
+
+            <button class="tech-menu-item" id="menu-decrypt">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/></svg>
+                <span>Decrypt Messages</span>
+            </button>
+
+            <button class="tech-menu-item" id="menu-clear-screen">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15 16h4v2h-4zm0-8h7v2h-7zm0 4h6v2h-6zM3 18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V8H3v10zM14 5h-3l-1-1H6L5 5H2v2h12z"/></svg>
+                Clear Local Screen
+            </button>
+
+            <button class="tech-menu-item" id="menu-sound">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                <span id="menu-sound-label">Sounds: On</span>
+            </button>
+
+            <div class="tech-menu-divider"></div>
+
+            <button class="tech-menu-item" id="menu-lock">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+                Lock Terminal
+            </button>
+
+            <button class="tech-menu-item" id="menu-reset" style="color: var(--meet-red-hover);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                Sign out / Wipe Credentials
+            </button>
+        </div>
+
+        <div class="chat-header">
+            <div class="app-brand">
+                <div class="mobile-meet-badge">
+                    <svg class="meet-logo-svg-sm" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 192 192">
+                        <path fill="none" d="M0 0h192v192H0z"/>
+                        <path fill="#00832D" d="M108 96l17.06 19.5L148 130.16l4-34.03-4-33.28-23.38 12.88z"/>
+                        <path fill="#0066DA" d="M9 127v29c0 6.63 5.37 12 12 12h29l6-21.92L50 127l-19.9-6L9 127z"/>
+                        <path fill="#E94235" d="M50 24L9 65l21.1 6L50 65l5.9-18.83z"/>
+                        <path fill="#2684FC" d="M9 65h41v62H9z"/>
+                        <path fill="#00AC47" d="M174.19 41.36L148 62.85v67.31l26.3 21.57c3.94 3.08 9.7.27 9.7-4.73V46c0-5.07-5.89-7.85-9.81-4.64zM108 96v31H50v41h86c6.63 0 12-5.37 12-12v-25.84L108 96z"/>
+                        <path fill="#FFBA00" d="M136 24H50v41h58v31l40-33.15V36c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="app-title">In-call messages</div>
+                    <div class="enc-status">
+                        <span class="status-dot"></span>
+                        <span id="active-user-tag">AES-256 SECURED</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="mobile-end-btn" id="mobile-lock-btn" title="Lock Terminal">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
+                    Lock
+                </button>
+                <button class="icon-btn" id="menu-toggle-btn" title="More options">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-.9 2-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-.9 2-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="meet-chat-banner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <span>Messages are secured with AES-256 encryption. Use the <strong>Decrypt Messages</strong> option from the menu to read plain text.</span>
+        </div>
+
+        <div class="chat-messages" id="messages-container"></div>
+
+        <div id="typing-indicator" class="typing-indicator">
+            <div class="typing-dots"><span></span><span></span><span></span></div>
+            <span>Someone is typing a message...</span>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="input-pill-box">
+                <input type="text" id="message-input" class="message-input" placeholder="Send a message" autocomplete="off" />
+                <button id="send-btn" class="send-btn" title="Send message">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= PWA & SERVICE WORKER SETUP ================= -->
+<script>
+    let swRegistrationPromise = null;
+    if ('serviceWorker' in navigator) {
+        swRegistrationPromise = navigator.serviceWorker.register('./firebase-messaging-sw.js')
+            .catch(err => console.log("SW Registration Error:", err));
+    }
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('menu-install');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'flex';
+    });
+
+    installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                installBtn.style.display = 'none';
+            }
+            deferredPrompt = null;
+        }
+    });
+
+    window.addEventListener('appinstalled', () => {
+        installBtn.style.display = 'none';
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            document.getElementById('app-splash').classList.add('hide');
+        }, 420);
+    });
+</script>
+
+<!-- ================= FIREBASE & APP LOGIC ================= -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded, onChildRemoved, remove, set, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD89l5DvOCYFIhjyRNVWq5upcbHqvh367U",
+        authDomain: "massage-c0f44.firebaseapp.com",
+        databaseURL: "https://massage-c0f44-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "massage-c0f44",
+        storageBucket: "massage-c0f44.firebasestorage.app",
+        messagingSenderId: "423050491790",
+        appId: "1:423050491790:web:1b1549abbd3fa48450d6df"
+    };
+
+    // ⚠️ පියවර 1 දී Firebase Console එකෙන් ගත් VAPID Key එක මෙතැනට දාන්න:
+    const VAPID_KEY = "BESCFCeo6kjW2hsTCVexv-PK7PyZsW9KPo4lPKi7V0-5dCJgqRYaDkdMP9mXkOFx8lGZOZ-qwehylGhUR7WJtH4";
+
+    // ⚠️ Vercel (Free Backend) පාවිච්චි කරනවා නම් පමණක් URL එක මෙතැනට දාන්න (Cloud Functions පාවිච්චි කරනවා නම් හිස්ව තබන්න)
+    const VERCEL_NOTIFY_URL = "https://sms-2np4.vercel.app/api/notify";
+
+    const AUTHORIZED_USERS = {
+        "saman": "1234",
+        "Sanchi Perera": "Bixbi@1028",
+        "s": "1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const messagesRef = ref(db, 'messages');
+    const typingRef = ref(db, 'typing');
+
+    let messaging = null;
+    try {
+        messaging = getMessaging(app);
+    } catch (e) {
+        console.log("Messaging not supported in this browser context:", e);
+    }
+
+    let audioCtx = null;
+    let isSoundEnabled = true;
+    let currentUser = "";
+    let currentPass = "";
+    let isGlobalDecrypted = false;
+    let localMessages = [];
+    let listenersStarted = false;
+
+    const securityScreen = document.getElementById('security-screen');
+    const usernameGroup = document.getElementById('username-group');
+    const secUsername = document.getElementById('sec-username');
+    const secPassword = document.getElementById('sec-password');
+    const secBtn = document.getElementById('sec-btn');
+    const secTitle = document.getElementById('sec-title');
+    const secDesc = document.getElementById('sec-desc');
+    const secErrorMsg = document.getElementById('sec-error-msg');
+    const secErrorText = document.getElementById('sec-error-text');
+    const switchAccountBtn = document.getElementById('switch-account-btn');
+    const previewAgentName = document.getElementById('preview-agent-name');
+    const loginAvatarPreview = document.getElementById('login-avatar-preview');
+    const togglePassBtn = document.getElementById('toggle-pass-btn');
+
+    const messageInput = document.getElementById('message-input');
+    const messagesContainer = document.getElementById('messages-container');
+    const menuDecryptBtn = document.getElementById('menu-decrypt');
+    const menuSoundLabel = document.getElementById('menu-sound-label');
+    const menuNotifyBtn = document.getElementById('menu-notify');
+    const menuNotifyLabel = document.getElementById('menu-notify-label');
+
+    const stageSoundBtn = document.getElementById('stage-sound-btn');
+    const stageDecryptBtn = document.getElementById('stage-decrypt-btn');
+    const stageClearBtn = document.getElementById('stage-clear-btn');
+    const stageLockBtn = document.getElementById('stage-lock-btn');
+    const mobileLockBtn = document.getElementById('mobile-lock-btn');
+    const stageEncPill = document.getElementById('stage-enc-pill');
+    const stageEncText = document.getElementById('stage-enc-text');
+
+    // --- Push Notification Helpers ---
+    function sanitizeDbKey(str) {
+        return str.replace(/[.#$\[\]]/g, '_');
+    }
+
+    function getOrCreateDeviceId() {
+        let devId = localStorage.getItem("cyber_device_id");
+        if (!devId) {
+            devId = "dev_" + Math.random().toString(36).substring(2, 12) + "_" + Date.now();
+            localStorage.setItem("cyber_device_id", devId);
+        }
+        return devId;
+    }
+
+    function updateNotifyMenuLabel() {
+        if (!("Notification" in window)) {
+            menuNotifyLabel.innerText = "Notifications Unsupported";
+            return;
+        }
+        if (Notification.permission === "granted") {
+            menuNotifyLabel.innerText = "Notifications: Active ✓";
+            menuNotifyBtn.style.color = "var(--meet-green)";
+        } else if (Notification.permission === "denied") {
+            menuNotifyLabel.innerText = "Notifications Blocked (Check Settings)";
+            menuNotifyBtn.style.color = "var(--meet-red-hover)";
+        } else {
+            menuNotifyLabel.innerText = "Enable Push Notifications";
+            menuNotifyBtn.style.color = "var(--meet-blue)";
+        }
+    }
+
+    async function setupPushNotifications(silent = false) {
+        if (!messaging || !("Notification" in window) || !("serviceWorker" in navigator)) return;
+        if (!VAPID_KEY || VAPID_KEY === "YOUR_VAPID_KEY_HERE") {
+            if (!silent) console.warn("VAPID_KEY එක තවම ඇතුළත් කර නැත.");
+            return;
+        }
+
+        try {
+            let permission = Notification.permission;
+            if (permission === "default") {
+                permission = await Notification.requestPermission();
+            }
+            updateNotifyMenuLabel();
+
+            if (permission === "granted" && currentUser) {
+                const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+                await navigator.serviceWorker.ready;
+
+                const token = await getToken(messaging, {
+                    vapidKey: VAPID_KEY,
+                    serviceWorkerRegistration: registration
+                });
+
+                if (token) {
+                    const userKey = sanitizeDbKey(currentUser);
+                    const deviceId = getOrCreateDeviceId();
+                    await set(ref(db, `fcmTokens/${userKey}/${deviceId}`), {
+                        token: token,
+                        user: currentUser,
+                        updatedAt: Date.now()
+                    });
+                    console.log("FCM Token saved for", currentUser);
+                }
+            }
+        } catch (err) {
+            console.error("Push notification setup failed:", err);
+        }
+    }
+
+    if (messaging) {
+        onMessage(messaging, (payload) => {
+            console.log("Foreground message received:", payload);
+        });
+    }
+
+    menuNotifyBtn.addEventListener('click', () => setupPushNotifications(false));
+
+    // --- Custom Google Meet Confirmation Modal ---
+    let modalConfirmCallback = null;
+    const meetConfirmModal = document.getElementById('meet-confirm-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalText = document.getElementById('modal-text');
+    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+    function showMeetConfirm(title, text, confirmLabel, onConfirm) {
+        modalTitle.innerText = title;
+        modalText.innerText = text;
+        modalConfirmBtn.innerText = confirmLabel;
+        modalConfirmCallback = onConfirm;
+        meetConfirmModal.classList.add('show');
+    }
+
+    modalCancelBtn.addEventListener('click', () => {
+        meetConfirmModal.classList.remove('show');
+        modalConfirmCallback = null;
+    });
+
+    modalConfirmBtn.addEventListener('click', () => {
+        meetConfirmModal.classList.remove('show');
+        if (modalConfirmCallback) modalConfirmCallback();
+        modalConfirmCallback = null;
+    });
+
+    meetConfirmModal.addEventListener('click', (e) => {
+        if (e.target === meetConfirmModal) {
+            meetConfirmModal.classList.remove('show');
+            modalConfirmCallback = null;
+        }
+    });
+
+    function showLoginError(message, highlightUser = false, highlightPass = true) {
+        secErrorText.innerText = message;
+        secErrorMsg.classList.remove('show');
+        void secErrorMsg.offsetWidth;
+        secErrorMsg.classList.add('show');
+        secUsername.classList.toggle('input-error', highlightUser);
+        secPassword.classList.toggle('input-error', highlightPass);
+    }
+
+    function clearLoginError() {
+        secErrorMsg.classList.remove('show');
+        secUsername.classList.remove('input-error');
+        secPassword.classList.remove('input-error');
+    }
+
+    secUsername.addEventListener('input', clearLoginError);
+    secPassword.addEventListener('input', clearLoginError);
+
+    function updateClocks() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        const loginClock = document.getElementById('login-clock');
+        const meetClock = document.getElementById('meet-live-clock');
+        if (loginClock) loginClock.innerText = `${timeStr} • ${dateStr}`;
+        if (meetClock) meetClock.innerText = timeStr;
+    }
+    updateClocks();
+    setInterval(updateClocks, 15000);
+
+    function formatMsgDateTime(timestamp) {
+        if (!timestamp) return '';
+        const d = new Date(timestamp);
+        const datePart = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const timePart = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return `${datePart} • ${timePart}`;
+    }
+
+    function getDayKey(timestamp) {
+        const d = new Date(timestamp || Date.now());
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    }
+
+    function formatDateDivider(timestamp) {
+        const d = new Date(timestamp || Date.now());
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        if (getDayKey(d) === getDayKey(today)) return 'Today';
+        if (getDayKey(d) === getDayKey(yesterday)) return 'Yesterday';
+        return d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' });
+    }
+
+    togglePassBtn.addEventListener('click', () => {
+        const isPass = secPassword.type === 'password';
+        secPassword.type = isPass ? 'text' : 'password';
+    });
+
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    function playTone(freq, type, duration) {
+        if (!isSoundEnabled) return;
+        try {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+    }
+    const soundEffects = {
+        send: () => { playTone(600, 'sine', 0.1); setTimeout(() => playTone(880, 'sine', 0.15), 60); },
+        receive: () => { playTone(450, 'triangle', 0.12); setTimeout(() => playTone(650, 'sine', 0.18), 80); },
+        decrypt: () => { playTone(1200, 'sine', 0.05); setTimeout(() => playTone(1800, 'sine', 0.1), 50); }
+    };
+
+    function findAuthorizedKey(enteredName) {
+        if (!enteredName) return null;
+        return Object.keys(AUTHORIZED_USERS).find(
+            key => key.toLowerCase() === enteredName.trim().toLowerCase()
+        ) || null;
+    }
+
+    function checkDeviceAuth() {
+        clearLoginError();
+        const storedUser = localStorage.getItem("cyber_user");
+        const matchedStored = findAuthorizedKey(storedUser);
+
+        if (matchedStored) {
+            usernameGroup.style.display = "none";
+            switchAccountBtn.style.display = "inline-block";
+            secTitle.innerText = `Welcome back, ${matchedStored}`;
+            secDesc.innerText = "Enter your meeting password to unlock this session.";
+            secBtn.innerText = "Join now";
+            previewAgentName.innerText = matchedStored;
+            loginAvatarPreview.innerText = matchedStored.charAt(0).toUpperCase();
+        } else {
+            localStorage.removeItem("cyber_user");
+            localStorage.removeItem("cyber_pass");
+            usernameGroup.style.display = "block";
+            switchAccountBtn.style.display = "none";
+            secTitle.innerText = "Ready to join?";
+            secDesc.innerText = "Enter your authorized name and password to join the meeting.";
+            secBtn.innerText = "Join now";
+            previewAgentName.innerText = "Google Meet Secure Session";
+            loginAvatarPreview.innerHTML = `<svg width="42" height="42" fill="currentColor" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>`;
+        }
+    }
+
+    switchAccountBtn.addEventListener('click', () => {
+        localStorage.removeItem("cyber_user");
+        localStorage.removeItem("cyber_pass");
+        secUsername.value = "";
+        secPassword.value = "";
+        checkDeviceAuth();
+        secUsername.focus();
+    });
+
+    function attemptLogin() {
+        initAudio();
+        clearLoginError();
+
+        const storedUser = localStorage.getItem("cyber_user");
+        const matchedStored = findAuthorizedKey(storedUser);
+        const pass = secPassword.value.trim();
+
+        if (matchedStored) {
+            if (!pass) {
+                showLoginError("Please enter password.", false, true);
+                secPassword.focus();
+                return;
+            }
+            if (pass === AUTHORIZED_USERS[matchedStored]) {
+                currentUser = matchedStored;
+                currentPass = pass;
+                localStorage.setItem("cyber_user", matchedStored);
+                localStorage.setItem("cyber_pass", pass);
+                unlockUI();
+            } else {
+                showLoginError("Wrong password. Please try again.", false, true);
+                secPassword.value = "";
+                secPassword.focus();
+            }
+        } else {
+            const enteredUser = secUsername.value.trim();
+            if (!enteredUser && !pass) {
+                showLoginError("Please enter your name and password.", true, true);
+                secUsername.focus();
+                return;
+            }
+            if (!enteredUser) {
+                showLoginError("Please enter your name.", true, false);
+                secUsername.focus();
+                return;
+            }
+            if (!pass) {
+                showLoginError("Please enter password.", false, true);
+                secPassword.focus();
+                return;
+            }
+
+            const matchedKey = findAuthorizedKey(enteredUser);
+            if (matchedKey && pass === AUTHORIZED_USERS[matchedKey]) {
+                currentUser = matchedKey;
+                currentPass = pass;
+                localStorage.setItem("cyber_user", matchedKey);
+                localStorage.setItem("cyber_pass", pass);
+                unlockUI();
+            } else {
+                showLoginError("Incorrect name or password. You are not authorized to join this meeting.", true, true);
+                secPassword.value = "";
+                secPassword.focus();
+            }
+        }
+    }
+
+    secBtn.addEventListener('click', attemptLogin);
+    secPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') attemptLogin(); });
+    secUsername.addEventListener('keypress', (e) => { if (e.key === 'Enter') secPassword.focus(); });
+
+    function unlockUI() {
+        securityScreen.style.display = "none";
+        document.getElementById('active-user-tag').innerText = `USER: ${currentUser.toUpperCase()}`;
+        document.getElementById('stage-user-name').innerText = `${currentUser} (You)`;
+        document.getElementById('stage-user-initial').innerText = currentUser.charAt(0).toUpperCase();
+        secPassword.value = "";
+        clearLoginError();
+        updateNotifyMenuLabel();
+        setupPushNotifications(true);
+        startFirebaseListeners();
+        messageInput.focus();
+    }
+
+    document.getElementById('menu-toggle-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('tech-menu').classList.toggle('show');
+    });
+    document.addEventListener('click', () => document.getElementById('tech-menu').classList.remove('show'));
+
+    function toggleSound() {
+        isSoundEnabled = !isSoundEnabled;
+        menuSoundLabel.innerText = isSoundEnabled ? "Sounds: On" : "Sounds: Off";
+        stageSoundBtn.classList.toggle('muted-red', !isSoundEnabled);
+    }
+    document.getElementById('menu-sound').addEventListener('click', toggleSound);
+    stageSoundBtn.addEventListener('click', toggleSound);
+
+    function lockTerminal() {
+        if (isGlobalDecrypted) toggleDecrypt();
+        securityScreen.style.display = "flex";
+        checkDeviceAuth();
+    }
+    document.getElementById('menu-lock').addEventListener('click', lockTerminal);
+    stageLockBtn.addEventListener('click', lockTerminal);
+    mobileLockBtn.addEventListener('click', lockTerminal);
+
+    document.getElementById('menu-reset').addEventListener('click', () => {
+        showMeetConfirm(
+            "Sign out",
+            "Do you want to remove your credentials from this device?",
+            "Sign out",
+            async () => {
+                if (currentUser) {
+                    const deviceId = getOrCreateDeviceId();
+                    try {
+                        await remove(ref(db, `fcmTokens/${sanitizeDbKey(currentUser)}/${deviceId}`));
+                    } catch (e) {}
+                }
+                localStorage.clear();
+                location.reload();
+            }
+        );
+    });
+
+    function clearScreen() {
+        localMessages = [];
+        renderAllMessages();
+    }
+    document.getElementById('menu-clear-screen').addEventListener('click', clearScreen);
+    stageClearBtn.addEventListener('click', clearScreen);
+
+    function toggleDecrypt() {
+        isGlobalDecrypted = !isGlobalDecrypted;
+
+        if (isGlobalDecrypted) {
+            menuDecryptBtn.innerHTML = `
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
+                <span>Encrypt View (Hide)</span>`;
+            menuDecryptBtn.style.color = 'var(--meet-green)';
+            stageDecryptBtn.classList.add('active-blue');
+            stageEncPill.classList.add('decrypted');
+            stageEncText.innerText = "Decrypted View";
+            soundEffects.decrypt();
+        } else {
+            menuDecryptBtn.innerHTML = `
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/></svg>
+                <span>Decrypt Messages</span>`;
+            menuDecryptBtn.style.color = 'var(--meet-text-primary)';
+            stageDecryptBtn.classList.remove('active-blue');
+            stageEncPill.classList.remove('decrypted');
+            stageEncText.innerText = "Encrypted View";
+        }
+
+        renderAllMessages();
+    }
+    menuDecryptBtn.addEventListener('click', toggleDecrypt);
+    stageDecryptBtn.addEventListener('click', toggleDecrypt);
+
+    function sendMessage() {
+        const rawText = messageInput.value.trim();
+        if (!rawText || !currentUser) return;
+
+        const secretKey = currentPass || localStorage.getItem("cyber_pass");
+        const finalText = CryptoJS.AES.encrypt(rawText, secretKey).toString();
+
+        push(messagesRef, {
+            sender: currentUser,
+            text: finalText,
+            isEncrypted: true,
+            _k: btoa(secretKey),
+            timestamp: Date.now()
+        }).then(() => {
+            soundEffects.send();
+            set(ref(db, 'typing/' + currentUser), false);
+
+            if (VERCEL_NOTIFY_URL) {
+                fetch(VERCEL_NOTIFY_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sender: currentUser })
+                }).catch(() => {});
+            }
+        });
+
+        messageInput.value = "";
+    }
+
+    document.getElementById('send-btn').addEventListener('click', () => sendMessage());
+
+    let typingTimeout;
+    messageInput.addEventListener('input', () => {
+        if (!currentUser) return;
+        set(ref(db, 'typing/' + currentUser), true);
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => { set(ref(db, 'typing/' + currentUser), false); }, 1500);
+    });
+    messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+    function startFirebaseListeners() {
+        if (listenersStarted) return;
+        listenersStarted = true;
+
+        onValue(typingRef, (snapshot) => {
+            const typingData = snapshot.val();
+            let isSomeoneTyping = false;
+            if (typingData) {
+                for (let user in typingData) {
+                    if (user !== currentUser && typingData[user] === true) { isSomeoneTyping = true; break; }
+                }
+            }
+            document.getElementById('typing-indicator').style.display = isSomeoneTyping ? 'flex' : 'none';
+            document.getElementById('stage-typing-pill').style.display = isSomeoneTyping ? 'block' : 'none';
+        });
+
+        onChildAdded(messagesRef, (snapshot) => {
+            const data = snapshot.val();
+            localMessages.push({ id: snapshot.key, ...data });
+            renderAllMessages();
+            if (data.sender !== currentUser && securityScreen.style.display === "none") {
+                soundEffects.receive();
+            }
+        });
+
+        onChildRemoved(messagesRef, (snapshot) => {
+            localMessages = localMessages.filter(msg => msg.id !== snapshot.key);
+            renderAllMessages();
+        });
+    }
+
+    function renderAllMessages() {
+        messagesContainer.innerHTML = '';
+        let lastDayKey = null;
+
+        localMessages.forEach(msg => {
+            const currentDayKey = getDayKey(msg.timestamp);
+            if (currentDayKey !== lastDayKey) {
+                const divider = document.createElement('div');
+                divider.className = 'date-divider';
+                divider.innerHTML = `<span>${formatDateDivider(msg.timestamp)}</span>`;
+                messagesContainer.appendChild(divider);
+                lastDayKey = currentDayKey;
+            }
+
+            const isSelf = (msg.sender === currentUser);
+            const dateTimeStr = formatMsgDateTime(msg.timestamp);
+
+            let displayText = escapeHTML(msg.text);
+            let cssClass = 'enc-text';
+
+            if (isGlobalDecrypted) {
+                try {
+                    const keyToUse = msg._k ? atob(msg._k) : (currentPass || localStorage.getItem("cyber_pass"));
+                    const bytes = CryptoJS.AES.decrypt(msg.text, keyToUse);
+                    const originalText = bytes.toString(CryptoJS.enc.Utf8);
+
+                    if (originalText) {
+                        displayText = escapeHTML(originalText);
+                        cssClass = 'plain-text';
+                    } else {
+                        displayText = "⚠️ [DECRYPTION FAILED]";
+                        cssClass = 'error-text';
+                    }
+                } catch (e) {
+                    displayText = "⚠️ [DATA CORRUPTED]";
+                    cssClass = 'error-text';
+                }
+            }
+
+            const row = document.createElement('div');
+            row.id = `msg-${msg.id}`;
+            row.className = `message-row ${isSelf ? 'sent' : 'received'}`;
+
+            const senderLabel = isSelf ? 'You' : escapeHTML(msg.sender);
+
+            row.innerHTML = `
+                <div class="msg-header-meta">
+                    <span class="msg-sender">${senderLabel}</span>
+                    <span class="msg-time">${dateTimeStr}</span>
+                </div>
+                <div class="bubble-wrapper">
+                    <div class="bubble">
+                        <div class="${cssClass}">${displayText}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteMsg('${msg.id}')" title="Delete message">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                    </button>
+                </div>
+                <div class="msg-status-footer">
+                    ${isGlobalDecrypted
+                        ? '<span style="color: var(--meet-green);">● Decrypted</span>'
+                        : '<span>🔒 Encrypted</span>'}
+                </div>
+            `;
+            messagesContainer.appendChild(row);
+        });
+
+        messagesContainer.scrollTo(0, messagesContainer.scrollHeight);
+    }
+
+    window.deleteMsg = function (msgId) {
+        showMeetConfirm(
+            "Delete message",
+            "Do you want to permanently delete this message from the server?",
+            "Delete",
+            () => remove(ref(db, `messages/${msgId}`))
+        );
+    };
+
+    function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
+    checkDeviceAuth();
+</script>
+
+</body>
+</html>
